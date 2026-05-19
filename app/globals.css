@@ -1,0 +1,509 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { -webkit-font-smoothing: antialiased; overflow-x: hidden; background: #FAF7F2; color: #0B1220; }
+
+/* ============= FOCUS RING (accessibility floor) =============
+   Amber ring is visible on white, paper, cyan, green and ink backgrounds.
+*/
+:focus-visible {
+  outline: 3px solid #f59e0b;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+/* override hidden ring on common interactive elements */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible {
+  outline: 3px solid #f59e0b;
+  outline-offset: 3px;
+}
+
+/* ============= WORDMARK — bubble + outline =============
+   Merry Bright filled with brand cyan + dark stroke. Renders as live text
+   (selectable, SEO-indexable, scalable). Falls back to layered text-shadow
+   where paint-order isn't supported.
+*/
+.wordmark {
+  font-family: var(--font-wordmark), system-ui, sans-serif;
+  color: #19b8c8;
+  -webkit-text-stroke: 0.06em #FAF7F2;
+  paint-order: stroke fill;
+  letter-spacing: -0.01em;
+  line-height: 0.95;
+  font-weight: 400;
+}
+.wordmark--green { color: #22C55E; }
+.wordmark--ink   { color: #0B1220; -webkit-text-stroke: 0; }
+.wordmark--paper { color: #FAF7F2; -webkit-text-stroke: 0.06em #0B1220; }
+@supports not (paint-order: stroke fill) {
+  .wordmark {
+    -webkit-text-stroke: 0;
+    text-shadow:
+      -2px -2px 0 #FAF7F2, 2px -2px 0 #FAF7F2,
+      -2px  2px 0 #FAF7F2, 2px  2px 0 #FAF7F2;
+  }
+}
+
+/* ============= STICKER CARD =============
+   Solid color block, big radius, slight rotation that settles to 0deg on
+   hover. Three tone variants. Use for courses grid, hero feature blocks,
+   side attractions, slot badges.
+*/
+.card-sticker {
+  position: relative;
+  border-radius: 28px;
+  padding: 24px;
+  box-shadow:
+    0 12px 30px -10px rgba(13, 148, 166, 0.35),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+  transform: rotate(var(--tilt, -1.5deg));
+  transition: transform 300ms cubic-bezier(.2, .8, .2, 1),
+              box-shadow 300ms cubic-bezier(.2, .8, .2, 1);
+  will-change: transform;
+}
+.card-sticker:hover {
+  transform: rotate(0deg) translateY(-2px);
+  box-shadow:
+    0 22px 40px -12px rgba(13, 148, 166, 0.45),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+}
+.card-sticker--cyan       { background: #19b8c8; color: #0B1220; }
+.card-sticker--cyan-soft  { background: #a8e6ed; color: #0B1220; }
+.card-sticker--green      { background: #22C55E; color: #0B1220; }
+.card-sticker--green-soft { background: #86efac; color: #0B1220; }
+.card-sticker--ink        { background: #0f0f0f; color: #ffffff; }
+.card-sticker--ink:hover  {
+  box-shadow:
+    0 22px 40px -12px rgba(15, 15, 15, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+.card-sticker--white      { background: #ffffff; color: #0B1220; }
+.card-sticker--tilt-r     { --tilt:  1.5deg; }
+.card-sticker--tilt-l     { --tilt: -1.5deg; }
+.card-sticker--tilt-r-lg  { --tilt:  3deg; }
+.card-sticker--tilt-l-lg  { --tilt: -3deg; }
+.card-sticker--no-tilt    { --tilt:  0deg; }
+
+/* ============= TICKET COUPON =============
+   White card with semi-circle notches at left + right edges (the perforated
+   look) plus a dashed seam between the stub and the price + a barcode stripe.
+   Use only for price/CTA — there's only one of these per page.
+*/
+.card-ticket {
+  --notch: 14px;
+  position: relative;
+  background: #ffffff;
+  color: #0B1220;
+  border-radius: 24px;
+  padding: 22px 28px;
+  -webkit-mask:
+    radial-gradient(var(--notch) at 0 50%, transparent 98%, #000 100%) -1px 0 / 100% 100% no-repeat,
+    radial-gradient(var(--notch) at 100% 50%, transparent 98%, #000 100%) 1px 0 / 100% 100% no-repeat;
+          mask:
+    radial-gradient(var(--notch) at 0 50%, transparent 98%, #000 100%) -1px 0 / 100% 100% no-repeat,
+    radial-gradient(var(--notch) at 100% 50%, transparent 98%, #000 100%) 1px 0 / 100% 100% no-repeat;
+  -webkit-mask-composite: source-in;
+          mask-composite: intersect;
+  box-shadow: 0 18px 40px -12px rgba(15, 15, 15, 0.18);
+}
+.card-ticket--green { background: #22C55E; color: #0B1220; }
+.card-ticket--ink   { background: #0f0f0f; color: #ffffff; }
+.card-ticket__seam  { border-left: 2px dashed rgba(0, 0, 0, 0.18); }
+.card-ticket--ink .card-ticket__seam { border-left-color: rgba(255, 255, 255, 0.25); }
+.card-ticket__barcode {
+  display: block;
+  height: 48px;
+  width: 54px;
+  background-image: repeating-linear-gradient(
+    to right,
+    currentColor 0 2px, transparent 2px 4px,
+    currentColor 4px 5px, transparent 5px 8px,
+    currentColor 8px 11px, transparent 11px 13px
+  );
+}
+
+/* ============= MAGAZINE STRAP HEADER =============
+   The thin all-caps strip that runs above the main nav, like a magazine
+   cover. Three columns: left date, center logomark, right cohort.
+*/
+.magazine-strap {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #0B1220;
+}
+@media (max-width: 480px) { .magazine-strap { font-size: 9.5px; letter-spacing: 0.18em; } }
+
+/* ============= FROSTED GLASS ============= */
+.frosted-glass {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.04),
+    0 12px 40px rgba(15, 15, 15, 0.06);
+}
+.frosted-glass-dark {
+  background: rgba(15, 15, 15, 0.85);
+  color: #fff;
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 12px 40px rgba(15, 15, 15, 0.18);
+}
+/* bright-cyan accent (legacy `.frosted-glass-violet` is an alias for backwards compat) */
+.frosted-glass-violet,
+.frosted-glass-aqua {
+  background: rgba(25, 184, 200, 0.92);
+  color: #0f0f0f;
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 14px 40px rgba(25, 184, 200, 0.32);
+}
+
+/* deep-teal accent — for primary buttons / dark stickers */
+.frosted-glass-petrol {
+  background: rgba(31, 111, 135, 0.92);
+  color: #fff;
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 14px 40px rgba(31, 111, 135, 0.30);
+}
+
+/* subtle dotted grid backdrop — for the hero (and reusable elsewhere) */
+.dot-grid {
+  background-image: radial-gradient(circle, rgba(15, 15, 15, 0.07) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* hover: slight scale on glass props to feel interactive */
+.glass-prop {
+  transition: transform .35s cubic-bezier(.2, .8, .2, 1);
+}
+.glass-prop:hover {
+  transform: scale(1.08);
+}
+
+/* Hide decorative glass props on phones where they collide with hero copy. */
+@media (max-width: 480px) {
+  .glass-prop-mobile-hide { display: none !important; }
+}
+
+/* ============= STICKER PILL =============
+   Inline pill used inside sticker cards (e.g. compulsory marker, elective badge). */
+.sticker-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background: #0f0f0f;
+  color: #ffffff;
+  line-height: 1.2;
+}
+.sticker-pill--cyan  { background: #19b8c8; color: #0B1220; }
+.sticker-pill--green { background: #22C55E; color: #0B1220; }
+.sticker-pill--paper { background: #FAF7F2; color: #0B1220; border: 1.5px solid #0f0f0f; }
+
+/* ticket-card with perforated edge — for the early-bird CTA */
+.ticket-card {
+  position: relative;
+}
+.ticket-card::before,
+.ticket-card::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #f1f1f1;
+  transform: translateY(-50%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+}
+.ticket-card::before { left: -9px; }
+.ticket-card::after { right: -9px; }
+img { max-width: 100%; display: block; }
+
+/* outlined pill text for headings — uses futuristic Orbitron for that sci-fi outline read */
+.pill-outline {
+  display: inline-block;
+  padding: 0 30px 4px;
+  border: 2.5px solid #0f0f0f;
+  border-radius: 999px;
+  color: transparent;
+  -webkit-text-stroke: 2px #0f0f0f;
+  font-family: "Orbitron", "Space Grotesk", sans-serif;
+  font-weight: 800;
+  letter-spacing: .02em;
+}
+
+.btn-dark {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: #141414; color: #fff;
+  border-radius: 999px; padding: 16px 30px;
+  min-height: 48px;
+  font-weight: 600; font-size: 13.5px;
+  transition: transform .2s, background .2s;
+}
+.btn-dark:hover { transform: translateY(-2px); background: #252525; }
+
+.btn-light {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: #fff; color: #141414;
+  border-radius: 999px; padding: 16px 30px;
+  min-height: 48px;
+  font-weight: 600; font-size: 13.5px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.06);
+  transition: transform .2s;
+}
+.btn-light:hover { transform: translateY(-2px); }
+
+/* ============= PRIMARY CTA (green grass)
+   The single primary action color across the site. Used only for "Register"
+   in the nav and the hero ticket CTA. Don't use this color anywhere else.
+*/
+.btn-grass {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: #22C55E; color: #0B1220;
+  border-radius: 999px; padding: 16px 30px;
+  min-height: 48px;
+  font-weight: 700; font-size: 13.5px;
+  letter-spacing: 0.01em;
+  box-shadow: 0 12px 28px -10px rgba(34, 197, 94, 0.55);
+  transition: transform .2s, background .2s, box-shadow .2s;
+}
+.btn-grass:hover {
+  transform: translateY(-2px);
+  background: #16a34a;
+  box-shadow: 0 18px 36px -12px rgba(34, 197, 94, 0.65);
+}
+
+.input {
+  width: 100%; padding: 14px 16px;
+  background: #fff; border: 1.5px solid rgba(0,0,0,.08);
+  border-radius: 12px; font-size: 14px;
+  transition: border-color .15s;
+}
+.input:focus { outline: none; border-color: #141414; }
+
+.label {
+  display: block; font-size: 12px; font-weight: 600;
+  letter-spacing: .04em; text-transform: uppercase;
+  color: #141414; margin-bottom: 6px;
+}
+
+.field-error { font-size: 12px; color: #c44; margin-top: 4px; }
+
+/* values section — wide horizontal purple stripes behind the meditation character */
+.values-stripes {
+  position: absolute;
+  top: 50%;
+  left: -240px;
+  width: 1180px;
+  height: 110px;
+  transform: translateY(-50%) rotate(-8deg);
+  opacity: .9;
+  z-index: 1;
+  background: repeating-linear-gradient(
+    to bottom,
+    #1f6f87 0 28px,
+    transparent 28px 48px
+  );
+}
+
+/* outcomes — text with a chromatic-split duplicate (offsets in 2 colors) */
+.split-text {
+  color: #0f0f0f;
+  text-shadow:
+    -3px -3px 0 #1f6f87,
+     5px  5px 0 #f97316;
+}
+
+/* outcomes — two-tone split background (lavender | beige), hard vertical seam */
+.split-bg {
+  background: linear-gradient(90deg, #d4bce8 0 50%, #d4a883 50% 100%);
+}
+
+/* pricing — yellow squiggle behind the heading */
+.pricing-squiggle {
+  position: absolute;
+  left: -40px;
+  top: -24px;
+  width: 380px;
+  height: 80px;
+  opacity: .9;
+  z-index: 0;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 80'><path d='M0 40 Q40 0 80 40 T160 40 T240 40 T320 40 T400 40' stroke='%23f4d35e' stroke-width='30' fill='none' stroke-linecap='round'/></svg>") no-repeat center / contain;
+}
+
+/* values — dotted-line decorative accents */
+.dotted-orange {
+  position: absolute;
+  width: 90px;
+  height: 14px;
+  background: repeating-linear-gradient(90deg, #ff9a3d 0 6px, transparent 6px 12px);
+}
+.dotted-violet {
+  position: absolute;
+  width: 90px;
+  height: 14px;
+  background: repeating-linear-gradient(90deg, #1f6f87 0 6px, transparent 6px 12px);
+}
+
+/* =============== MOTION =============== */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+@keyframes float-y-deep {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-18px); }
+}
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) rotate(var(--rot, 0deg)); }
+  50%      { transform: translate(-6px, -8px) rotate(calc(var(--rot, 0deg) - 4deg)); }
+}
+@keyframes wobble {
+  0%, 100% { transform: rotate(var(--rot, 0deg)); }
+  50%      { transform: rotate(calc(var(--rot, 0deg) + 6deg)); }
+}
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+@keyframes pulse-soft {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.04); }
+}
+@keyframes morph {
+  0%, 100% { border-radius: 50% 50% 45% 55% / 60% 50% 50% 40%; }
+  50%      { border-radius: 45% 55% 55% 45% / 50% 60% 40% 50%; }
+}
+@keyframes slide-x {
+  0%   { background-position: 0 0; }
+  100% { background-position: 380px 0; }
+}
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(15,15,15,0); }
+  50%      { box-shadow: 0 0 24px rgba(15,15,15,.06); }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.anim-float       { animation: float-y       4s ease-in-out infinite; }
+.anim-float-deep  { animation: float-y-deep  5s ease-in-out infinite; }
+.anim-drift       { animation: drift         5s ease-in-out infinite; }
+.anim-wobble      { animation: wobble        6s ease-in-out infinite; }
+.anim-spin-slow   { animation: spin-slow    16s linear infinite; }
+.anim-pulse       { animation: pulse-soft    3s ease-in-out infinite; }
+.anim-morph       { animation: morph        14s ease-in-out infinite; }
+.anim-glow        { animation: glow-pulse    4s ease-in-out infinite; }
+.anim-slide-x     { animation: slide-x      18s linear infinite; }
+
+.anim-fade-up     { animation: fade-up .8s ease-out both; }
+
+/* ====== subtle card motion — gentle bob + opacity fade-in ====== */
+@keyframes card-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-5px); }
+}
+@keyframes card-breathe {
+  0%, 100% { box-shadow: 0 4px 14px rgba(0,0,0,.04); }
+  50%      { box-shadow: 0 10px 26px rgba(0,0,0,.07); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.anim-card-bob     { animation: card-bob 6s ease-in-out infinite; }
+.anim-card-breathe { animation: card-breathe 5s ease-in-out infinite; }
+.anim-fade-in      { animation: fade-in .7s ease-out both; }
+
+/* =============== STAGGERED REVEAL ON SCROLL ===============
+   Cards float up one by one with a small lean. Driven by an
+   IntersectionObserver (components/ScrollReveal.tsx) that sets
+   data-revealed="true" the moment each card enters the viewport.
+   Works in every browser.
+   The --i variable on each card sets its place in the cascade.
+*/
+.stagger-rise {
+  opacity: 0;
+  transform: translateY(80px) rotate(var(--tilt, -2deg)) scale(.92);
+  transition:
+    opacity .8s cubic-bezier(.2, .8, .2, 1) min(calc(var(--i, 0) * 80ms), 320ms),
+    transform .8s cubic-bezier(.2, .8, .2, 1) min(calc(var(--i, 0) * 80ms), 320ms);
+  will-change: transform, opacity;
+}
+.stagger-rise:nth-child(odd)  { --tilt: -3deg; }
+.stagger-rise:nth-child(even) { --tilt:  3deg; }
+
+.stagger-rise[data-revealed="true"] {
+  opacity: 1;
+  transform: translateY(0) rotate(0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stagger-rise {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+.delay-1 { animation-delay: .2s; }
+.delay-2 { animation-delay: .5s; }
+.delay-3 { animation-delay: .8s; }
+.delay-4 { animation-delay: 1.1s; }
+.delay-5 { animation-delay: 1.4s; }
+
+/* respect users who prefer no motion */
+@media (prefers-reduced-motion: reduce) {
+  .anim-float,
+  .anim-float-deep,
+  .anim-drift,
+  .anim-wobble,
+  .anim-spin-slow,
+  .anim-pulse,
+  .anim-morph,
+  .anim-glow,
+  .anim-slide-x,
+  .anim-fade-up,
+  .anim-fade-in,
+  .anim-card-bob,
+  .anim-card-breathe {
+    animation: none !important;
+  }
+}
+
+/* now make the existing decorations animate */
+.values-stripes { animation: slide-x 22s linear infinite; }
+.pricing-squiggle { animation: drift 6s ease-in-out infinite; }
+

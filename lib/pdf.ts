@@ -1,0 +1,53 @@
+import PDFDocument from "pdfkit";
+import { formatNaira } from "./utils";
+
+interface ReceiptArgs {
+  registrationId: string;
+  parentName: string;
+  participantName: string;
+  courses: string[];
+  laptopRental: boolean;
+  bootCampFeeKobo: number;
+  laptopRentalKobo: number;
+  totalKobo: number;
+  paidAt: Date;
+}
+
+export function buildReceiptPdf(args: ReceiptArgs): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    const doc = new PDFDocument({ size: "A4", margin: 50 });
+    const chunks: Buffer[] = [];
+    doc.on("data", (c) => chunks.push(c as Buffer));
+    doc.on("end", () => resolve(Buffer.concat(chunks)));
+    doc.on("error", reject);
+
+    doc.fontSize(28).text("IMMERSIA", { continued: false });
+    doc.fontSize(11).fillColor("#555").text("Summer Tech Boot Camp 2026 — Payment Receipt");
+    doc.moveDown(1.2);
+
+    doc.fillColor("#141414").fontSize(14).text(`Registration ID: ${args.registrationId}`);
+    doc.fontSize(11).fillColor("#555").text(`Paid on ${args.paidAt.toLocaleString("en-NG")}`);
+    doc.moveDown(1);
+
+    doc.fillColor("#141414").fontSize(12).text(`Parent / Guardian: ${args.parentName}`);
+    doc.text(`Participant: ${args.participantName}`);
+    doc.moveDown(0.5);
+
+    doc.text("Courses:", { underline: true });
+    args.courses.forEach((c) => doc.text("  - " + c));
+    doc.moveDown(0.5);
+
+    doc.text(`Laptop rental: ${args.laptopRental ? "Yes" : "No"}`);
+    doc.moveDown(1);
+
+    doc.text(`Boot camp fee:    ${formatNaira(args.bootCampFeeKobo)}`);
+    if (args.laptopRental) doc.text(`Laptop rental:    ${formatNaira(args.laptopRentalKobo)}`);
+    doc.moveDown(0.3);
+    doc.fontSize(14).text(`TOTAL PAID:       ${formatNaira(args.totalKobo)}`, { underline: true });
+
+    doc.moveDown(2);
+    doc.fontSize(10).fillColor("#777").text("Keep this receipt as proof of payment. Camp begins 27 July 2026.");
+
+    doc.end();
+  });
+}

@@ -1,0 +1,23 @@
+node_modules
+.next
+.env.local
+.env*.local
+*.log
+.DS_Store
+dist
+build
+.vercel
+.idea
+.vscode
+
+# Build cache
+*.tsbuildinfo
+
+# Stray dev files
+1.png
+d0e7d470dbf49fb7b4a5ba4776c7ecd9.webp
+
+# Stray font installer notes that some bundles ship at the project root.
+# (Project-licensed font files live in app/fonts/ and are committed.)
+Read-Me-Please.txt
+More Info.txt
