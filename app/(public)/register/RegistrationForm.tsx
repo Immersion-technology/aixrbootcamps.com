@@ -222,7 +222,7 @@ export default function RegistrationForm({ pricing }: Props) {
           <div className="frosted-glass rounded-3xl p-6 md:p-7">
             <div className="flex items-baseline justify-between gap-3 mb-4 flex-wrap">
               <div className="text-[10.5px] font-bold tracking-[.22em] text-aqua-deep uppercase">
-                Enrolled in all {ALWAYS_ATTENDED.length} classes below
+                Enrolled in all {ALWAYS_ATTENDED.length} courses below
               </div>
               <span className="text-[11px] text-neutral-500">+ 3 daily active breaks</span>
             </div>
@@ -263,7 +263,7 @@ export default function RegistrationForm({ pricing }: Props) {
             <input type="checkbox" {...register("laptopRental")} className="accent-aqua-brand mt-0.5" />
             <div className="flex-1">
               <div className="text-[10px] font-bold tracking-[.18em] text-white/70 mb-0.5">OPTIONAL ADD-ON</div>
-              <div className="text-[13.5px] font-semibold">Rent a laptop for the four weeks</div>
+              <div className="text-[13.5px] font-semibold">Rent a laptop for the two weeks of your cohort</div>
             </div>
             <div className="font-accent font-extrabold text-[18px]">+{naira(pricing.laptopPrice)}</div>
           </label>
@@ -289,7 +289,7 @@ export default function RegistrationForm({ pricing }: Props) {
           ]} onEdit={() => setStep(1)} />
 
           <ReviewCard title="Programme" data={[
-            ["Classes", `${ALWAYS_ATTENDED.length} (all attended)`],
+            ["Courses", `${ALWAYS_ATTENDED.length} (all attended)`],
             ["Active breaks", "Pro Gaming · Table Tennis · Go Karting"],
             ["Laptop rental", values.laptopRental ? "Yes (+₦20,000)" : "No"],
           ]} onEdit={() => setStep(2)} />

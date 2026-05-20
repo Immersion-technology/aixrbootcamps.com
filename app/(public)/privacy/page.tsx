@@ -24,7 +24,7 @@ export default function PrivacyPage() {
         <div className="space-y-10 text-[14.5px] leading-relaxed text-ink/90">
           <Section title="1. Who we are">
             <p>
-              IMMERSIA (&ldquo;we&rdquo;, &ldquo;us&rdquo;) operates the AI &amp; XR Summer Tech Bootcamp, a four-week summer programme for kids aged 10–17 based in Lagos, Nigeria. This policy applies to everything on this site and to information you give us during registration.
+              IMMERSIA (&ldquo;we&rdquo;, &ldquo;us&rdquo;) operates the AI &amp; XR Summer Bootcamp, a summer programme for kids aged 10–17 split into two back-to-back two-week cohorts and based in Lagos, Nigeria. This policy applies to everything on this site and to information you give us during registration.
             </p>
           </Section>
 
@@ -41,7 +41,7 @@ export default function PrivacyPage() {
 
           <Section title="3. Why we collect it">
             <ul className="list-disc pl-5 space-y-1.5">
-              <li>To enrol your child in the cohort, assign them to classes, and produce their name badge / t-shirt.</li>
+              <li>To enrol your child in the cohort, assign them to courses, and produce their name badge / t-shirt.</li>
               <li>To reach you about logistics, drop-off, pick-up, schedule changes, and Demo Day.</li>
               <li>To contact your emergency contact if your child needs medical attention.</li>
               <li>To process payment via Paystack.</li>

@@ -5,39 +5,59 @@ import { jwtVerify } from "jose";
 const SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET ?? "dev-secret-do-not-use-in-prod"
 );
-const COOKIE = "immersia_admin";
+const ADMIN_COOKIE = "immersia_admin";
+const PARENT_COOKIE = "immersia_parent";
+
+// Public exemptions inside each auth-gated tree.
+const ADMIN_PUBLIC = new Set(["/admin/login"]);
+const PARENT_PUBLIC_PREFIXES = ["/account/login", "/account/setup"];
+const ADMIN_API_PUBLIC = ["/api/admin/auth/login"];
+const PARENT_API_PUBLIC = ["/api/account/login", "/api/account/setup"];
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // protected admin routes (except the login page + login API)
-  const isAdminPage = pathname.startsWith("/admin") && pathname !== "/admin/login";
+  // ---------- admin tree ----------
+  const isAdminPage = pathname.startsWith("/admin") && !ADMIN_PUBLIC.has(pathname);
   const isAdminApi =
-    pathname.startsWith("/api/admin") && !pathname.startsWith("/api/admin/auth/login");
+    pathname.startsWith("/api/admin") && !ADMIN_API_PUBLIC.some((p) => pathname.startsWith(p));
 
-  if (!isAdminPage && !isAdminApi) return NextResponse.next();
+  if (isAdminPage || isAdminApi) {
+    return checkAuth(req, ADMIN_COOKIE, "/admin/login", isAdminApi);
+  }
 
-  const token = req.cookies.get(COOKIE)?.value;
-  if (!token) return redirectOrUnauthorized(req, isAdminApi);
+  // ---------- parent tree ----------
+  const isParentPage =
+    pathname.startsWith("/account") && !PARENT_PUBLIC_PREFIXES.some((p) => pathname.startsWith(p));
+  const isParentApi =
+    pathname.startsWith("/api/account") && !PARENT_API_PUBLIC.some((p) => pathname.startsWith(p));
 
+  if (isParentPage || isParentApi) {
+    return checkAuth(req, PARENT_COOKIE, "/account/login", isParentApi);
+  }
+
+  return NextResponse.next();
+}
+
+async function checkAuth(req: NextRequest, cookieName: string, loginPath: string, isApi: boolean) {
+  const token = req.cookies.get(cookieName)?.value;
+  if (!token) return redirectOrUnauthorized(req, loginPath, isApi);
   try {
     await jwtVerify(token, SECRET);
     return NextResponse.next();
   } catch {
-    return redirectOrUnauthorized(req, isAdminApi);
+    return redirectOrUnauthorized(req, loginPath, isApi);
   }
 }
 
-function redirectOrUnauthorized(req: NextRequest, isApi: boolean) {
-  if (isApi) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+function redirectOrUnauthorized(req: NextRequest, loginPath: string, isApi: boolean) {
+  if (isApi) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const url = req.nextUrl.clone();
-  url.pathname = "/admin/login";
+  url.pathname = loginPath;
   url.searchParams.set("from", req.nextUrl.pathname);
   return NextResponse.redirect(url);
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/admin/:path*"],
+  matcher: ["/admin/:path*", "/api/admin/:path*", "/account/:path*", "/api/account/:path*"],
 };

@@ -53,7 +53,8 @@ export default function Footer() {
           <div>
             <p className="text-[10px] font-bold tracking-[.22em] text-neutral-500 mb-4">CAMP DATES</p>
             <p className="text-[13.5px] mb-1.5"><strong>27 July – 21 August 2026</strong></p>
-            <p className="text-[13.5px] text-neutral-700">Mon – Fri · 10am – 2:30pm · Lagos</p>
+            <p className="text-[13.5px] text-neutral-700">Mon – Fri · 10am – 2:30pm</p>
+            <p className="text-[13.5px] text-neutral-700 mt-1">99 Adesanya Ogunsanya · Leisure Mall, Lagos</p>
           </div>
 
           <div>

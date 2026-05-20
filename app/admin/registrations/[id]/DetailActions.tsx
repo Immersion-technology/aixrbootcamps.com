@@ -52,6 +52,33 @@ export default function DetailActions({ registrationId, currentStatus, paymentSt
     }
   }
 
+  async function sendInvite() {
+    setBusy("invite");
+    try {
+      const r = await fetch(`/api/admin/parent-account/invite`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ registrationId }),
+      });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error ?? "Failed");
+      const warn = j.hadPasswordBefore
+        ? "\n\nThis parent already had a password — the new link will REPLACE it once used.\n\n"
+        : "\n\n";
+      // copy to clipboard if we can, then show
+      try { await navigator.clipboard.writeText(j.setupUrl); } catch { /* fine */ }
+      alert(
+        `Setup link generated for ${j.name} <${j.email}>${warn}` +
+        `Send them this URL (already copied to clipboard):\n\n${j.setupUrl}\n\n` +
+        `Expires: ${new Date(j.expiresAt).toLocaleString("en-NG")}`
+      );
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "Failed");
+    } finally {
+      setBusy(null);
+    }
+  }
+
   return (
     <div className="frosted-glass-dark rounded-2xl p-4 sm:p-5 sticky top-3 z-30 mb-8">
       <div className="text-[10px] font-bold tracking-[.22em] text-white/70 uppercase mb-3">Quick actions</div>
@@ -109,6 +136,15 @@ export default function DetailActions({ registrationId, currentStatus, paymentSt
             ✉ Resend confirmation
           </ActionBtn>
         )}
+
+        <ActionBtn
+          onClick={sendInvite}
+          disabled={busy !== null}
+          tone="cyan"
+          loading={busy === "invite"}
+        >
+          🔑 Send setup link
+        </ActionBtn>
       </div>
     </div>
   );
@@ -120,7 +156,7 @@ function ActionBtn({
   children: React.ReactNode;
   onClick: () => void;
   disabled: boolean;
-  tone: "mint" | "pink" | "ghost" | "yellow" | "white";
+  tone: "mint" | "pink" | "ghost" | "yellow" | "white" | "cyan";
   loading: boolean;
 }) {
   const toneCls = {
@@ -129,6 +165,7 @@ function ActionBtn({
     yellow: "bg-yellow-soft text-ink hover:bg-yellow-deep",
     white: "bg-white text-ink hover:bg-violet-brand hover:text-white",
     ghost: "bg-white/10 text-white border border-white/15 hover:bg-white/20",
+    cyan: "bg-aqua-soft text-ink hover:bg-aqua-brand hover:text-white",
   }[tone];
   return (
     <button

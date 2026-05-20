@@ -18,6 +18,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <nav className="flex flex-col gap-1 text-[13px]">
             <NavLink href="/admin">Dashboard</NavLink>
             <NavLink href="/admin/registrations">Registrations</NavLink>
+            <NavLink href="/admin/attendance">Attendance</NavLink>
             <NavLink href="/admin/waitlist">Waitlist</NavLink>
             <NavLink href="/admin/settings">Settings</NavLink>
             <NavLink href="/admin/export">Export</NavLink>

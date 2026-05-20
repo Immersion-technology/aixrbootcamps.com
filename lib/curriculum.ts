@@ -110,7 +110,7 @@ export const CURRICULUM: CurriculumItem[] = [
     icon: "Rocket01Icon",
     tone: "yellow",
     shortDesc: "Idea → built product → live Demo Day pitch. Compulsory for every camper.",
-    tagline: "From the spark of an idea to a pitch in front of a real audience — in four weeks.",
+    tagline: "From the spark of an idea to a pitch in front of a real audience — in two weeks.",
     whatYoullLearn: [
       "How to spot a real problem worth solving",
       "Talking to potential customers without being weird",
@@ -311,7 +311,7 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     icon: "TableTennisBatIcon",
     tone: "orange",
-    shortDesc: "Sharpen reflexes between morning and afternoon classes — daily, free choice.",
+    shortDesc: "Sharpen reflexes between morning and afternoon courses — daily, free choice.",
     tagline: "The fastest racket sport in the world — perfect 30-minute reset between deep-tech blocks.",
     whatYoullLearn: [
       "Forehand, backhand and the push shot",

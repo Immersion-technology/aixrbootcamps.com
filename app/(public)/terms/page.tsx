@@ -30,16 +30,18 @@ export default function TermsPage() {
 
           <Section title="2. Camp dates &amp; hours">
             <ul className="list-disc pl-5 space-y-1.5">
-              <li><strong>27 July – 21 August 2026.</strong></li>
+              <li><strong>Two cohorts of 2 weeks each.</strong> Same curriculum, same instructors, same price — pick whichever fits your family&apos;s August calendar.</li>
+              <li><strong>Cohort 1:</strong> 27 July – 7 August 2026.</li>
+              <li><strong>Cohort 2:</strong> 10 August – 21 August 2026.</li>
               <li>Monday to Friday, <strong>10:00 AM – 2:30 PM</strong>.</li>
-              <li>Demo Day: <strong>Thursday 21 August 2026</strong> — attendance for the pitch is part of the programme.</li>
+              <li>Demo Day is on the last Friday of each cohort — attendance for the pitch is part of the programme.</li>
             </ul>
           </Section>
 
           <Section title="3. What the fee covers">
             <ul className="list-disc pl-5 space-y-1.5">
-              <li>All six classes plus the three side attractions, for the full four weeks.</li>
-              <li>Daily lunch + bottled water.</li>
+              <li>All six courses plus the three side attractions, for the full two weeks of your cohort.</li>
+              <li>Daily snacks + bottled water. (Lunch is bring-your-own; a vetted food vendor takes daily orders.)</li>
               <li>IMMERSIA t-shirt + all course materials and consumables.</li>
               <li>Use of camp laptops, headsets, robotics kits and gaming rigs.</li>
               <li>Demo Day, including the live pitch panel and prize for the winning team.</li>
@@ -50,10 +52,10 @@ export default function TermsPage() {
           <Section title="4. Payment, holds and refunds">
             <ul className="list-disc pl-5 space-y-1.5">
               <li>Payment is processed by <strong>Paystack</strong>. A slot is only held once payment clears.</li>
-              <li>The first 10 paid registrations get the <strong>₦100,000 early-bird</strong> price. After that, ₦150,000 regular.</li>
-              <li>Cancellation more than 21 days before camp starts: full refund minus a 5% processing fee.</li>
-              <li>Cancellation 7–21 days before camp starts: 50% refund.</li>
-              <li>Cancellation less than 7 days before camp starts, or any time after camp begins: no refund.</li>
+              <li>The first 10 paid registrations get the <strong>₦150,000 early-bird</strong> price. After that, ₦200,000 regular.</li>
+              <li><strong>Instalments:</strong> ₦75,000 deposit on registration holds your slot; balance is due two weeks before your cohort starts.</li>
+              <li><strong>Sibling discount:</strong> 10% off each additional camper from the same family.</li>
+              <li><strong>Refunds:</strong> full refund within the first 3 days after the cohort starts. After that, no refunds.</li>
               <li>If we cancel the cohort for any reason, every camper gets a full refund within 14 days.</li>
             </ul>
           </Section>

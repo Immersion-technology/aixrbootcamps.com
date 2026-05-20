@@ -11,6 +11,7 @@ import {
   RacingFlagIcon,
 } from "hugeicons-react";
 import ScrollReveal from "@/components/ScrollReveal";
+import { FAQS, FAQ_TOPIC_STYLE } from "@/lib/faq";
 import { connectDB } from "@/lib/db";
 import { Registration } from "@/models/Registration";
 import { getSetting, SETTING_KEYS } from "@/models/Setting";
@@ -51,8 +52,8 @@ async function getPublicConfig() {
       slotsPaid: 10,
       slotsLeft: 40,
       isEarlyBird: true,
-      earlyBirdPrice: 10000000,
-      regularPrice: 15000000,
+      earlyBirdPrice: 15000000,
+      regularPrice: 20000000,
       laptopPrice: 2000000,
     };
   }
@@ -60,8 +61,8 @@ async function getPublicConfig() {
 
 export default async function Landing() {
   const cfgRaw = await getPublicConfig();
-  // Force two-tier pricing (₦100k early-bird / ₦150k regular) until the DB seed catches up.
-  const cfg = { ...cfgRaw, slotsLeft: 50, earlyBirdPrice: 10000000, regularPrice: 15000000 };
+  // Force two-tier pricing (₦150k early-bird / ₦200k regular) until the DB seed catches up.
+  const cfg = { ...cfgRaw, slotsLeft: 50, earlyBirdPrice: 15000000, regularPrice: 20000000 };
   const naira = (k: number) => `₦${(k / 100).toLocaleString("en-NG")}`;
 
   return (
@@ -109,7 +110,7 @@ export default async function Landing() {
             {/* The wordmark — three stacked lines, bubble + outline */}
             <h1 className="flex flex-col items-end leading-[.92] tracking-tight mb-5 sm:mb-7 text-right">
               <span className="font-bubble text-ink anim-fade-up delay-1 text-[clamp(40px,8.5vw,108px)]">AI &amp; XR</span>
-              <span className="wordmark anim-fade-up delay-2 text-[clamp(48px,11vw,140px)]">SUMMER TECH</span>
+              <span className="wordmark anim-fade-up delay-2 text-[clamp(48px,11vw,140px)]">SUMMER</span>
               <span className="wordmark wordmark--green anim-fade-up delay-3 text-[clamp(48px,11vw,140px)]">BOOTCAMP</span>
             </h1>
 
@@ -120,7 +121,7 @@ export default async function Landing() {
               <div className="frosted-glass rounded-2xl px-5 py-3 sm:px-7 sm:py-4 rotate-[-2deg] flex flex-col justify-center min-w-[180px] sm:min-w-[210px]">
                 <div className="font-bubble text-[16px] sm:text-[18px] leading-none mb-1.5 text-ink">AGES 10–17</div>
                 <ul className="text-[10.5px] sm:text-[11px] text-neutral-800 space-y-0.5 leading-snug whitespace-nowrap">
-                  <li className="flex items-start gap-1.5"><span className="text-aqua-deep">•</span> 6 classes</li>
+                  <li className="flex items-start gap-1.5"><span className="text-aqua-deep">•</span> 6 courses</li>
                   <li className="flex items-start gap-1.5"><span className="text-aqua-deep">•</span> Daily Mon – Fri</li>
                   <li className="flex items-start gap-1.5"><span className="text-aqua-deep">•</span> 10 AM – 2:30 PM</li>
                 </ul>
@@ -130,7 +131,7 @@ export default async function Landing() {
               <div className="card-sticker card-sticker--cyan-soft card-sticker--tilt-l-lg px-4 py-3 sm:px-5 sm:py-4 shrink-0 flex flex-col justify-center" style={{ borderRadius: 18 }}>
                 <div className="text-[9px] sm:text-[10px] font-bold tracking-[.22em] text-ink/70 uppercase">Boot camp starts</div>
                 <div className="font-bubble text-[20px] sm:text-[24px] leading-none mt-1 text-ink">JUL 27</div>
-                <div className="text-[9px] sm:text-[10px] font-bold tracking-[.18em] text-ink/70 uppercase mt-0.5">Runs 4 weeks</div>
+                <div className="text-[9px] sm:text-[10px] font-bold tracking-[.18em] text-ink/70 uppercase mt-0.5">2 cohorts · 2 wks each</div>
               </div>
 
               {/* Ticket coupon CTA — EARLY BIRD · FIRST 10 · ₦100,000 (was ₦150,000) */}
@@ -172,14 +173,14 @@ export default async function Landing() {
         <div className="max-w-[1180px] mx-auto px-5 sm:px-7">
           <div className="mb-10 flex items-end justify-between flex-wrap gap-4">
             <h2 className="font-bubble text-[clamp(30px,4vw,52px)] leading-[1.02] tracking-tight max-w-[680px] text-ink">
-              Six immersive classes<br />plus three side attractions.
+              Six immersive courses<br />plus three side attractions.
             </h2>
             <p className="text-[13px] text-neutral-600 max-w-[300px]">Tap any card for the full curriculum, tools and sample project.</p>
           </div>
 
           <div className="stagger-group grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
             <CourseCard i={0} num="01" slug="vibe-coding"      Icon={CodeIcon}        sticker="cyan"      title={<>VIBE CODING &amp; AI PROMPT ENGINEERING</>}  sub="Pair-program with AI to ship a deployed web app — no prior code needed." />
-            <CourseCard i={1} num="02" slug="entrepreneurship" Icon={Rocket01Icon}    sticker="green"     title={<>ENTREPRENEURSHIP &amp; PITCHING</>}          sub="Idea → product → live Demo Day pitch in four weeks."                       tag="★ COMPULSORY" />
+            <CourseCard i={1} num="02" slug="entrepreneurship" Icon={Rocket01Icon}    sticker="green"     title={<>ENTREPRENEURSHIP &amp; PITCHING</>}          sub="Idea → product → live Demo Day pitch in two weeks."                        tag="★ COMPULSORY" />
             <CourseCard i={2} num="03" slug="content-creation" Icon={CameraVideoIcon} sticker="ink"       title={<>CONTENT CREATION</>}                          sub="Script, shoot and edit short-form videos worth posting." />
             <CourseCard i={3} num="04" slug="robotics"         Icon={RoboticIcon}     sticker="cyan-soft" title={<>ROBOTICS &amp; EMBEDDED SYSTEMS</>}          sub="Wire microcontrollers, write firmware, drive a real moving robot." />
             <CourseCard i={4} num="05" slug="3d-vr"            Icon={VrGlassesIcon}   sticker="ink"       title={<>3D CHARACTER &amp; VR WORLD CREATION</>}    sub="Sculpt characters in Blender. Step inside the world you made." />
@@ -193,7 +194,7 @@ export default async function Landing() {
           <div className="mt-16">
             <div className="flex items-baseline gap-3 mb-5 flex-wrap">
               <span className="font-bubble text-[28px] sm:text-[36px] leading-none text-ink">SIDE ATTRACTIONS</span>
-              <span className="text-[12.5px] text-neutral-600">— 30 min daily, free choice between morning &amp; afternoon classes</span>
+              <span className="text-[12.5px] text-neutral-600">— 30 min daily, free choice between morning &amp; afternoon courses</span>
             </div>
             <div className="stagger-group grid grid-cols-1 sm:grid-cols-3 gap-5 -mx-5 sm:mx-0 px-5 sm:px-0 overflow-x-auto sm:overflow-visible snap-x snap-mandatory sm:snap-none flex sm:grid">
               <SideAttraction i={0} slug="table-tennis"     Icon={TableTennisBatIcon} sticker="cyan"  title="TABLE TENNIS" desc="Sharpens reflexes before the afternoon block." />
@@ -291,7 +292,7 @@ export default async function Landing() {
             <LegendItem tone="gray"   label="Side Attraction · Table Tennis · Go Karting · Pro Gaming" />
           </div>
           <p className="mt-6 text-[12px] text-neutral-500 leading-relaxed max-w-[820px]">
-            ① Most classes run 2 sessions × 2 hrs = 4 hrs / week; AI Music runs once per week. ② Entrepreneurship is COMPULSORY for every camper (Mon afternoon + Thu morning). ③ All three side attractions (Table Tennis, Go Karting, Pro Gaming) are available every single day — students freely choose. ④ Tentative and subject to change.
+            ① Most courses run 2 sessions × 2 hrs = 4 hrs / week; AI Music runs once per week. ② Entrepreneurship is COMPULSORY for every camper (Mon afternoon + Thu morning). ③ All three side attractions (Table Tennis, Go Karting, Pro Gaming) are available every single day — students freely choose. ④ Tentative and subject to change.
           </p>
         </div>
       </section>
@@ -329,6 +330,78 @@ export default async function Landing() {
         </div>
       </section>
 
+      {/* ============ PARENT FAQ ============ */}
+      <section className="relative py-20 sm:py-24">
+        <div className="stagger-group max-w-[860px] mx-auto px-5 sm:px-7">
+          <div className="text-center mb-10 sm:mb-12">
+            <span
+              className="stagger-rise inline-flex items-center gap-2 frosted-glass rounded-full px-3.5 py-1.5 text-[10.5px] font-bold tracking-[.22em] mb-5"
+              style={{ "--i": 0 } as React.CSSProperties}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-aqua-brand inline-block anim-pulse" />
+              PARENT FAQ · TOP 10
+            </span>
+            <h2
+              className="stagger-rise font-bubble leading-[1] tracking-tight text-[clamp(34px,5vw,60px)] mb-3 text-ink"
+              style={{ "--i": 1 } as React.CSSProperties}
+            >
+              PARENTS ASK.<br />
+              <span className="wordmark wordmark--green">WE ANSWER.</span>
+            </h2>
+            <p
+              className="stagger-rise text-[14.5px] text-neutral-700 leading-relaxed max-w-[520px] mx-auto"
+              style={{ "--i": 2 } as React.CSSProperties}
+            >
+              The ten questions parents actually ask us before sending their kid. Tap one to expand.
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            {FAQS.map((item, i) => (
+              <details
+                key={item.q}
+                className="stagger-rise group frosted-glass rounded-2xl overflow-hidden"
+                style={{ "--i": 3 + i } as React.CSSProperties}
+              >
+                <summary className="flex items-center justify-between gap-4 px-5 sm:px-6 py-4 sm:py-5 cursor-pointer list-none">
+                  <div className="flex items-start gap-3 min-w-0">
+                    <span
+                      className={`sticker-pill ${FAQ_TOPIC_STYLE[item.topic]} mt-0.5 shrink-0`}
+                      aria-hidden
+                    >
+                      {item.topic}
+                    </span>
+                    <span className="font-bubble text-[15.5px] sm:text-[17px] leading-snug text-ink">
+                      {item.q}
+                    </span>
+                  </div>
+                  <span
+                    aria-hidden
+                    className="shrink-0 w-9 h-9 rounded-full bg-ink text-white flex items-center justify-center font-bubble text-[20px] leading-none transition-transform duration-300 group-open:rotate-45"
+                  >
+                    +
+                  </span>
+                </summary>
+                <div className="px-5 sm:px-6 pb-5 -mt-1">
+                  <p className="text-[13.5px] text-neutral-700 leading-relaxed max-w-[640px]">
+                    {item.a}
+                  </p>
+                </div>
+              </details>
+            ))}
+          </div>
+
+          <div className="mt-10 sm:mt-12 text-center">
+            <Link
+              href="/contact"
+              className="inline-block text-[13.5px] font-semibold text-ink/80 underline underline-offset-4 decoration-2 hover:text-grass-deep transition"
+            >
+              Still have questions? Talk to a human →
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* ============ FINAL CTA ============ */}
       <section className="py-24 sm:py-28 relative overflow-hidden">
         <div className="stagger-group max-w-[1180px] mx-auto px-5 sm:px-7 grid md:grid-cols-[1fr_1.2fr] gap-12 items-center">
@@ -349,7 +422,7 @@ export default async function Landing() {
               THEY&apos;RE GONE.
             </h2>
             <p className="max-w-[480px] my-6 text-neutral-700 text-[14.5px] leading-relaxed">
-              The 2026 cohort starts <strong>27 July</strong> and runs four weeks. Once we hit 50 paid registrations the cohort closes — next AI &amp; XR isn&apos;t until summer 2027. <strong>First 10 lock in {naira(cfg.earlyBirdPrice)}</strong> early-bird; regular price {naira(cfg.regularPrice)}. Both cover all 5 classes, daily side attractions, lunch, materials and Demo Day.
+              The 2026 cohorts run <strong>27 July – 21 August</strong> as two back-to-back 2-week sessions. Once we hit 50 paid registrations the camp closes — next AI &amp; XR isn&apos;t until summer 2027. <strong>First 10 lock in {naira(cfg.earlyBirdPrice)}</strong> early-bird; regular price {naira(cfg.regularPrice)}. Both cover all 6 courses, daily side attractions, snacks, materials and Demo Day.
             </p>
             <div className="flex flex-wrap gap-3 items-center">
               <Link href="/register" className="btn-grass">

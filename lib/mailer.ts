@@ -65,7 +65,7 @@ function shell(content: string): string {
           </tr>
           <tr>
             <td style="padding:32px 0 8px;text-align:center;font-size:11px;color:#777;letter-spacing:0.18em;text-transform:uppercase;">
-              <strong style="color:#0e92a0;">Lagos</strong> · 27 July – 21 August 2026 · Mon–Fri 10am–2:30pm
+              <strong style="color:#0e92a0;">99 Adesanya Ogunsanya, Leisure Mall</strong> · 27 July – 21 August 2026 · Mon–Fri 10am–2:30pm
             </td>
           </tr>
           <tr>

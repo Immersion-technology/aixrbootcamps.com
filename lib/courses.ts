@@ -30,6 +30,6 @@ export const SEED_COURSES: Course[] = [
 
   // ===== ACTIVE BREAKS =====
   { code: "pro-gaming", name: "Pro Gaming / E-Sports", category: "Active Break", description: "Coached competitive gaming on real rigs. Daily, free choice.", isAttraction: true, isActive: true, order: 7 },
-  { code: "table-tennis", name: "Table Tennis", category: "Active Break", description: "Sharpens reflexes between morning and afternoon classes. Daily, free choice.", isAttraction: true, isActive: true, order: 8 },
+  { code: "table-tennis", name: "Table Tennis", category: "Active Break", description: "Sharpens reflexes between morning and afternoon courses. Daily, free choice.", isAttraction: true, isActive: true, order: 8 },
   { code: "go-karting", name: "Go Karting", category: "Active Break", description: "Short, supervised circuits with full safety gear. Daily, free choice.", isAttraction: true, isActive: true, order: 9 },
 ];

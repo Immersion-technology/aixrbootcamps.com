@@ -39,8 +39,8 @@ export async function POST(req: NextRequest) {
     // we charge the right amount even if the DB Settings collection holds stale
     // values left over from earlier seeds. Update both here AND on the register
     // page if pricing ever changes again.
-    const earlyBirdPrice = 10000000;
-    const regularPrice = 15000000;
+    const earlyBirdPrice = 15000000;
+    const regularPrice = 20000000;
     const laptopPrice = 2000000;
 
     // --- capacity check ---

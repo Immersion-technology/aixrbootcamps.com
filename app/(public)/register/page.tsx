@@ -10,8 +10,8 @@ const FALLBACK = {
   capacity: 50,
   paid: 0,
   earlyBirdCutoff: "2026-06-30T23:59:59.000Z",
-  earlyBirdPrice: 10000000,  // ₦100,000 — first 10
-  regularPrice: 15000000,    // ₦150,000
+  earlyBirdPrice: 15000000,  // ₦150,000 — first 10
+  regularPrice: 20000000,    // ₦200,000
   laptopPrice: 2000000,      // +₦20,000
 };
 

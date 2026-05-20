@@ -66,9 +66,9 @@ export default function ContactPage() {
         <div className="frosted-glass rounded-3xl p-7 sm:p-8 anim-fade-up delay-4 grid sm:grid-cols-2 gap-6">
           <div>
             <div className="text-[10.5px] font-bold tracking-[.22em] text-aqua-deep mb-2">VENUE</div>
-            <h3 className="font-bubble text-[24px] sm:text-[28px] leading-tight mb-2 text-ink">Lagos · address shared on registration</h3>
+            <h3 className="font-bubble text-[24px] sm:text-[28px] leading-tight mb-2 text-ink">99 Adesanya Ogunsanya</h3>
             <p className="text-[13.5px] text-neutral-700 leading-relaxed">
-              The exact venue is shared with confirmed parents two weeks before camp. It&apos;s a secure, supervised facility on the island with parking, a generator, and CCTV throughout.
+              Leisure Mall, Lagos. Secure supervised facility with parking, a generator, and CCTV throughout. Drop-off + pick-up are ID-checked daily.
             </p>
           </div>
           <div>
