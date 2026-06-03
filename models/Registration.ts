@@ -45,7 +45,7 @@ export interface IRegistration {
   };
   paymentStatus: PaymentStatus;
   admissionStatus: AdmissionStatus;
-  paystackReference: string;
+  paymentReference: string;
   paidAt?: Date;
   statusLog: IStatusLog[];
   internalNotes?: string;
@@ -109,7 +109,7 @@ const RegistrationSchema = new Schema<IRegistration>(
       default: "pending",
       index: true,
     },
-    paystackReference: { type: String, required: true, unique: true, index: true },
+    paymentReference: { type: String, required: true, unique: true, index: true },
     paidAt: { type: Date },
     statusLog: { type: [StatusLogSchema], default: [] },
     internalNotes: { type: String },

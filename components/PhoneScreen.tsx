@@ -1,10 +1,10 @@
 /**
- * PhoneScreen — the IMMERSIA camper "today" dashboard, sized at iPhone 14
+ * PhoneScreen: the IMMERSIA camper "today" dashboard, sized at iPhone 14
  * native resolution (390 × 844). Used:
  *   - directly in /mock/dashboard for screenshotting at 1:1
  *   - scaled & wrapped in a bezel inside the Mentorship section
  *
- * Keep the content sparse — the empty space is half the design.
+ * Keep the content sparse: the empty space is half the design.
  */
 export default function PhoneScreen() {
   return (

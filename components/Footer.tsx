@@ -21,84 +21,192 @@ const SOCIALS: Array<{ label: string; href: string; path: string }> = [
   },
 ];
 
+const EXPLORE = [
+  { href: "/#courses",   label: "Courses" },
+  { href: "/#timetable", label: "Schedule" },
+  { href: "/register",   label: "Register" },
+  { href: "/faq",        label: "FAQ" },
+  { href: "/contact",    label: "Contact" },
+];
+
+const VISIT = [
+  { label: "27 July – 21 August 2026", muted: false },
+  { label: "Mon – Fri · 10am – 2:30pm", muted: true },
+  { label: "99 Adesanya Ogunsanya", muted: true },
+  { label: "Leisure Mall, Surulere · Lagos", muted: true },
+];
+
 export default function Footer() {
   return (
-    <footer className="border-t border-black/10 mt-12 pt-16 pb-10 sm:pb-12 px-5 sm:px-7">
+    <footer className="px-5 sm:px-7 pb-8 sm:pb-12 pt-4">
       <div className="max-w-[1180px] mx-auto">
-        <div className="grid md:grid-cols-[1.4fr_1fr_1fr_1fr] gap-10 sm:gap-12 mb-14">
-          <div>
-            <img
-              src="/imm.png"
-              alt="IMMERSIA — Virtual Reality, feel. everything"
-              className="h-12 sm:h-14 w-auto mb-4"
-              loading="lazy"
-              decoding="async"
-            />
-            <p className="text-[13.5px] text-neutral-700 leading-relaxed max-w-[360px]">
-              Lagos-based summer tech bootcamp for ages 10–17. Building the next generation of African makers, coders and founders.
+
+        {/* ============= CTA CARD =============
+            Dark sticker-style card with a soft top fade, the closing pitch,
+            and the single primary (grass) CTA. Tucks down into the white
+            footer card below via a negative margin so the two overlap. */}
+        <section
+          className="relative overflow-hidden rounded-[24px] sm:rounded-[32px] bg-ink text-white
+                     px-5 sm:px-10 pt-10 sm:pt-20 pb-16 sm:pb-28 text-center"
+        >
+          {/* soft glow that fades from the top edge inward, echoing the reference */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 -top-24 h-56
+                       bg-[radial-gradient(60%_100%_at_50%_0%,rgba(34,197,94,.28),transparent_70%)]"
+          />
+          {/* faint aqua bloom bottom-left for depth */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -bottom-20 -left-10 h-64 w-64 rounded-full
+                       bg-aqua-brand/15 blur-3xl"
+          />
+
+          <div className="relative">
+            <p className="text-[10px] sm:text-[11px] font-bold tracking-[.24em] uppercase text-grass-brand mb-2.5 sm:mb-5">
+              Slots are limited
             </p>
-          </div>
+            <h2 className="font-bubble text-[24px] sm:text-[48px] leading-[1.05] sm:leading-[1.02] tracking-tight max-w-[16ch] mx-auto">
+              Ready to build the future?
+            </h2>
+            <p className="mt-3 sm:mt-5 text-[13px] sm:text-[15.5px] text-white/65 leading-relaxed max-w-[46ch] mx-auto">
+              Give your 10–17 year-old a summer of coding, robotics and VR.
+              Reserve a seat before the cohort fills up.
+            </p>
 
-          <div>
-            <p className="text-[10px] font-bold tracking-[.22em] text-neutral-500 mb-4">EXPLORE</p>
-            <ul className="space-y-2.5 text-[13.5px]">
-              <li><Link href="/#courses" className="hover:text-grass-deep transition">Courses</Link></li>
-              <li><Link href="/#timetable" className="hover:text-grass-deep transition">Schedule</Link></li>
-              <li><Link href="/register" className="hover:text-grass-deep transition">Register</Link></li>
-              <li><Link href="/faq" className="hover:text-grass-deep transition">FAQ</Link></li>
-              <li><Link href="/contact" className="hover:text-grass-deep transition">Contact</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <p className="text-[10px] font-bold tracking-[.22em] text-neutral-500 mb-4">CAMP DATES</p>
-            <p className="text-[13.5px] mb-1.5"><strong>27 July – 21 August 2026</strong></p>
-            <p className="text-[13.5px] text-neutral-700">Mon – Fri · 10am – 2:30pm</p>
-            <p className="text-[13.5px] text-neutral-700 mt-1">99 Adesanya Ogunsanya · Leisure Mall, Lagos</p>
-          </div>
-
-          <div>
-            <p className="text-[10px] font-bold tracking-[.22em] text-neutral-500 mb-4">QUESTIONS?</p>
-            <a
-              href="https://wa.me/2348000000000"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 font-bubble text-[18px] text-grass-deep hover:text-grass-brand transition leading-none"
-              aria-label="Chat with us on WhatsApp"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                <path d={SOCIALS[2].path} />
-              </svg>
-              0800 000 0000
-            </a>
-            <p className="text-[12px] text-neutral-600 mt-2 leading-snug">WhatsApp · fastest reply</p>
-          </div>
-        </div>
-
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5 pt-8 border-t border-black/10">
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[12px] text-neutral-500">
-            <span>© 2026 IMMERSIA. All rights reserved.</span>
-            <Link href="/privacy" className="hover:text-ink transition">Privacy</Link>
-            <Link href="/terms" className="hover:text-ink transition">Rules of conduct</Link>
-          </div>
-
-          <div className="flex gap-2.5">
-            {SOCIALS.map(({ label, href, path }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={label}
-                className="w-11 h-11 rounded-full bg-ink text-white inline-flex items-center justify-center transition hover:-translate-y-0.5 hover:bg-grass-brand hover:text-ink"
+            <div className="mt-6 sm:mt-9 flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3.5">
+              <Link
+                href="/register"
+                className="inline-flex items-center gap-2 bg-grass-brand text-ink rounded-full
+                           px-6 sm:px-7 py-3 sm:py-3.5 min-h-[46px] sm:min-h-[52px] font-bubble text-[15px] sm:text-[16px] tracking-tight
+                           hover:bg-grass-deep hover:text-white active:scale-[.98] transition
+                           shadow-[0_14px_30px_-10px_rgba(34,197,94,.6)]"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                  <path d={path} />
-                </svg>
-              </a>
-            ))}
+                Reserve a slot <span aria-hidden>→</span>
+              </Link>
+              <Link
+                href="/contact"
+                className="inline-flex items-center gap-2 rounded-full px-6 sm:px-7 py-3 sm:py-3.5 min-h-[46px] sm:min-h-[52px]
+                           text-[13.5px] sm:text-[14px] font-semibold text-white/85 ring-1 ring-white/15
+                           hover:bg-white/5 hover:text-white transition"
+              >
+                Talk to us
+              </Link>
+            </div>
           </div>
-        </div>
+        </section>
+
+        {/* ============= FOOTER CARD =============
+            White card pulled up under the CTA card. A giant ghost wordmark
+            bleeds across the bottom, clipped by the card's overflow. */}
+        <section
+          className="relative -mt-9 sm:-mt-12 overflow-hidden rounded-[24px] sm:rounded-[32px] bg-white
+                     px-5 sm:px-10 pt-9 sm:pt-14 pb-7 sm:pb-10
+                     shadow-[0_18px_50px_-22px_rgba(15,15,15,.18)] ring-1 ring-black/[.04]"
+        >
+          {/* ghost wordmark watermark */}
+          <span
+            aria-hidden
+            className="pointer-events-none select-none absolute -bottom-4 sm:-bottom-12 left-1/2 -translate-x-1/2
+                       font-bubble text-[26vw] sm:text-[19vw] leading-none tracking-tight
+                       text-ink/[.035] whitespace-nowrap"
+          >
+            IMMERSIA
+          </span>
+
+          <div className="relative">
+            {/* top grid — brand block + link columns.
+                Mobile: brand full-width, then Explore | Visit side-by-side. */}
+            <div className="grid grid-cols-2 gap-x-6 gap-y-8 sm:gap-12 md:grid-cols-[1.5fr_1fr_1.1fr]">
+
+              {/* brand */}
+              <div className="col-span-2 md:col-span-1 text-center md:text-left">
+                <img
+                  src="/imm.png"
+                  alt="IMMERSIA — Virtual Reality, feel. everything"
+                  className="h-10 sm:h-14 w-auto mb-4 sm:mb-5 mx-auto md:mx-0"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p className="text-[13px] sm:text-[13.5px] text-neutral-600 leading-relaxed max-w-[330px] mx-auto md:mx-0">
+                  Lagos-based summer tech bootcamp for ages 10–17 — building the next
+                  generation of African makers, coders and founders.
+                </p>
+
+                <div className="flex justify-center md:justify-start gap-2.5 mt-5 sm:mt-6">
+                  {SOCIALS.map(({ label, href, path }) => (
+                    <a
+                      key={label}
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={label}
+                      className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-ink text-white inline-flex items-center justify-center
+                                 transition hover:-translate-y-0.5 hover:bg-grass-brand hover:text-ink"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                        <path d={path} />
+                      </svg>
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              {/* explore links */}
+              <nav aria-label="Footer">
+                <p className="text-[10px] font-bold tracking-[.22em] text-neutral-400 mb-3 sm:mb-4 text-center md:text-left">EXPLORE</p>
+                <ul className="space-y-2.5 sm:space-y-3 text-[13.5px] sm:text-[14px] text-neutral-700">
+                  {EXPLORE.map(({ href, label }) => (
+                    <li key={href}>
+                      <Link href={href} className="hover:text-grass-deep transition">
+                        {label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+
+              {/* visit + contact */}
+              <div>
+                <p className="text-[10px] font-bold tracking-[.22em] text-neutral-400 mb-3 sm:mb-4 text-center md:text-left">VISIT &amp; DATES</p>
+                <ul className="space-y-1.5 sm:space-y-2 text-[13px] sm:text-[13.5px] mb-5 sm:mb-6">
+                  {VISIT.map(({ label, muted }) => (
+                    <li key={label} className={muted ? "text-neutral-600" : "font-semibold text-ink"}>
+                      {label}
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="text-center md:text-left">
+                  <a
+                    href="https://wa.me/2348000000000"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 font-bubble text-[17px] text-grass-deep
+                               hover:text-grass-brand transition leading-none"
+                    aria-label="Chat with us on WhatsApp"
+                  >
+                    <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                      <path d={SOCIALS[2].path} />
+                    </svg>
+                    0800 000 0000
+                  </a>
+                  <p className="text-[12px] text-neutral-500 mt-2">WhatsApp · fastest reply</p>
+                </div>
+              </div>
+            </div>
+
+            {/* bottom bar — copyright + legal */}
+            <div className="flex flex-col sm:flex-row justify-between items-center sm:items-center gap-3 sm:gap-4
+                            mt-8 sm:mt-12 pt-5 sm:pt-6 border-t border-black/[.06] text-center sm:text-left">
+              <p className="text-[12px] text-neutral-500">© 2026 IMMERSIA. All rights reserved.</p>
+              <div className="flex flex-wrap justify-center sm:justify-start items-center gap-x-6 gap-y-2 text-[12px] text-neutral-500">
+                <Link href="/privacy" className="hover:text-ink transition">Privacy Policy</Link>
+                <Link href="/terms" className="hover:text-ink transition">Rules of conduct</Link>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </footer>
   );

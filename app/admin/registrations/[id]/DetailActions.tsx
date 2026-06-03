@@ -63,7 +63,7 @@ export default function DetailActions({ registrationId, currentStatus, paymentSt
       const j = await r.json();
       if (!r.ok) throw new Error(j.error ?? "Failed");
       const warn = j.hadPasswordBefore
-        ? "\n\nThis parent already had a password — the new link will REPLACE it once used.\n\n"
+        ? "\n\nThis parent already had a password. The new link will REPLACE it once used.\n\n"
         : "\n\n";
       // copy to clipboard if we can, then show
       try { await navigator.clipboard.writeText(j.setupUrl); } catch { /* fine */ }

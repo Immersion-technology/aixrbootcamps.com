@@ -2,7 +2,10 @@ import mongoose, { Schema, Model, Types } from "mongoose";
 
 export interface IPayment {
   registrationId: Types.ObjectId;
-  paystackReference: string;
+  paymentReference: string;
+  // Monnify's canonical transaction reference (MNFY|...). Captured from the
+  // webhook/status query. Kept for refunds and audit.
+  transactionReference?: string;
   amount: number;
   currency: string;
   status: "success" | "failed" | "abandoned" | "refunded" | "manual";
@@ -14,7 +17,8 @@ export interface IPayment {
 const PaymentSchema = new Schema<IPayment>(
   {
     registrationId: { type: Schema.Types.ObjectId, ref: "Registration", required: true, index: true },
-    paystackReference: { type: String, required: true, index: true },
+    paymentReference: { type: String, required: true, index: true },
+    transactionReference: { type: String, index: true },
     amount: { type: Number, required: true },
     currency: { type: String, default: "NGN" },
     status: { type: String, enum: ["success", "failed", "abandoned", "refunded", "manual"], required: true },
@@ -25,7 +29,7 @@ const PaymentSchema = new Schema<IPayment>(
   { strict: true }
 );
 
-PaymentSchema.index({ paystackReference: 1, status: 1 });
+PaymentSchema.index({ paymentReference: 1, status: 1 });
 
 export const Payment: Model<IPayment> =
   (mongoose.models.Payment as Model<IPayment>) || mongoose.model<IPayment>("Payment", PaymentSchema);

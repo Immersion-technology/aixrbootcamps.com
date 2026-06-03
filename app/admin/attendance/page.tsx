@@ -73,7 +73,7 @@ export default async function AdminAttendancePage({
         {regs.length === 0 ? (
           <div className="bg-white border border-black/[.06] rounded-2xl p-8 text-center">
             <p className="text-[13.5px] text-neutral-700">
-              No paid registrations yet. Once payments clear in Paystack they&apos;ll appear here.
+              No paid registrations yet. Once payments clear in Monnify they&apos;ll appear here.
             </p>
             <Link href="/admin/registrations" className="btn-light mt-4">Open registrations</Link>
           </div>

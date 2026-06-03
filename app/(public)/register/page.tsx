@@ -10,7 +10,7 @@ const FALLBACK = {
   capacity: 50,
   paid: 0,
   earlyBirdCutoff: "2026-06-30T23:59:59.000Z",
-  earlyBirdPrice: 15000000,  // ₦150,000 — first 10
+  earlyBirdPrice: 15000000,  // ₦150,000, first 10
   regularPrice: 20000000,    // ₦200,000
   laptopPrice: 2000000,      // +₦20,000
 };
@@ -66,7 +66,7 @@ export default async function RegisterPage() {
         </h1>
 
         <p className="text-[14px] sm:text-[15px] text-neutral-700 leading-relaxed max-w-[560px] mb-10 anim-fade-up delay-2">
-          Four short steps. Takes about three minutes. Your camper&apos;s slot is held the moment payment lands — Paystack confirms in seconds.
+          Four short steps. Takes about three minutes. Your camper&apos;s slot is held the moment payment lands. Monnify confirms in seconds.
         </p>
 
         <RegistrationForm

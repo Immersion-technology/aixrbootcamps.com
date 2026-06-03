@@ -22,7 +22,7 @@ export function buildReceiptPdf(args: ReceiptArgs): Promise<Buffer> {
     doc.on("error", reject);
 
     doc.fontSize(28).text("IMMERSIA", { continued: false });
-    doc.fontSize(11).fillColor("#555").text("Summer Tech Boot Camp 2026 — Payment Receipt");
+    doc.fontSize(11).fillColor("#555").text("Summer Tech Boot Camp 2026 · Payment Receipt");
     doc.moveDown(1.2);
 
     doc.fillColor("#141414").fontSize(14).text(`Registration ID: ${args.registrationId}`);

@@ -1,5 +1,5 @@
 /**
- * IMMERSIA — single source of truth for the 2026 curriculum.
+ * IMMERSIA: single source of truth for the 2026 curriculum.
  *
  * Both the landing page (course grid + active breaks + timetable),
  * the registration form (read-only enrollment + paired-elective radio),
@@ -75,10 +75,10 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     icon: "CodeIcon",
     tone: "violet",
-    shortDesc: "Pair-program with AI to ship a real, deployed web app — zero prior code required.",
-    tagline: "Code the way pros build in 2026 — alongside AI, not despite it.",
+    shortDesc: "Pair-program with AI to ship a real, deployed web app. Zero prior code required.",
+    tagline: "Code the way pros build in 2026, alongside AI, not despite it.",
     whatYoullLearn: [
-      "Prompt-engineering fundamentals — how to talk to AI like a senior engineer",
+      "Prompt-engineering fundamentals: how to talk to AI like a senior engineer",
       "Reading and reviewing AI-generated code before you ship it",
       "Breaking a real product idea into clear, build-ready specs",
       "Version control basics with Git + GitHub",
@@ -110,7 +110,7 @@ export const CURRICULUM: CurriculumItem[] = [
     icon: "Rocket01Icon",
     tone: "yellow",
     shortDesc: "Idea → built product → live Demo Day pitch. Compulsory for every camper.",
-    tagline: "From the spark of an idea to a pitch in front of a real audience — in two weeks.",
+    tagline: "From the spark of an idea to a pitch in front of a real audience, in two weeks.",
     whatYoullLearn: [
       "How to spot a real problem worth solving",
       "Talking to potential customers without being weird",
@@ -118,7 +118,7 @@ export const CURRICULUM: CurriculumItem[] = [
       "Financial projections you can defend (lite version)",
       "Brand, naming, and positioning fundamentals",
       "Pitch deck structure that actually closes",
-      "Speaking under pressure — and surviving the Q&A",
+      "Speaking under pressure, and surviving the Q&A",
     ],
     outcomes: [
       "A one-page business plan you'd hand to any investor",
@@ -142,14 +142,14 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     icon: "CameraVideoIcon",
     tone: "coral",
-    shortDesc: "Script, shoot, edit — walk out with a portfolio of short-form videos by week four.",
+    shortDesc: "Script, shoot, edit. Walk out with a portfolio of short-form videos by week four.",
     tagline: "Become the storyteller every founder, athlete and brand wishes they had.",
     whatYoullLearn: [
-      "Storytelling fundamentals — what makes people stop scrolling",
+      "Storytelling fundamentals: what makes people stop scrolling",
       "Scripting for short-form (under 60 seconds)",
       "Shooting on a phone like it cost a fortune",
       "Free lighting + audio tricks that change everything",
-      "Editing in CapCut — cuts, transitions, captions, music",
+      "Editing in CapCut: cuts, transitions, captions, music",
       "Hook structure + retention math",
       "Posting strategy across TikTok, IG and YouTube",
     ],
@@ -160,7 +160,7 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     tools: ["Phone camera", "CapCut", "Canva", "Notion (script templates)"],
     sampleProject:
-      "Produce a 3-part short-form series about IMMERSIA itself — script, shoot, edit, post. Highest-performing post wins a creator-kit prize.",
+      "Produce a 3-part short-form series about IMMERSIA itself: script, shoot, edit, post. Highest-performing post wins a creator-kit prize.",
   },
   {
     slug: "robotics",
@@ -176,12 +176,12 @@ export const CURRICULUM: CurriculumItem[] = [
     icon: "RoboticIcon",
     tone: "orange",
     shortDesc: "Wire microcontrollers. Write firmware. Take home a moving robot you actually built.",
-    tagline: "Make atoms dance — turn code into motors, sensors and a robot that moves.",
+    tagline: "Make atoms dance. Turn code into motors, sensors and a robot that moves.",
     whatYoullLearn: [
       "How electricity actually works (the lite version)",
       "Soldering basics under supervision",
       "Arduino + ESP32 fundamentals from scratch",
-      "Working with sensors — ultrasonic, IR, accelerometer",
+      "Working with sensors: ultrasonic, IR, accelerometer",
       "Driving motors and servos cleanly",
       "Writing firmware in C++ (just enough)",
       "Debugging when hardware lies to you",
@@ -210,7 +210,7 @@ export const CURRICULUM: CurriculumItem[] = [
     shortDesc: "Produce a finished, mixed track with AI-assisted tools.",
     tagline: "From an empty timeline to a finished track the algorithm wants to push.",
     whatYoullLearn: [
-      "Songwriting fundamentals — verse, chorus, hook",
+      "Songwriting fundamentals: verse, chorus, hook",
       "Working with AI music tools (Suno, Udio, Splice)",
       "Arranging a track in a basic DAW",
       "Mixing essentials: levels, EQ, compression (the basics)",
@@ -240,12 +240,12 @@ export const CURRICULUM: CurriculumItem[] = [
     icon: "VrGlassesIcon",
     tone: "pink",
     shortDesc: "Sculpt characters in Blender. Step inside your own VR world by week three.",
-    tagline: "Build worlds nobody else has been to — then step inside them.",
+    tagline: "Build worlds nobody else has been to, then step inside them.",
     whatYoullLearn: [
       "Blender basics: modeling, sculpting, texturing",
       "Character rigging the lite way (Mixamo + custom)",
       "Importing your assets into a Unity scene",
-      "Composing scenes for VR — scale, lighting, atmosphere",
+      "Composing scenes for VR: scale, lighting, atmosphere",
       "Hand-tracking interactions in your scene",
       "Exporting a build that runs on the Meta Quest 3",
       "Sharing your scene with friends + family",
@@ -257,7 +257,7 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     tools: ["Blender", "Unity", "Meta Quest 3 (provided)", "Mixamo", "Substance Painter (lite)"],
     sampleProject:
-      "Design a character. Place them inside your own VR scene. Walk into that scene on Demo Day with the headset on — your guests step in too.",
+      "Design a character. Place them inside your own VR scene. Walk into that scene on Demo Day with the headset on, your guests step in too.",
   },
 
   // ============================ ACTIVE BREAKS ============================
@@ -278,7 +278,7 @@ export const CURRICULUM: CurriculumItem[] = [
     icon: "GameController01Icon",
     tone: "blue",
     shortDesc: "Coached competitive gaming on real rigs. Free to join during every active break.",
-    tagline: "Train like an e-sports pro — strategy, reaction time, and the business behind the screen.",
+    tagline: "Train like an e-sports pro: strategy, reaction time, and the business behind the screen.",
     whatYoullLearn: [
       "Pro warm-up routines used by competitive players",
       "Team communication and shot-calling basics",
@@ -293,7 +293,7 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     tools: ["Gaming PCs", "Pro controllers", "Headsets"],
     sampleProject:
-      "End-of-camp e-sports tournament — bring your A-game and your favourite title.",
+      "End-of-camp e-sports tournament. Bring your A-game and your favourite title.",
   },
   {
     slug: "table-tennis",
@@ -311,8 +311,8 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     icon: "TableTennisBatIcon",
     tone: "orange",
-    shortDesc: "Sharpen reflexes between morning and afternoon courses — daily, free choice.",
-    tagline: "The fastest racket sport in the world — perfect 30-minute reset between deep-tech blocks.",
+    shortDesc: "Sharpen reflexes between morning and afternoon courses. Daily, free choice.",
+    tagline: "The fastest racket sport in the world. A perfect 30-minute reset between deep-tech blocks.",
     whatYoullLearn: [
       "Forehand, backhand and the push shot",
       "Spin and serve fundamentals",
@@ -326,7 +326,7 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     tools: ["Pro tables", "Quality paddles", "Match-grade balls"],
     sampleProject:
-      "Friday round-robin tournament — every level welcome, every player gets matches.",
+      "Friday round-robin tournament. Every level welcome, every player gets matches.",
   },
   {
     slug: "go-karting",
@@ -358,7 +358,7 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     tools: ["Junior karts", "Helmets", "Full safety gear"],
     sampleProject:
-      "End-of-camp kart championship — timed laps, podium, certificates.",
+      "End-of-camp kart championship: timed laps, podium, certificates.",
   },
 ];
 

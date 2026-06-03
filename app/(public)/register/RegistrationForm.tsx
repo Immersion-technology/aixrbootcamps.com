@@ -21,7 +21,7 @@ interface Props {
 
 const STEPS = ["Camper", "Guardian", "Programme", "Pay"] as const;
 
-// Every camper attends every class — no electives.
+// Every camper attends every class. No electives.
 const CLASSES: CurriculumItem[] = CURRICULUM.filter((c) => c.type === "class");
 const ALWAYS_ATTENDED: CurriculumItem[] = CLASSES;
 
@@ -57,7 +57,7 @@ export default function RegistrationForm({ pricing }: Props) {
     const fieldsForStep = (() => {
       if (step === 0) return ["participant"];
       if (step === 1) return ["parent", "emergencyContact"];
-      // step 2 (Programme) has no user-pickable fields — nothing to validate.
+      // step 2 (Programme) has no user-pickable fields, nothing to validate.
       return [];
     })();
     const ok = await trigger(fieldsForStep as any, { shouldFocus: true });
@@ -94,7 +94,7 @@ export default function RegistrationForm({ pricing }: Props) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-7 pb-24 lg:pb-0">
       {/* ============= STEPPER =============
-          Sticker pills. Color + checkmark + number — never color alone, per a11y. */}
+          Sticker pills. Color + checkmark + number, never color alone, per a11y. */}
       <ol className="grid grid-cols-4 gap-2 anim-fade-up" aria-label="Registration progress">
         {STEPS.map((label, i) => {
           const done = i < step;
@@ -258,7 +258,7 @@ export default function RegistrationForm({ pricing }: Props) {
             </p>
           </div>
 
-          {/* Laptop rental — ticket-style highlight */}
+          {/* Laptop rental, ticket-style highlight */}
           <label className="ticket-card frosted-glass-dark rounded-2xl p-4 flex items-center gap-3 cursor-pointer">
             <input type="checkbox" {...register("laptopRental")} className="accent-aqua-brand mt-0.5" />
             <div className="flex-1">
@@ -331,7 +331,7 @@ export default function RegistrationForm({ pricing }: Props) {
               disabled={submitting}
               className="w-full bg-grass-brand text-ink rounded-full py-4 min-h-[56px] font-bubble text-[18px] sm:text-[20px] tracking-tight hover:bg-grass-deep hover:text-white transition disabled:opacity-60 shadow-[0_14px_30px_-10px_rgba(34,197,94,.6)]"
             >
-              {submitting ? "REDIRECTING TO PAYSTACK…" : `PAY ${naira(total)} VIA PAYSTACK →`}
+              {submitting ? "REDIRECTING TO MONNIFY…" : `PAY ${naira(total)} VIA MONNIFY →`}
             </button>
           </div>
         </div>
@@ -415,7 +415,7 @@ function ReviewCard({
         {data.map(([k, v]) => (
           <div key={k}>
             <dt className="text-neutral-500 text-[10.5px] uppercase tracking-wider">{k}</dt>
-            <dd className="font-medium">{v || "—"}</dd>
+            <dd className="font-medium">{v || "–"}</dd>
           </div>
         ))}
       </dl>

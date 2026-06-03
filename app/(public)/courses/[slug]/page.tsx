@@ -120,7 +120,7 @@ export default function CourseDetail({ params }: { params: { slug: string } }) {
             </div>
           </div>
 
-          {/* big icon block — sticker-style, lifts on hover */}
+          {/* big icon block, sticker-style, lifts on hover */}
           <div className={cn("card-sticker card-sticker--cyan card-sticker--tilt-r-lg shrink-0 mt-8 lg:mt-0 w-32 h-32 sm:w-40 sm:h-40 flex items-center justify-center anim-float-deep", TONE_BG[course.tone])} style={{ borderRadius: 32 }}>
             <Icon size={72} className={TONE_TEXT[course.tone]} />
           </div>
@@ -193,12 +193,12 @@ export default function CourseDetail({ params }: { params: { slug: string } }) {
           </Card>
         </div>
 
-        {/* CTA STRIP — green grass primary, matches the rest of the site's CTA color */}
+        {/* CTA STRIP, green grass primary, matches the rest of the site's CTA color */}
         <div className="card-sticker card-sticker--ink card-sticker--no-tilt p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
           <div>
             <div className="text-[10.5px] font-bold tracking-[.22em] text-white/70 mb-1.5">READY?</div>
             <div className="font-bubble text-[22px] sm:text-[28px] leading-tight text-white">
-              Lock in your slot — only 50 spots in the cohort.
+              Lock in your slot. Only 50 spots in the cohort.
             </div>
           </div>
           <Link href="/register" className="btn-grass shrink-0">

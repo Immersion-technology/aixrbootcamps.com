@@ -35,7 +35,7 @@ export default function ExportPage() {
         <div className="border-t border-black/5 pt-6">
           <div className="text-[10.5px] font-bold tracking-[.22em] text-violet-brand uppercase mb-2">What&apos;s included</div>
           <p className="text-[12.5px] text-neutral-700 leading-relaxed">
-            Camper full name, DOB, age, gender, school, t-shirt size · parent name, email, both phone numbers, address, relationship · emergency contact · medical notes · selected courses · laptop rental flag · pricing tier + amount · payment + admission status · paid timestamp · Paystack reference · created timestamp.
+            Camper full name, DOB, age, gender, school, t-shirt size · parent name, email, both phone numbers, address, relationship · emergency contact · medical notes · selected courses · laptop rental flag · pricing tier + amount · payment + admission status · paid timestamp · Payment reference · created timestamp.
           </p>
         </div>
       </div>

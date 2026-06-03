@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req.headers);
   if (!rateLimit(`login:${ip}`, 8, 60_000)) {
-    return NextResponse.json({ error: "Too many attempts — try again in a minute" }, { status: 429 });
+    return NextResponse.json({ error: "Too many attempts. Try again in a minute." }, { status: 429 });
   }
 
   let body: unknown;

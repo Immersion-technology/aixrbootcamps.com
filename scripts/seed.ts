@@ -25,7 +25,7 @@ async function main() {
 
   // --- Courses ---
   // Drop legacy entries that don't exist in the new curriculum so the DB
-  // stays clean (public-speaking, esports, music — renamed/reclassified).
+  // stays clean (public-speaking, esports, music: renamed/reclassified).
   await Course.deleteMany({ code: { $in: ["esports", "music", "public-speaking"] } });
   for (const c of SEED_COURSES) {
     await Course.updateOne(
@@ -46,7 +46,7 @@ async function main() {
   const defaults: Array<[string, unknown]> = [
     [SETTING_KEYS.EARLY_BIRD_CUTOFF, "2026-06-30T23:59:59.000Z"],
     [SETTING_KEYS.CAPACITY, 50],
-    [SETTING_KEYS.EARLY_BIRD_PRICE, 15000000],  // ₦150,000 (kobo) — first 10
+    [SETTING_KEYS.EARLY_BIRD_PRICE, 15000000],  // ₦150,000 (kobo), first 10
     [SETTING_KEYS.REGULAR_PRICE, 20000000],     // ₦200,000
     [SETTING_KEYS.LAPTOP_RENTAL_PRICE, 2000000], // +₦20,000
     [SETTING_KEYS.CAMP_START_DATE, "2026-07-27"],

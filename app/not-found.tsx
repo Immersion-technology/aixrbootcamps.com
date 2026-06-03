@@ -17,7 +17,7 @@ export default function NotFound() {
             </h1>
 
             <p className="text-[14.5px] text-neutral-700 max-w-[460px] mx-auto leading-relaxed mb-9 anim-fade-up delay-2">
-              That page doesn&apos;t exist — or it never did. Head back to base and start again, or jump straight into the programme.
+              That page doesn&apos;t exist, or it never did. Head back to base and start again, or jump straight into the programme.
             </p>
 
             <div className="flex flex-wrap gap-3 justify-center anim-fade-up delay-3">

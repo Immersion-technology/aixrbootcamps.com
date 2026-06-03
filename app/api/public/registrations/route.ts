@@ -4,7 +4,7 @@ import { Registration } from "@/models/Registration";
 import { getSetting, SETTING_KEYS } from "@/models/Setting";
 import { nextSeq } from "@/models/Counter";
 import { registrationCreateSchema } from "@/lib/validations";
-import { initTransaction } from "@/lib/paystack";
+import { initTransaction } from "@/lib/monnify";
 import { normalizePhone, shortRegistrationId, rateLimit, getClientIp } from "@/lib/utils";
 import { getClasses } from "@/lib/curriculum";
 
@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req.headers);
   if (!rateLimit(`reg:${ip}`, 5, 60_000)) {
-    return NextResponse.json({ error: "Too many attempts — try again in a minute" }, { status: 429 });
+    return NextResponse.json({ error: "Too many attempts. Try again in a minute." }, { status: 429 });
   }
 
   let body: unknown;
@@ -51,10 +51,10 @@ export async function POST(req: NextRequest) {
     ]);
 
     if (paidCount >= capacity) {
-      return NextResponse.json({ error: "Camp is full — please join the waitlist" }, { status: 409 });
+      return NextResponse.json({ error: "Camp is full. Please join the waitlist." }, { status: 409 });
     }
 
-    // Every camper attends every class — no electives.
+    // Every camper attends every class. No electives.
     const finalCourses = getClasses().map((c) => c.slug);
 
     // --- pricing ---
@@ -63,10 +63,10 @@ export async function POST(req: NextRequest) {
     const laptopRentalFee = data.laptopRental ? laptopPrice : 0;
     const total = bootCampFee + laptopRentalFee;
 
-    // --- sequential registration ID + Paystack reference ---
+    // --- sequential registration ID + payment reference ---
     const seq = await nextSeq("registration");
     const registrationId = shortRegistrationId(seq);
-    const paystackReference = `${registrationId}-${Date.now()}`;
+    const paymentReference = `${registrationId}-${Date.now()}`;
 
     const reg = await Registration.create({
       registrationId,
@@ -89,25 +89,26 @@ export async function POST(req: NextRequest) {
       pricing: { tier, bootCampFee, laptopRentalFee, total },
       paymentStatus: "pending",
       admissionStatus: "pending",
-      paystackReference,
+      paymentReference,
       agreedToTerms: data.agreedToTerms,
       statusLog: [{ action: "created", by: "system", at: new Date() }],
     });
 
-    // --- init Paystack ---
+    // --- init Monnify ---
     const appUrl = process.env.APP_URL ?? `${req.nextUrl.origin}`;
     const initRes = await initTransaction({
       email: data.parent.email,
-      amountKobo: total,
-      reference: paystackReference,
-      callbackUrl: `${appUrl}/register/success`,
+      amountNaira: total / 100, // pricing is stored in kobo; Monnify expects naira
+      reference: paymentReference,
+      customerName: data.parent.fullName,
+      redirectUrl: `${appUrl}/register/success`,
       metadata: { registrationId, participantName: data.participant.fullName },
     });
 
     return NextResponse.json({
       registrationId: reg.registrationId,
-      authorizationUrl: initRes.authorization_url,
-      reference: paystackReference,
+      authorizationUrl: initRes.checkoutUrl,
+      reference: paymentReference,
     });
   } catch (e) {
     console.error("[POST /api/public/registrations]", e);

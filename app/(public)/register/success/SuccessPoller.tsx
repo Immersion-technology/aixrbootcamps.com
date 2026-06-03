@@ -45,7 +45,7 @@ export default function SuccessPoller({ reference }: { reference: string }) {
     return (
       <div className="frosted-glass rounded-2xl px-5 py-4 flex items-center gap-3">
         <span className="w-2 h-2 rounded-full bg-violet-brand inline-block anim-pulse" />
-        <span className="text-[13px] text-neutral-700 font-medium">Confirming payment with Paystack…</span>
+        <span className="text-[13px] text-neutral-700 font-medium">Confirming payment with Monnify…</span>
       </div>
     );
   }
@@ -55,7 +55,7 @@ export default function SuccessPoller({ reference }: { reference: string }) {
       <div className="ticket-card frosted-glass-dark rounded-2xl px-6 py-5 text-center anim-glow">
         <div className="text-[10.5px] font-bold tracking-[.22em] text-white/70 mb-2">REGISTRATION ID</div>
         <div className="font-accent font-extrabold text-[26px] sm:text-[30px] tracking-wide">{registrationId}</div>
-        <p className="text-[12px] text-white/70 mt-2.5">Save this — you&apos;ll need it for any future enquiry.</p>
+        <p className="text-[12px] text-white/70 mt-2.5">Save this, you&apos;ll need it for any future enquiry.</p>
       </div>
     );
   }
@@ -65,7 +65,7 @@ export default function SuccessPoller({ reference }: { reference: string }) {
       <div className="frosted-glass rounded-2xl px-5 py-4">
         <div className="text-[10.5px] font-bold tracking-[.18em] text-violet-brand mb-1.5">⌛ STILL CONFIRMING</div>
         <p className="text-[13px] text-neutral-700">
-          Paystack is taking longer than usual. If you don&apos;t see a confirmation email in 10 minutes, email us with your transaction reference.
+          Monnify is taking longer than usual. If you don&apos;t see a confirmation email in 10 minutes, email us with your transaction reference.
         </p>
       </div>
     );

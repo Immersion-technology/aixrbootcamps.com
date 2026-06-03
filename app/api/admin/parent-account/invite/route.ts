@@ -30,7 +30,7 @@ export async function POST(req: Request) {
 
     const email = reg.parent.email.toLowerCase();
 
-    // Find or create — keep one ParentAccount per email regardless of how many
+    // Find or create: keep one ParentAccount per email regardless of how many
     // kids that email registers.
     let acct = await ParentAccount.findOne({ email });
     if (!acct) {

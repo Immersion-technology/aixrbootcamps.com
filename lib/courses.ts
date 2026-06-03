@@ -1,5 +1,5 @@
 /**
- * Legacy course catalog — kept in sync with `lib/curriculum.ts` so any DB-driven
+ * Legacy course catalog, kept in sync with `lib/curriculum.ts` so any DB-driven
  * code (admin reports, registration records, exports) resolves the same names.
  *
  * The landing page, course detail pages, and registration form all read from

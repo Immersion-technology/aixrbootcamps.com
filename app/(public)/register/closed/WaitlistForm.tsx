@@ -38,7 +38,7 @@ export default function WaitlistForm() {
         <div className="text-[10.5px] font-bold tracking-[.22em] text-white/70 mb-2">YOU&apos;RE ON THE LIST</div>
         <h3 className="font-display font-extrabold uppercase text-[24px] mb-2">First in queue.</h3>
         <p className="text-[13px] text-white/80 max-w-[360px] mx-auto leading-relaxed">
-          We&apos;ll email the moment a slot opens. Keep an eye on your inbox — slots fill within hours.
+          We&apos;ll email the moment a slot opens. Keep an eye on your inbox, slots fill within hours.
         </p>
       </div>
     );

@@ -12,7 +12,7 @@ export default function FailedPage() {
             That didn&apos;t go through.
           </h1>
           <p className="text-[14px] text-white/85 max-w-[440px] mx-auto leading-relaxed">
-            <strong>No money was deducted.</strong> Your slot isn&apos;t held until payment lands — try again to lock it in before someone else does.
+            <strong>No money was deducted.</strong> Your slot isn&apos;t held until payment lands. Try again to lock it in before someone else does.
           </p>
         </div>
 
@@ -20,8 +20,8 @@ export default function FailedPage() {
           <div className="text-[10.5px] font-bold tracking-[.22em] text-aqua-deep mb-3">WHAT TO DO</div>
           <ul className="space-y-3 text-[13.5px] text-neutral-700">
             <li className="flex gap-3"><span className="text-aqua-deep font-bold">→</span> <span>Check that your card has funds and that international payments are enabled.</span></li>
-            <li className="flex gap-3"><span className="text-aqua-deep font-bold">→</span> <span>Try again — your details are still in the form, just resubmit.</span></li>
-            <li className="flex gap-3"><span className="text-aqua-deep font-bold">→</span> <span>Or pay by bank transfer / USSD — both options on Paystack&apos;s checkout page.</span></li>
+            <li className="flex gap-3"><span className="text-aqua-deep font-bold">→</span> <span>Try again, your details are still in the form, just resubmit.</span></li>
+            <li className="flex gap-3"><span className="text-aqua-deep font-bold">→</span> <span>Or pay by bank transfer / USSD. Both options on Monnify&apos;s checkout page.</span></li>
           </ul>
         </div>
 

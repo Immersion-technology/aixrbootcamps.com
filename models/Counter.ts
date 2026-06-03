@@ -13,7 +13,7 @@ const CounterSchema = new Schema<ICounter>({
 export const Counter: Model<ICounter> =
   (mongoose.models.Counter as Model<ICounter>) || mongoose.model<ICounter>("Counter", CounterSchema);
 
-// Atomic increment — used to generate sequential registration IDs.
+// Atomic increment: used to generate sequential registration IDs.
 export async function nextSeq(key: string): Promise<number> {
   const doc = await Counter.findOneAndUpdate(
     { key },

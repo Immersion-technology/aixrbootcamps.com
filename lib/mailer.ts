@@ -38,7 +38,7 @@ export function fmtNaira(kobo: number): string {
 }
 
 /**
- * Email shell — wraps content in IMMERSIA-branded layout.
+ * Email shell: wraps content in IMMERSIA-branded layout.
  * Email clients don't support backdrop-filter, so we use solid styles
  * that approximate the frosted-glass look.
  */
@@ -124,7 +124,7 @@ export function parentConfirmationHtml(args: {
           ${args.registrationId}
         </div>
         <p style="font-size:11.5px;color:rgba(255,255,255,0.65);margin:8px 0 0;">
-          Save this — you'll need it for any enquiry.
+          Save this, you'll need it for any enquiry.
         </p>
       </div>
 
@@ -204,7 +204,7 @@ export function waitlistHtml(args: { parentName: string; participantName: string
         </p>
       </div>
       <p style="font-size:13px;line-height:1.6;color:#777;margin:0;">
-        No payment is needed yet — we just wanted you on the list. If you have questions, reply to this email.
+        No payment is needed yet, we just wanted you on the list. If you have questions, reply to this email.
       </p>
     </div>
   `;

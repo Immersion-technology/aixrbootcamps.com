@@ -117,8 +117,8 @@ export default async function RegistrationsList({ searchParams }: { searchParams
                   <div className="font-medium">{r.parent.fullName}</div>
                   <div className="text-[11px] text-neutral-500">{r.parent.phonePrimary}</div>
                 </td>
-                <td className="p-3">{r.laptopRental ? "Yes" : "—"}</td>
-                <td className="p-3 font-mono text-[12px]">{r.paymentStatus === "paid" ? formatNaira(r.pricing.total) : "—"}</td>
+                <td className="p-3">{r.laptopRental ? "Yes" : "–"}</td>
+                <td className="p-3 font-mono text-[12px]">{r.paymentStatus === "paid" ? formatNaira(r.pricing.total) : "–"}</td>
                 <td className="p-3"><Pill v={r.paymentStatus} /></td>
                 <td className="p-3"><Pill v={r.admissionStatus} /></td>
                 <td className="p-3 text-[11px] text-neutral-500 whitespace-nowrap">{new Date(r.createdAt).toLocaleDateString("en-NG", { day: "numeric", month: "short" })}</td>

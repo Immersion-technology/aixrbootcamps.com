@@ -2,12 +2,12 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
 /**
- * Parent-side auth — separate cookie + JWT from the admin auth so a parent
+ * Parent-side auth: separate cookie + JWT from the admin auth so a parent
  * never gets accidental admin scope and vice versa. Uses the same JWT_SECRET
  * but a different audience claim + cookie name.
  *
- * Password hashing uses bcrypt via the existing helpers in lib/auth.ts —
- * import those there if you need to hash/verify a password.
+ * Password hashing uses bcrypt via the existing helpers in lib/auth.ts.
+ * Import those there if you need to hash/verify a password.
  */
 
 const SECRET = new TextEncoder().encode(

@@ -17,13 +17,13 @@ const config: Config = {
         peach: "#f3e3d5",
         yellow: { soft: "#f6e58a", deep: "#f4d35e" },
         beige: "#d4a883",
-        // bright cyan — primary accent (poster's "LEARN THE FUTURE" / JUL 27 sticker / bubble fill)
+        // bright cyan: primary accent (poster's "LEARN THE FUTURE" / JUL 27 sticker / bubble fill)
         aqua: { soft: "#a8e6ed", brand: "#19b8c8", deep: "#0e92a0" },
-        // vivid green — primary CTA color (poster's "SIGN UP TODAY" sticker)
+        // vivid green: primary CTA color (poster's "SIGN UP TODAY" sticker)
         grass: { soft: "#86efac", brand: "#22C55E", deep: "#16a34a" },
-        // deep teal — secondary accent
+        // deep teal: secondary accent
         petrol: { brand: "#1f6f87", deep: "#15536a" },
-        // legacy alias — kept so existing `violet-brand` / `frosted-glass-violet` refs keep working
+        // legacy alias: kept so existing `violet-brand` / `frosted-glass-violet` refs keep working
         violet: { brand: "#19b8c8" },
       },
       fontFamily: {

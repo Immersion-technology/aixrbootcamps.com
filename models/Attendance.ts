@@ -33,7 +33,7 @@ const AttendanceSchema = new Schema<IAttendance>(
   { timestamps: true, strict: true }
 );
 
-// One row per camper per day — upserts overwrite the previous record.
+// One row per camper per day; upserts overwrite the previous record.
 AttendanceSchema.index({ registrationId: 1, date: 1 }, { unique: true });
 
 export const Attendance: Model<IAttendance> =

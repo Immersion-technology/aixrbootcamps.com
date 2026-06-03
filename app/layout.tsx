@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
-// Spicy Sale — friendly bubble face used everywhere `font-bubble` shows up
+// Spicy Sale: friendly bubble face used everywhere `font-bubble` shows up
 // (stickers, info cards, course titles, section headlines). 100% free for
 // personal + commercial use per app/fonts/SpicySale-LICENSE.txt.
 const spicySale = localFont({
@@ -11,7 +11,7 @@ const spicySale = localFont({
   display: "swap",
 });
 
-// Super Beatpop — bigger, poster-punch display reserved for the hero wordmark.
+// Super Beatpop: bigger, poster-punch display reserved for the hero wordmark.
 // 100% free for personal + commercial use per app/fonts/SuperBeatpop-LICENSE.txt.
 const superBeatpop = localFont({
   src: "./fonts/SuperBeatpop.ttf",

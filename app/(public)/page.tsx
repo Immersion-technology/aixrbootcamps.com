@@ -20,7 +20,7 @@ type IconCmp = typeof RoboticIcon;
 
 // ISR: regenerate the static HTML at most once a minute. Capacity / paid-count
 // rarely change between renders, so the DB roundtrip can sit behind an edge cache.
-// (The cfg override below forces price + slots anyway — we mainly need this to
+// (The cfg override below forces price + slots anyway, we mainly need this to
 // avoid hitting MongoDB on every visit.)
 export const revalidate = 60;
 
@@ -72,7 +72,7 @@ export default async function Landing() {
       <section className="relative pt-6 sm:pt-10 pb-20 sm:pb-24 overflow-hidden dot-grid">
         <div className="max-w-[1180px] mx-auto px-5 sm:px-7 grid lg:grid-cols-[0.95fr_1.05fr] gap-10 lg:gap-12 items-start">
 
-          {/* LEFT — camper photo + glass props orbiting */}
+          {/* LEFT: camper photo + glass props orbiting */}
           <div className="relative min-h-[440px] sm:min-h-[600px] lg:min-h-[820px] flex items-center justify-center order-2 lg:order-1">
             <img
               src="/hero.png"
@@ -83,7 +83,7 @@ export default async function Landing() {
               fetchPriority="high"
             />
 
-            {/* Glass props — kept around the photo, the two that crowd hero copy on phones get hidden < 480px */}
+            {/* Glass props, kept around the photo. The two that crowd hero copy on phones get hidden < 480px */}
             <GlassSlot src="/img/glass-arrow.png"       pos="top-[1%] left-[-4%] sm:left-[-2%]"      size="w-20 h-20 sm:w-24 sm:h-24"  anim="anim-drift delay-1"        z="z-[5]" mobileHide />
             <GlassSlot src="/img/glass-star.png"        pos="top-[40%] left-[-2%] sm:left-[2%]"      size="w-14 h-14 sm:w-18 sm:h-18"  anim="anim-spin-slow"            z="z-[5]" />
             <GlassSlot src="/img/glass-orb.png"         pos="top-[8%] right-[-2%] sm:right-[2%]"     size="w-16 h-16 sm:w-20 sm:h-20"  anim="anim-float delay-2"        z="z-[5]" />
@@ -93,52 +93,55 @@ export default async function Landing() {
 
           </div>
 
-          {/* RIGHT — stickers + wordmark + ticket CTA */}
+          {/* RIGHT: stickers + wordmark + ticket CTA */}
           <div className="relative z-[5] order-1 lg:order-2 flex flex-col">
-            {/* tiny welcome paragraph, top of column */}
-            <p className="text-[12.5px] sm:text-[13px] text-neutral-700 leading-relaxed max-w-[320px] mb-4 sm:mb-5 lg:ml-auto lg:text-right anim-fade-up">
-              Welcome to the AI &amp; XR Summer Tech Bootcamp — Nigeria&apos;s only summer programme where kids 10–17 ship a deployed AI app, build a VR world, produce an AI-assisted track and deliver a live startup pitch to a jury. <strong>27 July – 21 August 2026.</strong>
+            {/* tiny welcome paragraph, desktop only (hidden on phones) */}
+            <p className="hidden lg:block text-[13px] text-neutral-700 leading-relaxed max-w-[320px] mb-5 lg:ml-auto lg:text-right anim-fade-up">
+              Welcome to the AI &amp; XR Summer Tech Bootcamp. Nigeria&apos;s only summer programme where kids 10–17 ship a deployed AI app, build a VR world, produce an AI-assisted track and deliver a live startup pitch to a jury. <strong>27 July – 21 August 2026.</strong>
             </p>
 
-            {/* Sign-up banner — full-width lead-in to the AI & XR wordmark below */}
-            <div className="relative mb-3 sm:mb-4 lg:flex lg:justify-end">
+            {/* Sign-up banner, full-width lead-in to the AI & XR wordmark below */}
+            <div className="relative mb-3 sm:mb-4 flex justify-center lg:justify-end">
               <div className="card-sticker card-sticker--green card-sticker--tilt-r anim-fade-up delay-1 inline-block px-5 sm:px-6 py-2.5 sm:py-3 max-w-full" style={{ borderRadius: 18 }}>
                 <div className="font-bubble whitespace-nowrap text-[clamp(14px,2.4vw,22px)] leading-none tracking-tight">SIGN UP YOUR KIDS TODAY FOR…</div>
               </div>
             </div>
 
-            {/* The wordmark — three stacked lines, bubble + outline */}
-            <h1 className="flex flex-col items-end leading-[.92] tracking-tight mb-5 sm:mb-7 text-right">
-              <span className="font-bubble text-ink anim-fade-up delay-1 text-[clamp(40px,8.5vw,108px)]">AI &amp; XR</span>
-              <span className="wordmark anim-fade-up delay-2 text-[clamp(48px,11vw,140px)]">SUMMER</span>
-              <span className="wordmark wordmark--green anim-fade-up delay-3 text-[clamp(48px,11vw,140px)]">BOOTCAMP</span>
+            {/* The wordmark, three stacked lines, bubble + outline */}
+            <h1 className="flex flex-col items-center lg:items-end leading-[.92] tracking-tight mb-5 sm:mb-7 text-center lg:text-right">
+              <span className="font-bubble text-ink anim-fade-up delay-1 text-[clamp(72px,18vw,108px)]">AI &amp; XR</span>
+              <span className="wordmark anim-fade-up delay-2 text-[clamp(82px,22vw,140px)]">SUMMER</span>
+              <span className="wordmark wordmark--green anim-fade-up delay-3 text-[clamp(82px,22vw,140px)]">BOOTCAMP</span>
             </h1>
 
-            {/* Ticket coupon CTA — EARLY BIRD · FIRST 10 · ₦100,000 (was ₦150,000) */}
-            {/* AGES + JUL 27 + Ticket coupon — single inline row, all same height */}
-            <div className="flex items-stretch gap-3 sm:gap-4 self-start lg:self-end anim-fade-up delay-3 flex-wrap lg:flex-nowrap">
-              {/* AGES 10-17 frosted glass card */}
-              <div className="frosted-glass rounded-2xl px-5 py-3 sm:px-7 sm:py-4 rotate-[-2deg] flex flex-col justify-center min-w-[180px] sm:min-w-[210px]">
-                <div className="font-bubble text-[16px] sm:text-[18px] leading-none mb-1.5 text-ink">AGES 10–17</div>
-                <ul className="text-[10.5px] sm:text-[11px] text-neutral-800 space-y-0.5 leading-snug whitespace-nowrap">
-                  <li className="flex items-start gap-1.5"><span className="text-aqua-deep">•</span> 6 courses</li>
-                  <li className="flex items-start gap-1.5"><span className="text-aqua-deep">•</span> Daily Mon – Fri</li>
-                  <li className="flex items-start gap-1.5"><span className="text-aqua-deep">•</span> 10 AM – 2:30 PM</li>
-                </ul>
+            {/* AGES + JUL 27 + Ticket coupon: AGES and JUL 27 stay inline as one group
+                on mobile (wrapped in an inner flex), ticket coupon wraps below. */}
+            <div className="flex items-stretch gap-3 sm:gap-4 self-center lg:self-end anim-fade-up delay-3 flex-wrap justify-center lg:justify-start lg:flex-nowrap">
+              {/* Inline AGES + JUL 27 group, never wraps internally */}
+              <div className="flex items-stretch gap-2.5 sm:gap-4 flex-nowrap">
+                {/* AGES 10-17 frosted glass card */}
+                <div className="frosted-glass rounded-2xl px-4 py-3 sm:px-7 sm:py-4 rotate-[-2deg] flex flex-col justify-center min-w-[150px] sm:min-w-[210px]">
+                  <div className="font-bubble text-[14px] sm:text-[18px] leading-none mb-1.5 text-ink">AGES 10–17</div>
+                  <ul className="text-[10px] sm:text-[11px] text-neutral-800 space-y-0.5 leading-snug whitespace-nowrap">
+                    <li className="flex items-start gap-1.5"><span className="text-aqua-deep">•</span> 6 courses</li>
+                    <li className="flex items-start gap-1.5"><span className="text-aqua-deep">•</span> Daily Mon – Fri</li>
+                    <li className="flex items-start gap-1.5"><span className="text-aqua-deep">•</span> 10 AM – 2:30 PM</li>
+                  </ul>
+                </div>
+
+                {/* JUL 27 date sticker */}
+                <div className="card-sticker card-sticker--cyan-soft card-sticker--tilt-l-lg px-3.5 py-3 sm:px-5 sm:py-4 shrink-0 flex flex-col justify-center" style={{ borderRadius: 18 }}>
+                  <div className="text-[8.5px] sm:text-[10px] font-bold tracking-[.22em] text-ink/70 uppercase">Boot camp starts</div>
+                  <div className="font-bubble text-[18px] sm:text-[24px] leading-none mt-1 text-ink">JUL 27</div>
+                  <div className="text-[8.5px] sm:text-[10px] font-bold tracking-[.18em] text-ink/70 uppercase mt-0.5">2 cohorts · 2 wks each</div>
+                </div>
               </div>
 
-              {/* JUL 27 date sticker */}
-              <div className="card-sticker card-sticker--cyan-soft card-sticker--tilt-l-lg px-4 py-3 sm:px-5 sm:py-4 shrink-0 flex flex-col justify-center" style={{ borderRadius: 18 }}>
-                <div className="text-[9px] sm:text-[10px] font-bold tracking-[.22em] text-ink/70 uppercase">Boot camp starts</div>
-                <div className="font-bubble text-[20px] sm:text-[24px] leading-none mt-1 text-ink">JUL 27</div>
-                <div className="text-[9px] sm:text-[10px] font-bold tracking-[.18em] text-ink/70 uppercase mt-0.5">2 cohorts · 2 wks each</div>
-              </div>
-
-              {/* Ticket coupon CTA — EARLY BIRD · FIRST 10 · ₦100,000 (was ₦150,000) */}
+              {/* Ticket coupon CTA: EARLY BIRD · FIRST 10 · ₦100,000 (was ₦150,000) */}
               <Link
                 href="/register"
                 className="group inline-block"
-                aria-label={`Reserve a slot — early bird ${naira(cfg.earlyBirdPrice)}, first 10`}
+                aria-label={`Reserve a slot. Early bird ${naira(cfg.earlyBirdPrice)}, first 10`}
               >
                 <div className="card-ticket flex items-stretch gap-4 sm:gap-5 group-hover:-translate-y-1 transition-transform h-full">
                   <div className="flex-1 pr-2 flex flex-col justify-center">
@@ -160,7 +163,7 @@ export default async function Landing() {
 
             <Link
               href="/contact"
-              className="anim-fade-up delay-5 text-[12.5px] mt-4 text-neutral-600 hover:text-ink underline underline-offset-4 decoration-2 self-start lg:self-end"
+              className="anim-fade-up delay-5 text-[12.5px] mt-4 text-neutral-600 hover:text-ink underline underline-offset-4 decoration-2 self-center lg:self-end"
             >
               or talk to a human →
             </Link>
@@ -171,7 +174,7 @@ export default async function Landing() {
       {/* ============ COURSES GRID ============ */}
       <section id="courses" className="relative overflow-hidden pt-6 pb-24">
         <div className="max-w-[1180px] mx-auto px-5 sm:px-7">
-          <div className="mb-10 flex items-end justify-between flex-wrap gap-4">
+          <div className="mb-10 flex flex-col items-center text-center md:flex-row md:items-end md:justify-between md:text-left gap-4">
             <h2 className="font-bubble text-[clamp(30px,4vw,52px)] leading-[1.02] tracking-tight max-w-[680px] text-ink">
               Six immersive courses<br />plus three side attractions.
             </h2>
@@ -179,7 +182,7 @@ export default async function Landing() {
           </div>
 
           <div className="stagger-group grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-            <CourseCard i={0} num="01" slug="vibe-coding"      Icon={CodeIcon}        sticker="cyan"      title={<>VIBE CODING &amp; AI PROMPT ENGINEERING</>}  sub="Pair-program with AI to ship a deployed web app — no prior code needed." />
+            <CourseCard i={0} num="01" slug="vibe-coding"      Icon={CodeIcon}        sticker="cyan"      title={<>VIBE CODING &amp; AI PROMPT ENGINEERING</>}  sub="Pair-program with AI to ship a deployed web app. No prior code needed." />
             <CourseCard i={1} num="02" slug="entrepreneurship" Icon={Rocket01Icon}    sticker="green"     title={<>ENTREPRENEURSHIP &amp; PITCHING</>}          sub="Idea → product → live Demo Day pitch in two weeks."                        tag="★ COMPULSORY" />
             <CourseCard i={2} num="03" slug="content-creation" Icon={CameraVideoIcon} sticker="ink"       title={<>CONTENT CREATION</>}                          sub="Script, shoot and edit short-form videos worth posting." />
             <CourseCard i={3} num="04" slug="robotics"         Icon={RoboticIcon}     sticker="cyan-soft" title={<>ROBOTICS &amp; EMBEDDED SYSTEMS</>}          sub="Wire microcontrollers, write firmware, drive a real moving robot." />
@@ -187,14 +190,14 @@ export default async function Landing() {
             <CourseCard i={5} num="06" slug="ai-music"         Icon={MusicNote01Icon} sticker="green-soft" title={<>AI MUSIC PRODUCTION</>}                     sub="Produce a finished, mixed track with AI-assisted tools." />
           </div>
 
-          {/* SIDE ATTRACTIONS — renamed from Active Breaks. Until the cutout photos
+          {/* SIDE ATTRACTIONS, renamed from Active Breaks. Until the cutout photos
               of paddle/kart/PS5 arrive, we render icon-only sticker cards as a
               graceful fallback. The strip uses horizontal-scroll-snap on mobile so
               one card sits fully visible with the next peeking. */}
           <div className="mt-16">
-            <div className="flex items-baseline gap-3 mb-5 flex-wrap">
+            <div className="flex flex-col items-center text-center sm:flex-row sm:items-baseline sm:text-left flex-wrap gap-3 mb-5">
               <span className="font-bubble text-[28px] sm:text-[36px] leading-none text-ink">SIDE ATTRACTIONS</span>
-              <span className="text-[12.5px] text-neutral-600">— 30 min daily, free choice between morning &amp; afternoon courses</span>
+              <span className="text-[12.5px] text-neutral-600">30 min daily, free choice between morning &amp; afternoon courses</span>
             </div>
             <div className="stagger-group grid grid-cols-1 sm:grid-cols-3 gap-5 -mx-5 sm:mx-0 px-5 sm:px-0 overflow-x-auto sm:overflow-visible snap-x snap-mandatory sm:snap-none flex sm:grid">
               <SideAttraction i={0} slug="table-tennis"     Icon={TableTennisBatIcon} sticker="cyan"  title="TABLE TENNIS" desc="Sharpens reflexes before the afternoon block." />
@@ -208,14 +211,14 @@ export default async function Landing() {
       {/* ============ TIMETABLE ============ */}
       <section id="timetable" className="relative overflow-hidden py-20 sm:py-28 bg-white border-y border-black/[.05]">
         <div className="max-w-[1180px] mx-auto px-5 sm:px-7">
-          <div className="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <div className="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4 text-center md:text-left">
             <div>
               <span className="text-[11px] font-bold tracking-[.22em] text-aqua-deep">MON – FRI · 10:00 AM – 2:30 PM · AGES 10–17</span>
               <h2 className="font-bubble text-[clamp(30px,4.2vw,52px)] leading-[1.02] tracking-tight mt-3 max-w-[640px] text-ink">
                 The actual week<br />your kid will live.
               </h2>
             </div>
-            <p className="text-[13px] text-neutral-600 max-w-[340px]">
+            <p className="text-[13px] text-neutral-600 max-w-[340px] mx-auto md:mx-0">
               Two 2-hour deep-work blocks per day, split by a structured 30-minute side attraction.
             </p>
           </div>
@@ -251,7 +254,7 @@ export default async function Landing() {
             </div>
           </div>
 
-          {/* MOBILE rows-as-cards (< md) — each day is one stacked card with its
+          {/* MOBILE rows-as-cards (< md): each day is one stacked card with its
               own list of time blocks. Each line gets a 6px left border in its
               class tone for vertical scannability. */}
           <div className="md:hidden stagger-group space-y-4">
@@ -292,7 +295,7 @@ export default async function Landing() {
             <LegendItem tone="gray"   label="Side Attraction · Table Tennis · Go Karting · Pro Gaming" />
           </div>
           <p className="mt-6 text-[12px] text-neutral-500 leading-relaxed max-w-[820px]">
-            ① Most courses run 2 sessions × 2 hrs = 4 hrs / week; AI Music runs once per week. ② Entrepreneurship is COMPULSORY for every camper (Mon afternoon + Thu morning). ③ All three side attractions (Table Tennis, Go Karting, Pro Gaming) are available every single day — students freely choose. ④ Tentative and subject to change.
+            ① Most courses run 2 sessions × 2 hrs = 4 hrs / week; AI Music runs once per week. ② Entrepreneurship is COMPULSORY for every camper (Mon afternoon + Thu morning). ③ All three side attractions (Table Tennis, Go Karting, Pro Gaming) are available every single day. Students freely choose. ④ Tentative and subject to change.
           </p>
         </div>
       </section>
@@ -414,17 +417,17 @@ export default async function Landing() {
             className="stagger-rise w-full max-w-[420px] justify-self-center object-contain drop-shadow-[0_30px_40px_rgba(0,0,0,0.15)]"
             style={{ "--i": 0 } as React.CSSProperties}
           />
-          <div className="stagger-rise relative" style={{ "--i": 1 } as React.CSSProperties}>
+          <div className="stagger-rise relative text-center md:text-left" style={{ "--i": 1 } as React.CSSProperties}>
             <h2 className="font-bubble text-[clamp(36px,5.6vw,76px)] leading-[1.02] text-ink">
               WHEN THESE<br />
               <span className="inline-block card-sticker card-sticker--green card-sticker--tilt-r px-6 pb-1 my-1.5 align-baseline" style={{ borderRadius: 999 }}>{cfg.slotsLeft} SLOTS</span><br />
               ARE GONE,<br />
               THEY&apos;RE GONE.
             </h2>
-            <p className="max-w-[480px] my-6 text-neutral-700 text-[14.5px] leading-relaxed">
-              The 2026 cohorts run <strong>27 July – 21 August</strong> as two back-to-back 2-week sessions. Once we hit 50 paid registrations the camp closes — next AI &amp; XR isn&apos;t until summer 2027. <strong>First 10 lock in {naira(cfg.earlyBirdPrice)}</strong> early-bird; regular price {naira(cfg.regularPrice)}. Both cover all 6 courses, daily side attractions, snacks, materials and Demo Day.
+            <p className="max-w-[480px] my-6 text-neutral-700 text-[14.5px] leading-relaxed mx-auto md:mx-0">
+              The 2026 cohorts run <strong>27 July – 21 August</strong> as two back-to-back 2-week sessions. Once we hit 50 paid registrations the camp closes. Next AI &amp; XR isn&apos;t until summer 2027. <strong>First 10 lock in {naira(cfg.earlyBirdPrice)}</strong> early-bird; regular price {naira(cfg.regularPrice)}. Both cover all 6 courses, daily side attractions, snacks, materials and Demo Day.
             </p>
-            <div className="flex flex-wrap gap-3 items-center">
+            <div className="flex flex-wrap gap-3 items-center justify-center md:justify-start">
               <Link href="/register" className="btn-grass">
                 Reserve a Slot <span aria-hidden>→</span>
               </Link>

@@ -56,7 +56,7 @@ export default function FaqPage() {
         <div className="mt-12 card-sticker card-sticker--ink card-sticker--no-tilt p-6 sm:p-7 flex flex-col sm:flex-row items-start sm:items-center gap-5 justify-between anim-fade-up delay-3">
           <div>
             <div className="text-[10.5px] font-bold tracking-[.2em] text-white/70 mb-1.5">STILL HAVE QUESTIONS?</div>
-            <div className="font-bubble text-[22px] sm:text-[28px] leading-tight text-white">WhatsApp or call us — we reply same day.</div>
+            <div className="font-bubble text-[22px] sm:text-[28px] leading-tight text-white">WhatsApp or call us, we reply same day.</div>
           </div>
           <Link href="/contact" className="btn-grass shrink-0">
             Contact us <span aria-hidden>→</span>

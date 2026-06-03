@@ -47,7 +47,7 @@ export default async function RegistrationDetail({ params }: { params: { id: str
           <Row k="DOB" v={`${new Date(reg.participant.dateOfBirth).toLocaleDateString("en-NG")} (age ${calcAge(reg.participant.dateOfBirth)})`} />
           <Row k="Gender" v={reg.participant.gender} />
           <Row k="School" v={reg.participant.school} />
-          <Row k="Class" v={reg.participant.classGrade || "—"} />
+          <Row k="Class" v={reg.participant.classGrade || "–"} />
           <Row k="T-shirt" v={reg.participant.tshirtSize} />
         </Card>
 
@@ -67,7 +67,7 @@ export default async function RegistrationDetail({ params }: { params: { id: str
         </Card>
 
         <Card title="Medical / notes">
-          <p className="text-[13px] text-neutral-700 leading-relaxed">{reg.medicalNotes || "—"}</p>
+          <p className="text-[13px] text-neutral-700 leading-relaxed">{reg.medicalNotes || "–"}</p>
         </Card>
 
         <Card title="Courses" wide>
@@ -89,7 +89,7 @@ export default async function RegistrationDetail({ params }: { params: { id: str
           <Row k="Boot camp fee" v={formatNaira(reg.pricing.bootCampFee)} />
           <Row k="Laptop rental" v={formatNaira(reg.pricing.laptopRentalFee)} />
           <Row k="Total" v={<strong>{formatNaira(reg.pricing.total)}</strong>} />
-          <Row k="Paystack ref" v={<span className="font-mono text-[11px] break-all">{reg.paystackReference}</span>} />
+          <Row k="Payment ref" v={<span className="font-mono text-[11px] break-all">{reg.paymentReference}</span>} />
           {reg.paidAt && <Row k="Paid at" v={new Date(reg.paidAt).toLocaleString("en-NG")} />}
         </Card>
 
@@ -102,7 +102,7 @@ export default async function RegistrationDetail({ params }: { params: { id: str
                 <li key={String(p._id)} className="py-2.5 flex justify-between items-center">
                   <span className="font-medium">
                     <span className="font-accent uppercase text-[10.5px] tracking-wider mr-2 text-violet-brand">{p.status}</span>
-                    {p.channel ?? "—"}
+                    {p.channel ?? "–"}
                   </span>
                   <span className="text-[11.5px] text-neutral-500">{new Date(p.receivedAt).toLocaleString("en-NG")}</span>
                 </li>

@@ -16,7 +16,7 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
   const reg = await Registration.findOne({ registrationId: params.id });
   if (!reg) return NextResponse.json({ error: "Not found" }, { status: 404 });
   if (reg.paymentStatus !== "paid") {
-    return NextResponse.json({ error: "Cannot resend — not paid" }, { status: 409 });
+    return NextResponse.json({ error: "Cannot resend, not paid." }, { status: 409 });
   }
 
   const campStart = await getSetting<string>(SETTING_KEYS.CAMP_START_DATE, "2026-07-27");

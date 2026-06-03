@@ -98,7 +98,7 @@ export default async function CamperProfilePage({ params }: { params: { id: stri
                     {new Date(a.date).toLocaleDateString("en-NG", { weekday: "short", day: "numeric", month: "short" })}
                   </span>
                   <span className="flex-1 min-w-0 text-[12.5px] text-neutral-700 truncate">
-                    {a.note ?? <span className="opacity-50">—</span>}
+                    {a.note ?? <span className="opacity-50">–</span>}
                   </span>
                   <StatusBadge status={a.status} />
                 </li>

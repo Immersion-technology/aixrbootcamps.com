@@ -30,7 +30,7 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
 
   await Payment.create({
     registrationId: reg._id,
-    paystackReference: reg.paystackReference,
+    paymentReference: reg.paymentReference,
     amount: reg.pricing.total,
     currency: "NGN",
     status: "manual",

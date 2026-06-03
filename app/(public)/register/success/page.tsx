@@ -1,13 +1,20 @@
 import Link from "next/link";
 import SuccessPoller from "./SuccessPoller";
 
-export default function SuccessPage({ searchParams }: { searchParams: { reference?: string } }) {
-  const ref = searchParams.reference ?? "";
+export default function SuccessPage({
+  searchParams,
+}: {
+  searchParams: { paymentReference?: string; transactionReference?: string; reference?: string };
+}) {
+  // Monnify appends ?paymentReference=…&transactionReference=… to the redirect.
+  // We key our records off our own paymentReference; `reference` is a legacy
+  // fallback. Bank-transfer redirects sometimes carry only paymentReference.
+  const ref = searchParams.paymentReference ?? searchParams.reference ?? "";
 
   return (
     <section className="relative min-h-[80vh] dot-grid pt-12 pb-24 flex items-center">
       <div className="max-w-[640px] mx-auto px-5 sm:px-7 w-full">
-        {/* HERO CARD — green sticker celebrates the moment */}
+        {/* HERO CARD, green sticker celebrates the moment */}
         <div className="relative card-sticker card-sticker--green card-sticker--no-tilt px-8 sm:px-12 py-12 sm:py-14 text-center anim-fade-up overflow-hidden">
           <span aria-hidden className="absolute left-1/2 top-[68px] -translate-x-1/2 w-40 h-40 rounded-full bg-white/30 blur-2xl anim-pulse" />
           <div className="relative font-bubble text-[88px] leading-none mb-3 text-ink">✓</div>
@@ -16,11 +23,11 @@ export default function SuccessPage({ searchParams }: { searchParams: { referenc
             You&apos;re in.
           </h1>
           <p className="text-[14px] text-ink/85 max-w-[420px] mx-auto leading-relaxed">
-            We&apos;re finalising your registration with Paystack. A confirmation email + PDF receipt is on its way.
+            We&apos;re finalising your registration with Monnify. A confirmation email + PDF receipt is on its way.
           </p>
         </div>
 
-        {/* POLLER — registration ID lands here */}
+        {/* POLLER, registration ID lands here */}
         <div className="mt-5 anim-fade-up delay-1">
           <SuccessPoller reference={ref} />
         </div>

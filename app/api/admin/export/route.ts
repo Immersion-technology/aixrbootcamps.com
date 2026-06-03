@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
     "Total (kobo)": r.pricing.total,
     "Payment status": r.paymentStatus,
     "Admission status": r.admissionStatus,
-    "Paystack ref": r.paystackReference,
+    "Payment ref": r.paymentReference,
     "Paid at": r.paidAt ? new Date(r.paidAt).toISOString() : "",
     "Registered at": new Date(r.createdAt).toISOString(),
   }));

@@ -52,10 +52,10 @@ export default function ContactPage() {
         </h1>
 
         <p className="text-[14.5px] text-neutral-700 leading-relaxed max-w-[520px] mb-10 anim-fade-up delay-2">
-          Three ways to reach us. WhatsApp is the fastest — we reply same day, often within the hour.
+          Three ways to reach us. WhatsApp is the fastest, we reply same day, often within the hour.
         </p>
 
-        {/* channel cards — sticker variants, slight rotation */}
+        {/* channel cards, sticker variants, slight rotation */}
         <div className="stagger-group grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 mb-14">
           {CHANNELS.map((c, i) => (
             <ChannelCard key={c.label} channel={c} index={i} />

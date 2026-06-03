@@ -40,7 +40,7 @@ export function getClientIp(headers: Headers): string {
 /**
  * Tiny in-memory rate limiter.
  * Returns true while the caller is under the limit, false once they exceed it.
- * Process-local — fine for a single-instance deploy; swap for Redis-backed
+ * Process-local: fine for a single-instance deploy; swap for Redis-backed
  * limiting if/when this scales horizontally.
  */
 const RATE_BUCKETS = new Map<string, { count: number; resetAt: number }>();
