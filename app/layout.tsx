@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import SmoothScroll from "@/components/SmoothScroll";
 
 // Spicy Sale: friendly bubble face used everywhere `font-bubble` shows up
 // (stickers, info cards, course titles, section headlines). 100% free for
@@ -36,7 +37,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
       </head>
-      <body className="bg-paper text-ink font-body antialiased">{children}</body>
+      <body className="bg-paper text-ink font-body antialiased">
+        <SmoothScroll />
+        {children}
+      </body>
     </html>
   );
 }

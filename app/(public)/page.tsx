@@ -11,7 +11,7 @@ import {
   RacingFlagIcon,
 } from "hugeicons-react";
 import ScrollReveal from "@/components/ScrollReveal";
-import { FAQS, FAQ_TOPIC_STYLE } from "@/lib/faq";
+import FaqAccordion from "@/components/FaqAccordion";
 import { connectDB } from "@/lib/db";
 import { Registration } from "@/models/Registration";
 import { getSetting, SETTING_KEYS } from "@/models/Setting";
@@ -359,40 +359,7 @@ export default async function Landing() {
             </p>
           </div>
 
-          <div className="space-y-3">
-            {FAQS.map((item, i) => (
-              <details
-                key={item.q}
-                className="stagger-rise group frosted-glass rounded-2xl overflow-hidden"
-                style={{ "--i": 3 + i } as React.CSSProperties}
-              >
-                <summary className="flex items-center justify-between gap-4 px-5 sm:px-6 py-4 sm:py-5 cursor-pointer list-none">
-                  <div className="flex items-start gap-3 min-w-0">
-                    <span
-                      className={`sticker-pill ${FAQ_TOPIC_STYLE[item.topic]} mt-0.5 shrink-0`}
-                      aria-hidden
-                    >
-                      {item.topic}
-                    </span>
-                    <span className="font-bubble text-[15.5px] sm:text-[17px] leading-snug text-ink">
-                      {item.q}
-                    </span>
-                  </div>
-                  <span
-                    aria-hidden
-                    className="shrink-0 w-9 h-9 rounded-full bg-ink text-white flex items-center justify-center font-bubble text-[20px] leading-none transition-transform duration-300 group-open:rotate-45"
-                  >
-                    +
-                  </span>
-                </summary>
-                <div className="px-5 sm:px-6 pb-5 -mt-1">
-                  <p className="text-[13.5px] text-neutral-700 leading-relaxed max-w-[640px]">
-                    {item.a}
-                  </p>
-                </div>
-              </details>
-            ))}
-          </div>
+          <FaqAccordion reveal="stagger" staggerOffset={3} />
 
           <div className="mt-10 sm:mt-12 text-center">
             <Link

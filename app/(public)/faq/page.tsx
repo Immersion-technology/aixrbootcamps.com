@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FAQS, FAQ_TOPIC_STYLE } from "@/lib/faq";
+import FaqAccordion from "@/components/FaqAccordion";
 
 export default function FaqPage() {
   return (
@@ -21,36 +21,7 @@ export default function FaqPage() {
         </p>
 
         {/* accordion */}
-        <div className="space-y-3">
-          {FAQS.map((item, i) => (
-            <details
-              key={item.q}
-              className={`group frosted-glass rounded-2xl overflow-hidden anim-fade-up delay-${(i % 5) + 1}`}
-            >
-              <summary className="flex items-center justify-between gap-4 px-5 sm:px-6 py-5 cursor-pointer list-none">
-                <div className="flex items-start gap-3 min-w-0">
-                  <span className={`sticker-pill ${FAQ_TOPIC_STYLE[item.topic]} mt-0.5 shrink-0`} aria-hidden>
-                    {item.topic}
-                  </span>
-                  <span className="font-bubble text-[15.5px] sm:text-[17px] leading-snug text-ink">
-                    {item.q}
-                  </span>
-                </div>
-                <span
-                  aria-hidden
-                  className="shrink-0 w-9 h-9 rounded-full bg-ink text-white flex items-center justify-center font-bubble text-[20px] leading-none transition-transform duration-300 group-open:rotate-45"
-                >
-                  +
-                </span>
-              </summary>
-              <div className="px-5 sm:px-6 pb-5 -mt-1">
-                <p className="text-[13.5px] text-neutral-700 leading-relaxed max-w-[640px]">
-                  {item.a}
-                </p>
-              </div>
-            </details>
-          ))}
-        </div>
+        <FaqAccordion reveal="fade" />
 
         {/* still-have-questions CTA */}
         <div className="mt-12 card-sticker card-sticker--ink card-sticker--no-tilt p-6 sm:p-7 flex flex-col sm:flex-row items-start sm:items-center gap-5 justify-between anim-fade-up delay-3">
