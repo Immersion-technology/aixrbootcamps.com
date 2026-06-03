@@ -42,6 +42,7 @@ export async function GET(req: NextRequest) {
     "Emergency relationship": r.emergencyContact.relationship,
     "Medical notes": r.medicalNotes ?? "",
     "Courses": (r.courses ?? []).join("; "),
+    "Robotics elective": r.roboticsElective ? "Yes" : "No",
     "Laptop rental": r.laptopRental ? "Yes" : "No",
     "Pricing tier": r.pricing.tier,
     "Total (NGN)": formatNaira(r.pricing.total),

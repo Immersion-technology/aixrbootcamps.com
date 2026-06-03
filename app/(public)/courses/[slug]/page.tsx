@@ -58,6 +58,11 @@ const TONE_TEXT: Record<Tone, string> = {
   coral: "text-pink-deep",
 };
 
+/** Format a kobo amount as a clean naira string, e.g. 2500000 → "₦25,000". */
+function nairaK(kobo: number): string {
+  return `₦${(kobo / 100).toLocaleString("en-NG")}`;
+}
+
 export function generateStaticParams() {
   return allSlugs().map((slug) => ({ slug }));
 }
@@ -112,12 +117,24 @@ export default function CourseDetail({ params }: { params: { slug: string } }) {
                   ★ COMPULSORY
                 </span>
               )}
+              {course.isElective && (
+                <span className="rounded-full bg-aqua-brand text-ink px-3 py-1.5 text-[10.5px] font-bold tracking-[.18em]">
+                  ✦ ELECTIVE · +{nairaK(course.electiveFeeKobo ?? 0)}
+                </span>
+              )}
               {!isClass && (
                 <span className="frosted-glass rounded-full px-3 py-1.5 text-[10.5px] font-bold tracking-[.18em]">
                   ☕ DAILY · FREE CHOICE
                 </span>
               )}
             </div>
+
+            {course.isElective && (
+              <p className="mt-4 text-[13px] text-neutral-600 leading-relaxed max-w-[520px] anim-fade-up delay-3">
+                This is an optional elective. The base camp fee covers the core programme; add it at registration for an extra{" "}
+                <strong className="text-ink">{nairaK(course.electiveFeeKobo ?? 0)}</strong>, which covers the components your camper builds with and takes home.
+              </p>
+            )}
           </div>
 
           {/* big icon block, sticker-style, lifts on hover */}
@@ -130,7 +147,7 @@ export default function CourseDetail({ params }: { params: { slug: string } }) {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-12">
           <Stat label="Hours / week" value={`${course.hoursPerWeek}h`} />
           <Stat label="Sessions / week" value={String(course.sessionsPerWeek)} />
-          <Stat label="Total over camp" value={`${course.hoursPerWeek * 4}h`} highlight />
+          <Stat label="Total over cohort" value={`${course.hoursPerWeek * 2}h`} highlight />
         </div>
 
         <div className="grid lg:grid-cols-[1.15fr_.85fr] gap-5 mb-5">

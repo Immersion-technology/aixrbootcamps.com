@@ -1,18 +1,19 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { randomUUID } from "crypto";
 import { Types } from "mongoose";
 import { connectDB } from "@/lib/db";
 import { Registration } from "@/models/Registration";
 import { ParentAccount } from "@/models/ParentAccount";
 import { getAdminFromCookie } from "@/lib/auth";
+import { issueLoginLink } from "@/lib/magic-link";
+import { sendMail, magicLinkHtml } from "@/lib/mailer";
 
 const schema = z.object({
   registrationId: z.string().refine((v) => Types.ObjectId.isValid(v), "Invalid registration id"),
 });
 
-const SETUP_TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
-
+// Admin helper: email the parent a one-time login link (passwordless).
+// Creates the ParentAccount on the fly if it doesn't exist yet.
 export async function POST(req: Request) {
   const admin = await getAdminFromCookie();
   if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -30,36 +31,25 @@ export async function POST(req: Request) {
 
     const email = reg.parent.email.toLowerCase();
 
-    // Find or create: keep one ParentAccount per email regardless of how many
-    // kids that email registers.
+    // One ParentAccount per email, regardless of how many kids it registers.
     let acct = await ParentAccount.findOne({ email });
     if (!acct) {
-      acct = new ParentAccount({
+      acct = await ParentAccount.create({
         email,
         name: reg.parent.fullName,
         phone: reg.parent.phonePrimary,
       });
     }
 
-    const token = randomUUID().replace(/-/g, "");
-    acct.passwordSetupToken = token;
-    acct.passwordSetupExpiresAt = new Date(Date.now() + SETUP_TOKEN_TTL_MS);
-    await acct.save();
-
-    const base = process.env.APP_URL ?? "http://localhost:3000";
-    const setupUrl = `${base}/account/setup?token=${token}`;
-
-    return NextResponse.json({
-      ok: true,
-      email,
-      name: acct.name,
-      setupUrl,
-      expiresAt: acct.passwordSetupExpiresAt,
-      // Whether the parent already has a usable password (i.e. a previous
-      // invite has already been completed). UI uses this to warn before
-      // overriding.
-      hadPasswordBefore: Boolean(acct.passwordHash),
+    const base = process.env.APP_URL ?? new URL(req.url).origin;
+    const url = await issueLoginLink({ role: "parent", accountId: String(acct._id), email, baseUrl: base });
+    await sendMail({
+      to: email,
+      subject: "Your IMMERSIA parent portal login link",
+      html: magicLinkHtml({ name: acct.name, url, role: "parent" }),
     });
+
+    return NextResponse.json({ ok: true, email, name: acct.name });
   } catch (e) {
     console.error("[parent-invite]", e);
     return NextResponse.json({ error: "Something went wrong." }, { status: 500 });

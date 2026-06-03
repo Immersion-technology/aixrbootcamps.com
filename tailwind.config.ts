@@ -27,9 +27,9 @@ const config: Config = {
         violet: { brand: "#19b8c8" },
       },
       fontFamily: {
-        display: ['"Space Grotesk"', "system-ui", "sans-serif"],
-        body: ['"Space Grotesk"', "system-ui", "sans-serif"],
-        accent: ['"Orbitron"', '"Space Grotesk"', "sans-serif"],
+        display: ["var(--font-body)", "system-ui", "sans-serif"],
+        body: ["var(--font-body)", "system-ui", "sans-serif"],
+        accent: ["var(--font-accent)", "var(--font-body)", "sans-serif"],
         bubble: ["var(--font-bubble)", "system-ui", "sans-serif"],
       },
     },

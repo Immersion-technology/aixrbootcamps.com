@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { Registration } from "@/models/Registration";
 import { Payment } from "@/models/Payment";
+import { ParentAccount } from "@/models/ParentAccount";
 import { getSetting, SETTING_KEYS } from "@/models/Setting";
 import { verifyWebhookSignature, getTransactionStatus } from "@/lib/monnify";
 import { sendMail, parentConfirmationHtml, adminAlertHtml } from "@/lib/mailer";
@@ -86,12 +87,29 @@ export async function POST(req: NextRequest) {
 
       reg.paymentStatus = "paid";
       reg.paidAt = new Date();
+      // Paid = admitted (admin can reject/refund as an override).
+      reg.admissionStatus = "admitted";
       reg.statusLog.push({
         action: overflow ? "paid_overflow" : "paid",
         by: "monnify",
         at: new Date(),
       });
+      reg.statusLog.push({ action: "admission_admitted", by: "system", at: new Date() });
       await reg.save();
+
+      // Auto-provision the parent's portal account (passwordless login).
+      // Idempotent: one account per email, reused across multiple children.
+      await ParentAccount.updateOne(
+        { email: reg.parent.email },
+        {
+          $setOnInsert: {
+            email: reg.parent.email,
+            name: reg.parent.fullName,
+            phone: reg.parent.phonePrimary,
+          },
+        },
+        { upsert: true }
+      );
 
       await Payment.create({
         registrationId: reg._id,
@@ -118,8 +136,10 @@ export async function POST(req: NextRequest) {
           participantName: reg.participant.fullName,
           courses: reg.courses,
           laptopRental: reg.laptopRental,
+          roboticsElective: reg.roboticsElective,
           bootCampFeeKobo: reg.pricing.bootCampFee,
           laptopRentalKobo: reg.pricing.laptopRentalFee,
+          roboticsFeeKobo: reg.pricing.roboticsFee,
           totalKobo: reg.pricing.total,
           paidAt: reg.paidAt!,
         });
@@ -133,6 +153,7 @@ export async function POST(req: NextRequest) {
             registrationId: reg.registrationId,
             courses: reg.courses,
             laptopRental: reg.laptopRental,
+            roboticsElective: reg.roboticsElective,
             totalKobo: reg.pricing.total,
             campStart,
           }),

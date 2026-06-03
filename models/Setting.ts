@@ -41,6 +41,7 @@ export const SETTING_KEYS = {
   EARLY_BIRD_PRICE: "earlyBirdPrice",
   REGULAR_PRICE: "regularPrice",
   LAPTOP_RENTAL_PRICE: "laptopRentalPrice",
+  ROBOTICS_ELECTIVE_PRICE: "roboticsElectivePrice",
   CAMP_START_DATE: "campStartDate",
   CAMP_END_DATE: "campEndDate",
   ADMIN_ALERT_EMAIL: "adminAlertEmail",

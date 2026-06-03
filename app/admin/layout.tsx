@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getAdminFromCookie } from "@/lib/auth";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -11,7 +12,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <aside className="w-60 shrink-0 bg-white/80 backdrop-blur border-r border-black/5 p-5 sticky top-0 h-screen flex flex-col">
           {/* brand block */}
           <Link href="/admin" className="frosted-glass rounded-2xl p-3 mb-6 block hover:scale-[1.02] transition">
-            <img src="/imm.png" alt="IMMERSIA admin" className="h-8 w-auto" />
+            <Image src="/imm.png" alt="IMMERSIA admin" width={3151} height={1036} priority sizes="180px" className="h-8 w-auto" />
             <div className="text-[9.5px] font-bold tracking-[.22em] text-violet-brand mt-1.5 uppercase">Admin</div>
           </Link>
 
@@ -19,6 +20,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <NavLink href="/admin">Dashboard</NavLink>
             <NavLink href="/admin/registrations">Registrations</NavLink>
             <NavLink href="/admin/attendance">Attendance</NavLink>
+            <NavLink href="/admin/teachers">Teachers</NavLink>
             <NavLink href="/admin/waitlist">Waitlist</NavLink>
             <NavLink href="/admin/settings">Settings</NavLink>
             <NavLink href="/admin/export">Export</NavLink>

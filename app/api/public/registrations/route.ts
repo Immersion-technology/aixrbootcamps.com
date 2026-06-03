@@ -42,6 +42,7 @@ export async function POST(req: NextRequest) {
     const earlyBirdPrice = 15000000;
     const regularPrice = 20000000;
     const laptopPrice = 2000000;
+    const roboticsPrice = 2500000; // +₦25,000 elective — Arduino board, servos/motors and consumables the camper keeps
 
     // --- capacity check ---
     const [capacity, paidCount, earlyBirdCutoff] = await Promise.all([
@@ -54,14 +55,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Camp is full. Please join the waitlist." }, { status: 409 });
     }
 
-    // Every camper attends every class. No electives.
-    const finalCourses = getClasses().map((c) => c.slug);
+    // Every camper attends every core class. Robotics is an opt-in paid elective,
+    // so it's only added to the enrollment when the parent ticked it.
+    const finalCourses = getClasses()
+      .filter((c) => !c.isElective || data.roboticsElective)
+      .map((c) => c.slug);
 
     // --- pricing ---
     const tier = new Date() < new Date(earlyBirdCutoff) ? "early_bird" : "regular";
     const bootCampFee = tier === "early_bird" ? earlyBirdPrice : regularPrice;
     const laptopRentalFee = data.laptopRental ? laptopPrice : 0;
-    const total = bootCampFee + laptopRentalFee;
+    const roboticsFee = data.roboticsElective ? roboticsPrice : 0;
+    const total = bootCampFee + laptopRentalFee + roboticsFee;
 
     // --- sequential registration ID + payment reference ---
     const seq = await nextSeq("registration");
@@ -86,7 +91,8 @@ export async function POST(req: NextRequest) {
       medicalNotes: data.medicalNotes,
       courses: finalCourses,
       laptopRental: data.laptopRental,
-      pricing: { tier, bootCampFee, laptopRentalFee, total },
+      roboticsElective: data.roboticsElective,
+      pricing: { tier, bootCampFee, laptopRentalFee, roboticsFee, total },
       paymentStatus: "pending",
       admissionStatus: "pending",
       paymentReference,

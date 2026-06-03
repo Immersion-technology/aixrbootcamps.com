@@ -40,6 +40,7 @@ export const registrationCreateSchema = z.object({
   emergencyContact: emergencySchema,
   medicalNotes: z.string().trim().optional().default(""),
   laptopRental: z.boolean(),
+  roboticsElective: z.boolean().optional().default(false),
   agreedToTerms: z.literal(true, {
     errorMap: () => ({ message: "You must agree to the rules of conduct" }),
   }),

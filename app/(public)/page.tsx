@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   RoboticIcon,
   CodeIcon,
@@ -70,17 +71,18 @@ export default async function Landing() {
       <ScrollReveal />
       {/* ============ HERO ============ */}
       <section className="relative pt-6 sm:pt-10 pb-20 sm:pb-24 overflow-hidden dot-grid">
-        <div className="max-w-[1180px] mx-auto px-5 sm:px-7 grid lg:grid-cols-[0.95fr_1.05fr] gap-10 lg:gap-12 items-start">
+        <div className="max-w-[1180px] mx-auto px-5 sm:px-7 grid lg:grid-cols-[0.82fr_1.18fr] gap-10 lg:gap-10 items-start">
 
           {/* LEFT: camper photo + glass props orbiting */}
           <div className="relative min-h-[440px] sm:min-h-[600px] lg:min-h-[820px] flex items-center justify-center order-2 lg:order-1">
-            <img
+            <Image
               src="/hero.png"
               alt="An IMMERSIA camper holding a robot and a VR headset"
+              width={1024}
+              height={1536}
+              priority
+              sizes="(max-width: 1024px) 90vw, 900px"
               className="relative z-[3] w-full max-w-[420px] sm:max-w-[520px] lg:max-w-[900px] lg:w-[130%] h-auto object-contain drop-shadow-[0_30px_30px_rgba(0,0,0,0.18)]"
-              loading="eager"
-              decoding="async"
-              fetchPriority="high"
             />
 
             {/* Glass props, kept around the photo. The two that crowd hero copy on phones get hidden < 480px */}
@@ -97,7 +99,7 @@ export default async function Landing() {
           <div className="relative z-[5] order-1 lg:order-2 flex flex-col">
             {/* tiny welcome paragraph, desktop only (hidden on phones) */}
             <p className="hidden lg:block text-[13px] text-neutral-700 leading-relaxed max-w-[320px] mb-5 lg:ml-auto lg:text-right anim-fade-up">
-              Welcome to the AI &amp; XR Summer Tech Bootcamp. Nigeria&apos;s only summer programme where kids 10–17 ship a deployed AI app, build a VR world, produce an AI-assisted track and deliver a live startup pitch to a jury. <strong>27 July – 21 August 2026.</strong>
+              Welcome to the AI &amp; XR Summer Tech Bootcamp. Nigeria&apos;s only summer programme where kids 10–17 ship a deployed AI app, build a VR world, produce an AI-assisted track and deliver a live startup pitch to a jury. <strong>27 July – 4 September 2026.</strong>
             </p>
 
             {/* Sign-up banner, full-width lead-in to the AI & XR wordmark below */}
@@ -115,12 +117,15 @@ export default async function Landing() {
             </h1>
 
             {/* AGES + JUL 27 + Ticket coupon: AGES and JUL 27 stay inline as one group
-                on mobile (wrapped in an inner flex), ticket coupon wraps below. */}
-            <div className="flex items-stretch gap-3 sm:gap-4 self-center lg:self-end anim-fade-up delay-3 flex-wrap justify-center lg:justify-start lg:flex-nowrap">
-              {/* Inline AGES + JUL 27 group, never wraps internally */}
-              <div className="flex items-stretch gap-2.5 sm:gap-4 flex-nowrap">
-                {/* AGES 10-17 frosted glass card */}
-                <div className="frosted-glass rounded-2xl px-4 py-3 sm:px-7 sm:py-4 rotate-[-2deg] flex flex-col justify-center min-w-[150px] sm:min-w-[210px]">
+                on mobile (wrapped in an inner flex). On desktop all three sit inline. */}
+            <div className="flex items-stretch gap-5 sm:gap-7 lg:gap-8 lg:gap-y-6 self-center lg:self-end anim-fade-up delay-3 flex-wrap justify-center lg:justify-end">
+              {/* Inline AGES + JUL 27 group, never wraps internally.
+                  On desktop the group is given a fixed width so it lands slightly
+                  wider than the BOOTCAMP wordmark above it (visual cascade). */}
+              <div className="flex items-stretch gap-2.5 sm:gap-4 lg:gap-5 flex-nowrap lg:w-[580px]">
+                {/* AGES 10-17 frosted glass card. lg:flex-1 lets it fill the
+                    remaining width inside the fixed-width inner group. */}
+                <div className="frosted-glass rounded-2xl px-4 py-3 sm:px-7 sm:py-4 lg:px-5 lg:py-4 rotate-[-2deg] flex flex-col justify-center min-w-[150px] sm:min-w-[210px] lg:flex-1">
                   <div className="font-bubble text-[14px] sm:text-[18px] leading-none mb-1.5 text-ink">AGES 10–17</div>
                   <ul className="text-[10px] sm:text-[11px] text-neutral-800 space-y-0.5 leading-snug whitespace-nowrap">
                     <li className="flex items-start gap-1.5"><span className="text-aqua-deep">•</span> 6 courses</li>
@@ -130,17 +135,19 @@ export default async function Landing() {
                 </div>
 
                 {/* JUL 27 date sticker */}
-                <div className="card-sticker card-sticker--cyan-soft card-sticker--tilt-l-lg px-3.5 py-3 sm:px-5 sm:py-4 shrink-0 flex flex-col justify-center" style={{ borderRadius: 18 }}>
+                <div className="card-sticker card-sticker--cyan-soft card-sticker--tilt-l-lg px-3.5 py-3 sm:px-5 sm:py-4 lg:px-4 lg:py-4 shrink-0 flex flex-col justify-center" style={{ borderRadius: 18 }}>
                   <div className="text-[8.5px] sm:text-[10px] font-bold tracking-[.22em] text-ink/70 uppercase">Boot camp starts</div>
                   <div className="font-bubble text-[18px] sm:text-[24px] leading-none mt-1 text-ink">JUL 27</div>
-                  <div className="text-[8.5px] sm:text-[10px] font-bold tracking-[.18em] text-ink/70 uppercase mt-0.5">2 cohorts · 2 wks each</div>
+                  <div className="text-[8.5px] sm:text-[10px] font-bold tracking-[.18em] text-ink/70 uppercase mt-0.5">3 cohorts · 2 wks each</div>
                 </div>
               </div>
 
-              {/* Ticket coupon CTA: EARLY BIRD · FIRST 10 · ₦100,000 (was ₦150,000) */}
+              {/* Ticket coupon CTA: EARLY BIRD · FIRST 10 · ₦100,000 (was ₦150,000).
+                  block + lg:w-full so on desktop it stretches across the full right
+                  column, sitting as the widest element of the cascade. */}
               <Link
                 href="/register"
-                className="group inline-block"
+                className="group block lg:w-full"
                 aria-label={`Reserve a slot. Early bird ${naira(cfg.earlyBirdPrice)}, first 10`}
               >
                 <div className="card-ticket flex items-stretch gap-4 sm:gap-5 group-hover:-translate-y-1 transition-transform h-full">
@@ -185,7 +192,7 @@ export default async function Landing() {
             <CourseCard i={0} num="01" slug="vibe-coding"      Icon={CodeIcon}        sticker="cyan"      title={<>VIBE CODING &amp; AI PROMPT ENGINEERING</>}  sub="Pair-program with AI to ship a deployed web app. No prior code needed." />
             <CourseCard i={1} num="02" slug="entrepreneurship" Icon={Rocket01Icon}    sticker="green"     title={<>ENTREPRENEURSHIP &amp; PITCHING</>}          sub="Idea → product → live Demo Day pitch in two weeks."                        tag="★ COMPULSORY" />
             <CourseCard i={2} num="03" slug="content-creation" Icon={CameraVideoIcon} sticker="ink"       title={<>CONTENT CREATION</>}                          sub="Script, shoot and edit short-form videos worth posting." />
-            <CourseCard i={3} num="04" slug="robotics"         Icon={RoboticIcon}     sticker="cyan-soft" title={<>ROBOTICS &amp; EMBEDDED SYSTEMS</>}          sub="Wire microcontrollers, write firmware, drive a real moving robot." />
+            <CourseCard i={3} num="04" slug="robotics"         Icon={RoboticIcon}     sticker="cyan-soft" title={<>ROBOTICS &amp; EMBEDDED SYSTEMS</>}          sub="Blink an LED on day one; build your own gadget and keep the kit by week's end." tag="✦ ELECTIVE · +₦25,000" />
             <CourseCard i={4} num="05" slug="3d-vr"            Icon={VrGlassesIcon}   sticker="ink"       title={<>3D CHARACTER &amp; VR WORLD CREATION</>}    sub="Sculpt characters in Blender. Step inside the world you made." />
             <CourseCard i={5} num="06" slug="ai-music"         Icon={MusicNote01Icon} sticker="green-soft" title={<>AI MUSIC PRODUCTION</>}                     sub="Produce a finished, mixed track with AI-assisted tools." />
           </div>
@@ -375,12 +382,13 @@ export default async function Landing() {
       {/* ============ FINAL CTA ============ */}
       <section className="py-24 sm:py-28 relative overflow-hidden">
         <div className="stagger-group max-w-[1180px] mx-auto px-5 sm:px-7 grid md:grid-cols-[1fr_1.2fr] gap-12 items-center">
-          <img
+          <Image
             src="/glass-blob.png"
             alt=""
             aria-hidden
-            loading="lazy"
-            decoding="async"
+            width={1024}
+            height={1024}
+            sizes="(max-width: 768px) 90vw, 420px"
             className="stagger-rise w-full max-w-[420px] justify-self-center object-contain drop-shadow-[0_30px_40px_rgba(0,0,0,0.15)]"
             style={{ "--i": 0 } as React.CSSProperties}
           />
@@ -392,7 +400,7 @@ export default async function Landing() {
               THEY&apos;RE GONE.
             </h2>
             <p className="max-w-[480px] my-6 text-neutral-700 text-[14.5px] leading-relaxed mx-auto md:mx-0">
-              The 2026 cohorts run <strong>27 July – 21 August</strong> as two back-to-back 2-week sessions. Once we hit 50 paid registrations the camp closes. Next AI &amp; XR isn&apos;t until summer 2027. <strong>First 10 lock in {naira(cfg.earlyBirdPrice)}</strong> early-bird; regular price {naira(cfg.regularPrice)}. Both cover all 6 courses, daily side attractions, snacks, materials and Demo Day.
+              The 2026 cohorts run <strong>27 July – 4 September</strong> as three back-to-back 2-week sessions. Once we hit 50 paid registrations the camp closes. Next AI &amp; XR isn&apos;t until summer 2027. <strong>First 10 lock in {naira(cfg.earlyBirdPrice)}</strong> early-bird; regular price {naira(cfg.regularPrice)}. Both cover the 5 core courses, daily side attractions, snacks, materials and Demo Day — Robotics is an optional +₦25,000 elective.
             </p>
             <div className="flex flex-wrap gap-3 items-center justify-center md:justify-start">
               <Link href="/register" className="btn-grass">
@@ -592,13 +600,12 @@ function GlassSlot({
   return (
     <div className={`absolute ${z} ${pos} ${size} ${anim} ${mobileHide ? "glass-prop-mobile-hide" : ""}`} aria-hidden>
       <div className="relative w-full h-full glass-prop">
-        <img
+        <Image
           src={src}
           alt=""
-          loading="lazy"
-          decoding="async"
-          fetchPriority="low"
-          className="relative w-full h-full object-contain drop-shadow-[0_10px_20px_rgba(15,15,15,0.18)]"
+          fill
+          sizes="128px"
+          className="object-contain drop-shadow-[0_10px_20px_rgba(15,15,15,0.18)]"
         />
       </div>
     </div>

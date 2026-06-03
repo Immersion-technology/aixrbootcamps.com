@@ -30,9 +30,10 @@ export default function TermsPage() {
 
           <Section title="2. Camp dates &amp; hours">
             <ul className="list-disc pl-5 space-y-1.5">
-              <li><strong>Two cohorts of 2 weeks each.</strong> Same curriculum, same instructors, same price. Pick whichever fits your family&apos;s August calendar.</li>
+              <li><strong>Three cohorts of 2 weeks each.</strong> Same curriculum, same instructors, same price. Pick whichever fits your family&apos;s calendar.</li>
               <li><strong>Cohort 1:</strong> 27 July – 7 August 2026.</li>
               <li><strong>Cohort 2:</strong> 10 August – 21 August 2026.</li>
+              <li><strong>Cohort 3:</strong> 24 August – 4 September 2026.</li>
               <li>Monday to Friday, <strong>10:00 AM – 2:30 PM</strong>.</li>
               <li>Demo Day is on the last Friday of each cohort, and attendance for the pitch is part of the programme.</li>
             </ul>
@@ -40,13 +41,13 @@ export default function TermsPage() {
 
           <Section title="3. What the fee covers">
             <ul className="list-disc pl-5 space-y-1.5">
-              <li>All six courses plus the three side attractions, for the full two weeks of your cohort.</li>
+              <li>All five core courses plus the three side attractions, for the full two weeks of your cohort. (Robotics is an optional paid elective — see below.)</li>
               <li>Daily snacks + bottled water. (Lunch is bring-your-own; a vetted food vendor takes daily orders.)</li>
               <li>IMMERSIA t-shirt + all course materials and consumables.</li>
               <li>Use of camp laptops, headsets, robotics kits and gaming rigs.</li>
               <li>Demo Day, including the live pitch panel and prize for the winning team.</li>
             </ul>
-            <p className="mt-2">Not included: transport to and from the venue, take-home equipment beyond what&apos;s explicitly stated, and the optional laptop rental add-on.</p>
+            <p className="mt-2">Not included: transport to and from the venue, take-home equipment beyond what&apos;s explicitly stated, the optional Robotics elective (+₦25,000, which covers the Arduino kit and components your camper keeps), and the optional laptop rental add-on.</p>
           </Section>
 
           <Section title="4. Payment, holds and refunds">

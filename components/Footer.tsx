@@ -1,4 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
+import Ferrofluid from "@/components/Ferrofluid";
 
 const SOCIALS: Array<{ label: string; href: string; path: string }> = [
   {
@@ -49,20 +51,38 @@ export default function Footer() {
           className="relative overflow-hidden rounded-[24px] sm:rounded-[32px] bg-ink text-white
                      px-5 sm:px-10 pt-10 sm:pt-20 pb-16 sm:pb-28 text-center"
         >
+          {/* Ferrofluid base layer, brand-tinted glowing rims drifting upward */}
+          <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
+            <Ferrofluid
+              colors={["#19b8c8", "#22C55E", "#1f6f87"]}
+              speed={0.4}
+              scale={1.4}
+              turbulence={1.1}
+              fluidity={0.12}
+              rimWidth={0.22}
+              sharpness={2.5}
+              shimmer={1.3}
+              glow={2.2}
+              flowDirection="up"
+              opacity={0.75}
+              mouseInteraction={false}
+            />
+          </div>
+
           {/* soft glow that fades from the top edge inward, echoing the reference */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-0 -top-24 h-56
+            className="pointer-events-none absolute inset-x-0 -top-24 h-56 z-[1]
                        bg-[radial-gradient(60%_100%_at_50%_0%,rgba(34,197,94,.28),transparent_70%)]"
           />
           {/* faint aqua bloom bottom-left for depth */}
           <div
             aria-hidden
-            className="pointer-events-none absolute -bottom-20 -left-10 h-64 w-64 rounded-full
+            className="pointer-events-none absolute -bottom-20 -left-10 h-64 w-64 rounded-full z-[1]
                        bg-aqua-brand/15 blur-3xl"
           />
 
-          <div className="relative">
+          <div className="relative z-10">
             <p className="text-[10px] sm:text-[11px] font-bold tracking-[.24em] uppercase text-grass-brand mb-2.5 sm:mb-5">
               Slots are limited
             </p>
@@ -121,12 +141,13 @@ export default function Footer() {
 
               {/* brand */}
               <div className="col-span-2 md:col-span-1 text-center md:text-left">
-                <img
+                <Image
                   src="/imm.png"
                   alt="IMMERSIA — Virtual Reality, feel. everything"
+                  width={3151}
+                  height={1036}
+                  sizes="240px"
                   className="h-10 sm:h-14 w-auto mb-4 sm:mb-5 mx-auto md:mx-0"
-                  loading="lazy"
-                  decoding="async"
                 />
                 <p className="text-[13px] sm:text-[13.5px] text-neutral-600 leading-relaxed max-w-[330px] mx-auto md:mx-0">
                   Lagos-based summer tech bootcamp for ages 10–17 — building the next

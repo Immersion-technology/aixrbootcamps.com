@@ -62,16 +62,7 @@ export default function DetailActions({ registrationId, currentStatus, paymentSt
       });
       const j = await r.json();
       if (!r.ok) throw new Error(j.error ?? "Failed");
-      const warn = j.hadPasswordBefore
-        ? "\n\nThis parent already had a password. The new link will REPLACE it once used.\n\n"
-        : "\n\n";
-      // copy to clipboard if we can, then show
-      try { await navigator.clipboard.writeText(j.setupUrl); } catch { /* fine */ }
-      alert(
-        `Setup link generated for ${j.name} <${j.email}>${warn}` +
-        `Send them this URL (already copied to clipboard):\n\n${j.setupUrl}\n\n` +
-        `Expires: ${new Date(j.expiresAt).toLocaleString("en-NG")}`
-      );
+      alert(`Login link emailed to ${j.name} <${j.email}>. It expires in 30 minutes.`);
     } catch (e) {
       alert(e instanceof Error ? e.message : "Failed");
     } finally {
@@ -143,7 +134,7 @@ export default function DetailActions({ registrationId, currentStatus, paymentSt
           tone="cyan"
           loading={busy === "invite"}
         >
-          🔑 Send setup link
+          🔑 Email login link
         </ActionBtn>
       </div>
     </div>

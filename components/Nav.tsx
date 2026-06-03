@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
@@ -43,13 +44,14 @@ export default function Nav() {
           {/* ── Mobile nav ── */}
           <nav className="md:hidden flex items-center justify-between h-[68px]">
             <Link href="/" aria-label="IMMERSIA, home">
-              <img
+              <Image
                 src="/imm.png"
                 alt="IMMERSIA, Virtual Reality, feel. everything"
+                width={3151}
+                height={1036}
+                priority
+                sizes="180px"
                 className="h-8 w-auto"
-                loading="eager"
-                decoding="async"
-                fetchPriority="high"
               />
             </Link>
 
@@ -68,13 +70,14 @@ export default function Nav() {
           {/* ── Desktop nav ── */}
           <nav className="hidden md:grid grid-cols-[1fr_auto_1fr] items-center h-[74px] gap-6">
             <Link href="/" aria-label="IMMERSIA, home" className="justify-self-start">
-              <img
+              <Image
                 src="/imm.png"
                 alt="IMMERSIA, Virtual Reality, feel. everything"
+                width={3151}
+                height={1036}
+                priority
+                sizes="180px"
                 className="h-10 w-auto"
-                loading="eager"
-                decoding="async"
-                fetchPriority="high"
               />
             </Link>
 
@@ -83,17 +86,14 @@ export default function Nav() {
               <li><Link href="/#timetable" className="hover:text-ink transition">Schedule</Link></li>
               <li><Link href="/faq"        className="hover:text-ink transition">FAQ</Link></li>
               <li><Link href="/contact"    className="hover:text-ink transition">Contact</Link></li>
-              <li>
-                <Link
-                  href="/register"
-                  className="inline-flex items-center gap-1.5 bg-grass-brand text-ink rounded-full px-5 py-2 text-[12.5px] font-bold tracking-wide hover:bg-grass-deep hover:text-white transition shadow-[0_8px_20px_-8px_rgba(34,197,94,.5)]"
-                >
-                  Reserve <span aria-hidden>→</span>
-                </Link>
-              </li>
             </ul>
 
-            <div className="justify-self-end" aria-hidden />
+            <Link
+              href="/register"
+              className="justify-self-end inline-flex items-center gap-1.5 bg-grass-brand text-ink rounded-full px-5 py-2 text-[12.5px] font-bold tracking-wide hover:bg-grass-deep hover:text-white transition shadow-[0_8px_20px_-8px_rgba(34,197,94,.5)]"
+            >
+              Reserve <span aria-hidden>→</span>
+            </Link>
           </nav>
         </div>
       </header>
@@ -135,9 +135,12 @@ export default function Nav() {
                 aria-label="IMMERSIA, home"
                 className="justify-self-center"
               >
-                <img
+                <Image
                   src="/imm.png"
                   alt=""
+                  width={3151}
+                  height={1036}
+                  sizes="220px"
                   className="h-12 w-auto rounded-xl bg-white px-2.5 py-1.5"
                 />
               </Link>

@@ -1,18 +1,20 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
-
-const SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET ?? "dev-secret-do-not-use-in-prod"
-);
+import { JWT_SECRET as SECRET } from "@/lib/jwt-secret";
 const ADMIN_COOKIE = "immersia_admin";
 const PARENT_COOKIE = "immersia_parent";
+const TEACHER_COOKIE = "immersia_teacher";
 
 // Public exemptions inside each auth-gated tree.
+// NOTE: middleware is an OPTIMISTIC redirect layer only (CVE-2025-29927) —
+// every protected page/route re-verifies the session server-side.
 const ADMIN_PUBLIC = new Set(["/admin/login"]);
-const PARENT_PUBLIC_PREFIXES = ["/account/login", "/account/setup"];
+const PARENT_PUBLIC_PREFIXES = ["/account/login"];
+const TEACHER_PUBLIC_PREFIXES = ["/teacher/login"];
 const ADMIN_API_PUBLIC = ["/api/admin/auth/login"];
-const PARENT_API_PUBLIC = ["/api/account/login", "/api/account/setup"];
+const PARENT_API_PUBLIC = ["/api/account/login"];
+const TEACHER_API_PUBLIC = ["/api/teacher/login"];
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -34,6 +36,16 @@ export async function middleware(req: NextRequest) {
 
   if (isParentPage || isParentApi) {
     return checkAuth(req, PARENT_COOKIE, "/account/login", isParentApi);
+  }
+
+  // ---------- teacher tree ----------
+  const isTeacherPage =
+    pathname.startsWith("/teacher") && !TEACHER_PUBLIC_PREFIXES.some((p) => pathname.startsWith(p));
+  const isTeacherApi =
+    pathname.startsWith("/api/teacher") && !TEACHER_API_PUBLIC.some((p) => pathname.startsWith(p));
+
+  if (isTeacherPage || isTeacherApi) {
+    return checkAuth(req, TEACHER_COOKIE, "/teacher/login", isTeacherApi);
   }
 
   return NextResponse.next();
@@ -59,5 +71,12 @@ function redirectOrUnauthorized(req: NextRequest, loginPath: string, isApi: bool
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/admin/:path*", "/account/:path*", "/api/account/:path*"],
+  matcher: [
+    "/admin/:path*",
+    "/api/admin/:path*",
+    "/account/:path*",
+    "/api/account/:path*",
+    "/teacher/:path*",
+    "/api/teacher/:path*",
+  ],
 };

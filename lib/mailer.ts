@@ -38,6 +38,20 @@ export function fmtNaira(kobo: number): string {
 }
 
 /**
+ * Escape user-supplied values before interpolating them into email HTML.
+ * Names, notes, etc. come from registrations / admin input and must not be
+ * able to inject markup into the email body.
+ */
+function esc(value: unknown): string {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+/**
  * Email shell: wraps content in IMMERSIA-branded layout.
  * Email clients don't support backdrop-filter, so we use solid styles
  * that approximate the frosted-glass look.
@@ -96,11 +110,12 @@ export function parentConfirmationHtml(args: {
   registrationId: string;
   courses: string[];
   laptopRental: boolean;
+  roboticsElective: boolean;
   totalKobo: number;
   campStart: string;
 }): string {
   const courseList = args.courses
-    .map((c) => `<li style="padding:4px 0;color:#0f0f0f;">${c}</li>`)
+    .map((c) => `<li style="padding:4px 0;color:#0f0f0f;">${esc(c)}</li>`)
     .join("");
 
   const content = `
@@ -109,10 +124,10 @@ export function parentConfirmationHtml(args: {
         Payment confirmed · You're in
       </div>
       <h1 style="font-size:32px;line-height:1.05;margin:0 0 16px;letter-spacing:-0.02em;font-weight:800;text-transform:uppercase;">
-        Welcome, ${args.parentName}.
+        Welcome, ${esc(args.parentName)}.
       </h1>
       <p style="font-size:15px;line-height:1.65;color:#3a3a3a;margin:0 0 24px;">
-        ${args.participantName}'s slot at the IMMERSIA Summer Tech Boot Camp is locked in. Your PDF receipt is attached.
+        ${esc(args.participantName)}'s slot at the IMMERSIA Summer Tech Boot Camp is locked in. Your PDF receipt is attached.
       </p>
 
       <!-- ticket card -->
@@ -121,7 +136,7 @@ export function parentConfirmationHtml(args: {
           Registration ID
         </div>
         <div style="font-family:'Orbitron','Space Grotesk',sans-serif;font-weight:800;font-size:22px;letter-spacing:0.04em;">
-          ${args.registrationId}
+          ${esc(args.registrationId)}
         </div>
         <p style="font-size:11.5px;color:rgba(255,255,255,0.65);margin:8px 0 0;">
           Save this, you'll need it for any enquiry.
@@ -129,7 +144,8 @@ export function parentConfirmationHtml(args: {
       </div>
 
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 16px;font-size:14px;">
-        <tr><td style="padding:6px 0;color:#777;">Camp starts</td><td style="text-align:right;font-weight:600;">${args.campStart}</td></tr>
+        <tr><td style="padding:6px 0;color:#777;">Camp starts</td><td style="text-align:right;font-weight:600;">${esc(args.campStart)}</td></tr>
+        <tr><td style="padding:6px 0;color:#777;">Robotics elective</td><td style="text-align:right;font-weight:600;">${args.roboticsElective ? "Yes" : "No"}</td></tr>
         <tr><td style="padding:6px 0;color:#777;">Laptop rental</td><td style="text-align:right;font-weight:600;">${args.laptopRental ? "Yes" : "No"}</td></tr>
         <tr><td style="padding:6px 0;color:#777;">Amount paid</td><td style="text-align:right;font-weight:700;font-family:'Orbitron','Space Grotesk',sans-serif;">${fmtNaira(args.totalKobo)}</td></tr>
       </table>
@@ -144,6 +160,104 @@ export function parentConfirmationHtml(args: {
 
     <div style="background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:16px;padding:18px 22px;margin-top:14px;font-size:13px;line-height:1.6;color:#3a3a3a;">
       <strong style="color:#0f0f0f;">What's next.</strong> A WhatsApp invite to the parent group lands two weeks before camp with the venue address, drop-off details and Day 1 schedule. Questions? Just reply to this email.
+    </div>
+
+    <div style="background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:16px;padding:20px 22px;margin-top:14px;text-align:center;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.18em;color:#0e92a0;text-transform:uppercase;margin-bottom:6px;">
+        Your parent portal
+      </div>
+      <p style="font-size:13px;line-height:1.6;color:#3a3a3a;margin:0 0 14px;">
+        Track ${esc(args.participantName)}'s attendance and details any time. No password needed, we email you a one-time login link.
+      </p>
+      <a href="${APP_URL}/account/login" style="display:inline-block;background:#0f0f0f;color:#fff;text-decoration:none;font-weight:700;font-size:13px;padding:11px 24px;border-radius:999px;letter-spacing:0.04em;">
+        Log in to your portal →
+      </a>
+    </div>
+  `;
+  return shell(content);
+}
+
+/**
+ * One-time login link for the parent OR teacher portal (passwordless).
+ * `role` only affects the copy; the URL already points to the right verify route.
+ */
+export function magicLinkHtml(args: { name: string; url: string; role: "parent" | "teacher" }): string {
+  const portal = args.role === "teacher" ? "facilitator" : "parent";
+  const content = `
+    <div style="background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:24px;padding:36px 28px;box-shadow:0 12px 40px rgba(15,15,15,0.06);">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.22em;color:#0e92a0;text-transform:uppercase;margin-bottom:8px;">
+        Your login link
+      </div>
+      <h1 style="font-size:26px;line-height:1.1;margin:0 0 14px;font-weight:800;text-transform:uppercase;letter-spacing:-0.02em;">
+        Hi ${esc(args.name)}.
+      </h1>
+      <p style="font-size:15px;line-height:1.65;color:#3a3a3a;margin:0 0 22px;">
+        Tap the button below to sign in to your ${portal} portal. This link works once and expires in 30 minutes.
+      </p>
+      <div style="text-align:center;margin:8px 0 18px;">
+        <a href="${args.url}" style="display:inline-block;background:#0f0f0f;color:#fff;text-decoration:none;font-weight:700;font-size:14px;padding:13px 30px;border-radius:999px;letter-spacing:0.04em;">
+          Sign in →
+        </a>
+      </div>
+      <p style="font-size:12px;line-height:1.55;color:#999;margin:0;">
+        If you didn't request this, you can safely ignore it, no one can sign in without this link. Trouble with the button? Paste this URL into your browser:<br>
+        <span style="word-break:break-all;color:#0e92a0;">${args.url}</span>
+      </p>
+    </div>
+  `;
+  return shell(content);
+}
+
+/** Sent when an admin rejects a registration (admission override). */
+export function admissionRejectedHtml(args: {
+  parentName: string;
+  participantName: string;
+  note?: string;
+}): string {
+  const reason = args.note
+    ? `<div style="background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:16px;padding:16px 20px;margin:18px 0;font-size:13.5px;line-height:1.6;color:#3a3a3a;"><strong style="color:#0f0f0f;">Note from the team:</strong> ${esc(args.note)}</div>`
+    : "";
+  const content = `
+    <div style="background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:24px;padding:36px 28px;box-shadow:0 12px 40px rgba(15,15,15,0.06);">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.22em;color:#b3261e;text-transform:uppercase;margin-bottom:8px;">
+        Registration update
+      </div>
+      <h1 style="font-size:26px;line-height:1.1;margin:0 0 14px;font-weight:800;text-transform:uppercase;letter-spacing:-0.02em;">
+        Hi ${esc(args.parentName)}.
+      </h1>
+      <p style="font-size:15px;line-height:1.65;color:#3a3a3a;margin:0 0 6px;">
+        We're sorry, but we're unable to confirm ${esc(args.participantName)}'s place at the IMMERSIA Summer Tech Boot Camp. If a payment was made, our team will be in touch about a refund.
+      </p>
+      ${reason}
+      <p style="font-size:13.5px;line-height:1.6;color:#777;margin:14px 0 0;">
+        If you think this is a mistake, just reply to this email and we'll take another look.
+      </p>
+    </div>
+  `;
+  return shell(content);
+}
+
+/** Sent when an admin adds a teacher, with their first login link. */
+export function teacherWelcomeHtml(args: { name: string; loginUrl: string }): string {
+  const content = `
+    <div style="background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:24px;padding:36px 28px;box-shadow:0 12px 40px rgba(15,15,15,0.06);">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.22em;color:#0e92a0;text-transform:uppercase;margin-bottom:8px;">
+        You're on the IMMERSIA team
+      </div>
+      <h1 style="font-size:26px;line-height:1.1;margin:0 0 14px;font-weight:800;text-transform:uppercase;letter-spacing:-0.02em;">
+        Welcome, ${esc(args.name)}.
+      </h1>
+      <p style="font-size:15px;line-height:1.65;color:#3a3a3a;margin:0 0 22px;">
+        You've been added as a facilitator. From your portal you can see your roster, mark daily attendance, and view each camper's safety details. Sign in with the link below, it works once and expires in 30 minutes.
+      </p>
+      <div style="text-align:center;margin:8px 0 18px;">
+        <a href="${args.loginUrl}" style="display:inline-block;background:#0f0f0f;color:#fff;text-decoration:none;font-weight:700;font-size:14px;padding:13px 30px;border-radius:999px;letter-spacing:0.04em;">
+          Open my portal →
+        </a>
+      </div>
+      <p style="font-size:12px;line-height:1.55;color:#999;margin:0;">
+        Next time, just go to <a href="${APP_URL}/teacher/login" style="color:#0e92a0;text-decoration:none;">${APP_URL}/teacher/login</a> and request a fresh link.
+      </p>
     </div>
   `;
   return shell(content);
@@ -163,14 +277,14 @@ export function adminAlertHtml(args: {
         New paid registration
       </div>
       <h2 style="font-size:24px;line-height:1.1;margin:0 0 12px;font-weight:800;text-transform:uppercase;letter-spacing:-0.01em;">
-        ${args.participantName}
+        ${esc(args.participantName)}
       </h2>
       <div style="font-family:'Orbitron','Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:#0e92a0;margin-bottom:18px;">
-        ${args.registrationId}
+        ${esc(args.registrationId)}
       </div>
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:14px;">
-        <tr><td style="padding:5px 0;color:#777;">Parent</td><td style="text-align:right;font-weight:600;">${args.parentName}</td></tr>
-        <tr><td style="padding:5px 0;color:#777;">Phone</td><td style="text-align:right;font-weight:600;"><a href="tel:${args.parentPhone}" style="color:#0f0f0f;text-decoration:none;">${args.parentPhone}</a></td></tr>
+        <tr><td style="padding:5px 0;color:#777;">Parent</td><td style="text-align:right;font-weight:600;">${esc(args.parentName)}</td></tr>
+        <tr><td style="padding:5px 0;color:#777;">Phone</td><td style="text-align:right;font-weight:600;"><a href="tel:${esc(args.parentPhone)}" style="color:#0f0f0f;text-decoration:none;">${esc(args.parentPhone)}</a></td></tr>
         <tr><td style="padding:5px 0;color:#777;">Amount</td><td style="text-align:right;font-weight:700;font-family:'Orbitron','Space Grotesk',sans-serif;">${fmtNaira(args.totalKobo)}</td></tr>
       </table>
       <div style="margin-top:24px;">
@@ -190,10 +304,10 @@ export function waitlistHtml(args: { parentName: string; participantName: string
         You're on the waitlist
       </div>
       <h1 style="font-size:28px;line-height:1.05;margin:0 0 14px;font-weight:800;text-transform:uppercase;letter-spacing:-0.02em;">
-        Hi ${args.parentName}.
+        Hi ${esc(args.parentName)}.
       </h1>
       <p style="font-size:15px;line-height:1.65;color:#3a3a3a;margin:0 0 18px;">
-        ${args.participantName} is officially on the IMMERSIA waitlist. The 2026 cohort is currently full at 50 paid slots, but we open spots when paid registrations cancel within 7 days of camp start.
+        ${esc(args.participantName)} is officially on the IMMERSIA waitlist. The 2026 cohort is currently full at 50 paid slots, but we open spots when paid registrations cancel within 7 days of camp start.
       </p>
       <div style="background:#1f6f87;color:#fff;border-radius:16px;padding:18px 22px;margin:18px 0;">
         <div style="font-size:10px;font-weight:700;letter-spacing:0.22em;color:rgba(255,255,255,0.8);text-transform:uppercase;margin-bottom:4px;">

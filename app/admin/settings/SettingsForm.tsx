@@ -58,6 +58,12 @@ export default function SettingsForm({ initial }: Props) {
               onChange={(e) => set(SETTING_KEYS.LAPTOP_RENTAL_PRICE, Number(e.target.value))}
               onBlur={() => save(SETTING_KEYS.LAPTOP_RENTAL_PRICE, vals[SETTING_KEYS.LAPTOP_RENTAL_PRICE])} />
           </Field>
+          <Field label="Robotics elective (kobo)">
+            <input type="number" className="input"
+              value={vals[SETTING_KEYS.ROBOTICS_ELECTIVE_PRICE]}
+              onChange={(e) => set(SETTING_KEYS.ROBOTICS_ELECTIVE_PRICE, Number(e.target.value))}
+              onBlur={() => save(SETTING_KEYS.ROBOTICS_ELECTIVE_PRICE, vals[SETTING_KEYS.ROBOTICS_ELECTIVE_PRICE])} />
+          </Field>
         </div>
         <p className="text-[11.5px] text-neutral-500 mt-2">Prices are stored in kobo. ₦1 = 100 kobo. Currently ₦{(Number(vals[SETTING_KEYS.EARLY_BIRD_PRICE])/100).toLocaleString("en-NG")} early / ₦{(Number(vals[SETTING_KEYS.REGULAR_PRICE])/100).toLocaleString("en-NG")} regular.</p>
       </Section>

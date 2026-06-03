@@ -37,10 +37,12 @@ export interface IRegistration {
   medicalNotes?: string;
   courses: string[];
   laptopRental: boolean;
+  roboticsElective: boolean;
   pricing: {
     tier: PricingTier;
     bootCampFee: number;
     laptopRentalFee: number;
+    roboticsFee: number;
     total: number;
   };
   paymentStatus: PaymentStatus;
@@ -91,10 +93,12 @@ const RegistrationSchema = new Schema<IRegistration>(
     medicalNotes: { type: String, trim: true },
     courses: { type: [String], required: true },
     laptopRental: { type: Boolean, default: false },
+    roboticsElective: { type: Boolean, default: false },
     pricing: {
       tier: { type: String, enum: ["early_bird", "regular"], required: true },
       bootCampFee: { type: Number, required: true },
       laptopRentalFee: { type: Number, required: true, default: 0 },
+      roboticsFee: { type: Number, required: true, default: 0 },
       total: { type: Number, required: true },
     },
     paymentStatus: {

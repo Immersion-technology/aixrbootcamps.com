@@ -1,12 +1,13 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
+import { JWT_SECRET as SECRET } from "@/lib/jwt-secret";
 
-const SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET ?? "fallback-do-not-use-in-prod-please-change"
-);
 const COOKIE_NAME = "immersia_admin";
 const COOKIE_MAX_AGE = 60 * 60 * 12; // 12 hours
+// Audience-scope the admin token so a parent/teacher JWT (signed with the same
+// JWT_SECRET) can NOT be replayed in the admin cookie to escalate privilege.
+const AUDIENCE = "admin";
 
 export interface AdminPayload {
   sub: string;
@@ -25,6 +26,7 @@ export async function verifyPassword(plain: string, hash: string): Promise<boole
 export async function signAdminToken(payload: AdminPayload): Promise<string> {
   return new SignJWT({ ...payload })
     .setProtectedHeader({ alg: "HS256" })
+    .setAudience(AUDIENCE)
     .setIssuedAt()
     .setExpirationTime(`${COOKIE_MAX_AGE}s`)
     .sign(SECRET);
@@ -32,7 +34,7 @@ export async function signAdminToken(payload: AdminPayload): Promise<string> {
 
 export async function verifyAdminToken(token: string): Promise<AdminPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, SECRET);
+    const { payload } = await jwtVerify(token, SECRET, { audience: AUDIENCE });
     return payload as unknown as AdminPayload;
   } catch {
     return null;

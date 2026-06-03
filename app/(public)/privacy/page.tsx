@@ -24,7 +24,7 @@ export default function PrivacyPage() {
         <div className="space-y-10 text-[14.5px] leading-relaxed text-ink/90">
           <Section title="1. Who we are">
             <p>
-              IMMERSIA (&ldquo;we&rdquo;, &ldquo;us&rdquo;) operates the AI &amp; XR Summer Bootcamp, a summer programme for kids aged 10–17 split into two back-to-back two-week cohorts and based in Lagos, Nigeria. This policy applies to everything on this site and to information you give us during registration.
+              IMMERSIA (&ldquo;we&rdquo;, &ldquo;us&rdquo;) operates the AI &amp; XR Summer Bootcamp, a summer programme for kids aged 10–17 split into three back-to-back two-week cohorts and based in Lagos, Nigeria. This policy applies to everything on this site and to information you give us during registration.
             </p>
           </Section>
 

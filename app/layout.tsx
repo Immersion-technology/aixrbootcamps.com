@@ -1,7 +1,25 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Space_Grotesk, Orbitron } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
+
+// Space Grotesk: the body + display workhorse (font-body / font-display).
+// Self-hosted via next/font so there's no render-blocking request to Google.
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-body",
+  display: "swap",
+});
+
+// Orbitron: futuristic display used for outlined-pill / sci-fi headings (font-accent).
+const orbitron = Orbitron({
+  subsets: ["latin"],
+  weight: ["500", "700", "800", "900"],
+  variable: "--font-accent",
+  display: "swap",
+});
 
 // Spicy Sale: friendly bubble face used everywhere `font-bubble` shows up
 // (stickers, info cards, course titles, section headlines). 100% free for
@@ -28,15 +46,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${spicySale.variable} ${superBeatpop.variable}`}>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@500;700;800;900&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html
+      lang="en"
+      className={`${spaceGrotesk.variable} ${orbitron.variable} ${spicySale.variable} ${superBeatpop.variable}`}
+    >
       <body className="bg-paper text-ink font-body antialiased">
         <SmoothScroll />
         {children}

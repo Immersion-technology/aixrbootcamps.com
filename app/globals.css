@@ -270,7 +270,7 @@ img { max-width: 100%; display: block; }
   border-radius: 999px;
   color: transparent;
   -webkit-text-stroke: 2px #0f0f0f;
-  font-family: "Orbitron", "Space Grotesk", sans-serif;
+  font-family: var(--font-accent), var(--font-body), sans-serif;
   font-weight: 800;
   letter-spacing: .02em;
 }

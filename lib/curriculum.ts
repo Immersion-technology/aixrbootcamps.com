@@ -40,6 +40,10 @@ export type CurriculumItem = {
   name: string;
   type: "class" | "active-break";
   isCompulsory?: boolean;
+  /** Opt-in paid elective: not part of the base fee; adds `electiveFeeKobo` at checkout. */
+  isElective?: boolean;
+  /** Additional fee (in kobo) charged when a camper opts into this elective. */
+  electiveFeeKobo?: number;
   facilitators: string[];
   hoursPerWeek: number;
   sessionsPerWeek: number;
@@ -166,6 +170,8 @@ export const CURRICULUM: CurriculumItem[] = [
     slug: "robotics",
     name: "Robotics & Embedded Systems",
     type: "class",
+    isElective: true,
+    electiveFeeKobo: 2500000, // +₦25,000 — covers the Arduino board, servos/motors and consumables the camper keeps
     facilitators: [],
     hoursPerWeek: 4,
     sessionsPerWeek: 2,
@@ -175,25 +181,26 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     icon: "RoboticIcon",
     tone: "orange",
-    shortDesc: "Wire microcontrollers. Write firmware. Take home a moving robot you actually built.",
-    tagline: "Make atoms dance. Turn code into motors, sensors and a robot that moves.",
+    shortDesc: "Blink your first LED on day one, then build sensors, sound, motors and a full alarm system — and design your own gadget. Keep the kit.",
+    tagline: "Turn code into the real world: a blinking light on day one, your own working electronic gadget by the end.",
     whatYoullLearn: [
-      "How electricity actually works (the lite version)",
-      "Soldering basics under supervision",
-      "Arduino + ESP32 fundamentals from scratch",
-      "Working with sensors: ultrasonic, IR, accelerometer",
-      "Driving motors and servos cleanly",
-      "Writing firmware in C++ (just enough)",
-      "Debugging when hardware lies to you",
+      "Set up an Arduino from scratch — IDE, board, libraries and your first upload",
+      "Read a circuit diagram and wire it on a breadboard with confidence",
+      "Digital vs analog: buttons, a light dimmer, light sensors and the map() function",
+      "Make things move and make sound: piezo buzzers, servo motors and a joystick",
+      "Drive an LCD display and build a complete motion-sensing security system",
+      "Write firmware in C++ — variables, loops, conditionals and libraries (just enough)",
+      "Debug with the serial monitor and a multimeter when the hardware lies to you",
     ],
     outcomes: [
-      "A working robot you built end-to-end and take home",
-      "The ability to read circuit diagrams without panicking",
-      "Confidence to take electronics apart and put them back together",
+      "A capstone gadget you designed and built yourself — a smart doorbell, weather station, plant-waterer alert or your own idea",
+      "A portfolio of 6–8 working electronics projects you can demo and explain",
+      "Your own Arduino kit — board, sensors, servos and components — to keep and keep building with at home",
+      "The confidence to read a circuit diagram and take electronics apart and back together",
     ],
-    tools: ["Arduino IDE", "Soldering iron (supervised)", "ESP32 dev kits", "Breadboards", "Multimeters", "Servos + sensors"],
+    tools: ["Arduino Uno R3", "Arduino IDE", "Breadboards + jumper wires", "Servos, sensors & I²C LCD", "Multimeter", "Soldering iron (supervised)"],
     sampleProject:
-      "Build a line-following or obstacle-avoiding robot from a bare microcontroller up. Race it against your cohort on Demo Day.",
+      "Pitch your own gadget — a smart doorbell, a weather station, a plant-waterer alert — then build it, debug it with the serial monitor, and demo it live to parents on showcase day.",
   },
   {
     slug: "ai-music",
@@ -239,25 +246,26 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     icon: "VrGlassesIcon",
     tone: "pink",
-    shortDesc: "Sculpt characters in Blender. Step inside your own VR world by week three.",
-    tagline: "Build worlds nobody else has been to, then step inside them.",
+    shortDesc: "Sculpt an original character in Blender, build the world it lives in, then step inside that world in VR — and walk your guests through it.",
+    tagline: "Build a world nobody has ever been to, wear a character you made, and walk your friends through it in VR.",
     whatYoullLearn: [
-      "Blender basics: modeling, sculpting, texturing",
-      "Character rigging the lite way (Mixamo + custom)",
-      "Importing your assets into a Unity scene",
-      "Composing scenes for VR: scale, lighting, atmosphere",
-      "Hand-tracking interactions in your scene",
-      "Exporting a build that runs on the Meta Quest 3",
-      "Sharing your scene with friends + family",
+      "Blender from zero: navigate the viewport and model in object + edit mode",
+      "Sculpt and detail an original character from simple shapes",
+      "Materials, lighting and camera framing that render a scene with real mood",
+      "Use AI tools to spark concept art, textures and ideas for your character and world",
+      "Rig your character so it can walk, wave and animate",
+      "Build the world: terrain, sky, props and atmosphere, with a cinematic fly-through",
+      "Assemble it all into a walkable VR space in Frame VR and add interactivity",
     ],
     outcomes: [
-      "An original 3D character you sculpted from scratch",
-      "A small VR scene you designed and built",
-      "The project files to keep iterating at home",
+      "An original 3D character you sculpted, coloured and rigged from scratch",
+      "A complete VR world you designed and built — that guests can walk through in a headset",
+      "A portfolio: rendered scenes, a fly-through film and a published VR experience",
+      "All your project files to keep creating at home",
     ],
-    tools: ["Blender", "Unity", "Meta Quest 3 (provided)", "Mixamo", "Substance Painter (lite)"],
+    tools: ["Blender 4.x", "Mixamo", "Frame VR", "AI concept + texture tools", "Free asset libraries (Quaternius · Kenney · Poly Pizza)", "Meta Quest (provided)"],
     sampleProject:
-      "Design a character. Place them inside your own VR scene. Walk into that scene on Demo Day with the headset on, your guests step in too.",
+      "Design and sculpt a character, rig it, then build the world it lives in. On showcase day, guests put on a headset and walk through your world while you give them the tour.",
   },
 
   // ============================ ACTIVE BREAKS ============================

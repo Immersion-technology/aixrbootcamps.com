@@ -12,6 +12,7 @@ interface Pricing {
   earlyBirdPrice: number;
   regularPrice: number;
   laptopPrice: number;
+  roboticsPrice: number;
 }
 
 interface Props {
@@ -21,9 +22,11 @@ interface Props {
 
 const STEPS = ["Camper", "Guardian", "Programme", "Pay"] as const;
 
-// Every camper attends every class. No electives.
+// Every camper attends every core class. Electives (e.g. Robotics) are opt-in,
+// carry their own fee, and are offered separately below.
 const CLASSES: CurriculumItem[] = CURRICULUM.filter((c) => c.type === "class");
-const ALWAYS_ATTENDED: CurriculumItem[] = CLASSES;
+const ALWAYS_ATTENDED: CurriculumItem[] = CLASSES.filter((c) => !c.isElective);
+const ELECTIVES: CurriculumItem[] = CLASSES.filter((c) => c.isElective);
 
 export default function RegistrationForm({ pricing }: Props) {
   const [step, setStep] = useState(0);
@@ -46,6 +49,7 @@ export default function RegistrationForm({ pricing }: Props) {
       emergencyContact: { fullName: "", phone: "", relationship: "" },
       medicalNotes: "",
       laptopRental: false,
+      roboticsElective: false,
       agreedToTerms: false as unknown as true,
     },
   });
@@ -70,7 +74,8 @@ export default function RegistrationForm({ pricing }: Props) {
 
   const bootCampFee = pricing.isEarlyBird ? pricing.earlyBirdPrice : pricing.regularPrice;
   const laptopFee = values.laptopRental ? pricing.laptopPrice : 0;
-  const total = bootCampFee + laptopFee;
+  const roboticsFee = values.roboticsElective ? pricing.roboticsPrice : 0;
+  const total = bootCampFee + laptopFee + roboticsFee;
   const naira = (k: number) => `₦${(k / 100).toLocaleString("en-NG")}`;
 
   async function onSubmit(data: RegistrationCreateInput) {
@@ -258,6 +263,19 @@ export default function RegistrationForm({ pricing }: Props) {
             </p>
           </div>
 
+          {/* Electives — opt-in paid courses, not part of the base fee */}
+          {ELECTIVES.map((c) => (
+            <label key={c.slug} className="ticket-card frosted-glass rounded-2xl p-4 flex items-start gap-3 cursor-pointer border-2 border-aqua-brand/30">
+              <input type="checkbox" {...register("roboticsElective")} className="accent-aqua-brand mt-1" />
+              <div className="flex-1">
+                <div className="text-[10px] font-bold tracking-[.18em] text-aqua-deep mb-0.5">✦ OPTIONAL ELECTIVE</div>
+                <div className="text-[14px] font-semibold text-ink">{c.name}</div>
+                <div className="text-[12px] text-neutral-600 mt-0.5 leading-snug">{c.shortDesc}</div>
+              </div>
+              <div className="font-accent font-extrabold text-[18px] text-ink shrink-0">+{naira(c.electiveFeeKobo ?? 0)}</div>
+            </label>
+          ))}
+
           {/* Laptop rental, ticket-style highlight */}
           <label className="ticket-card frosted-glass-dark rounded-2xl p-4 flex items-center gap-3 cursor-pointer">
             <input type="checkbox" {...register("laptopRental")} className="accent-aqua-brand mt-0.5" />
@@ -289,9 +307,10 @@ export default function RegistrationForm({ pricing }: Props) {
           ]} onEdit={() => setStep(1)} />
 
           <ReviewCard title="Programme" data={[
-            ["Courses", `${ALWAYS_ATTENDED.length} (all attended)`],
+            ["Core courses", `${ALWAYS_ATTENDED.length} (all attended)`],
             ["Active breaks", "Pro Gaming · Table Tennis · Go Karting"],
-            ["Laptop rental", values.laptopRental ? "Yes (+₦20,000)" : "No"],
+            ["Robotics elective", values.roboticsElective ? `Yes (+${naira(pricing.roboticsPrice)})` : "No"],
+            ["Laptop rental", values.laptopRental ? `Yes (+${naira(pricing.laptopPrice)})` : "No"],
           ]} onEdit={() => setStep(2)} />
 
           {/* Total + pay */}
@@ -303,6 +322,12 @@ export default function RegistrationForm({ pricing }: Props) {
                   <td className="py-1.5">Boot camp ({pricing.isEarlyBird ? "early bird" : "regular"})</td>
                   <td className="text-right py-1.5 font-mono">{naira(bootCampFee)}</td>
                 </tr>
+                {values.roboticsElective && (
+                  <tr>
+                    <td className="py-1.5">Robotics elective</td>
+                    <td className="text-right py-1.5 font-mono">{naira(roboticsFee)}</td>
+                  </tr>
+                )}
                 {values.laptopRental && (
                   <tr>
                     <td className="py-1.5">Laptop rental</td>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 type Sticker = "cyan" | "green" | "ink";
 
@@ -103,10 +104,13 @@ function ChannelCard({
       style={{ "--i": index, "--tilt": `${index % 2 === 0 ? -2 : 2}deg` } as React.CSSProperties}
       aria-label={`${channel.label}: ${channel.value}`}
     >
-      <img
+      <Image
         src={channel.glass}
         alt=""
         aria-hidden
+        width={64}
+        height={64}
+        sizes="64px"
         className="absolute top-2 right-2 w-16 h-16 object-contain opacity-90 group-hover:scale-110 transition"
       />
       <div className={`text-[10.5px] font-bold tracking-[.22em] uppercase mb-3 ${isDark ? "text-white/70" : "text-ink/70"}`}>

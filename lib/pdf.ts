@@ -7,8 +7,10 @@ interface ReceiptArgs {
   participantName: string;
   courses: string[];
   laptopRental: boolean;
+  roboticsElective: boolean;
   bootCampFeeKobo: number;
   laptopRentalKobo: number;
+  roboticsFeeKobo: number;
   totalKobo: number;
   paidAt: Date;
 }
@@ -37,10 +39,12 @@ export function buildReceiptPdf(args: ReceiptArgs): Promise<Buffer> {
     args.courses.forEach((c) => doc.text("  - " + c));
     doc.moveDown(0.5);
 
+    doc.text(`Robotics elective: ${args.roboticsElective ? "Yes" : "No"}`);
     doc.text(`Laptop rental: ${args.laptopRental ? "Yes" : "No"}`);
     doc.moveDown(1);
 
     doc.text(`Boot camp fee:    ${formatNaira(args.bootCampFeeKobo)}`);
+    if (args.roboticsElective) doc.text(`Robotics elective: ${formatNaira(args.roboticsFeeKobo)}`);
     if (args.laptopRental) doc.text(`Laptop rental:    ${formatNaira(args.laptopRentalKobo)}`);
     doc.moveDown(0.3);
     doc.fontSize(14).text(`TOTAL PAID:       ${formatNaira(args.totalKobo)}`, { underline: true });

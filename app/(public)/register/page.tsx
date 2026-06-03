@@ -13,6 +13,7 @@ const FALLBACK = {
   earlyBirdPrice: 15000000,  // ₦150,000, first 10
   regularPrice: 20000000,    // ₦200,000
   laptopPrice: 2000000,      // +₦20,000
+  roboticsPrice: 2500000,    // +₦25,000 robotics elective
 };
 
 async function getRegisterData() {
@@ -33,6 +34,7 @@ async function getRegisterData() {
       earlyBirdPrice: FALLBACK.earlyBirdPrice,
       regularPrice: FALLBACK.regularPrice,
       laptopPrice: FALLBACK.laptopPrice,
+      roboticsPrice: FALLBACK.roboticsPrice,
     };
   } catch {
     return FALLBACK;
@@ -40,7 +42,7 @@ async function getRegisterData() {
 }
 
 export default async function RegisterPage() {
-  const { capacity, paid, earlyBirdCutoff, earlyBirdPrice, regularPrice, laptopPrice } =
+  const { capacity, paid, earlyBirdCutoff, earlyBirdPrice, regularPrice, laptopPrice, roboticsPrice } =
     await getRegisterData();
 
   if (paid >= capacity) {
@@ -75,6 +77,7 @@ export default async function RegisterPage() {
             earlyBirdPrice,
             regularPrice,
             laptopPrice,
+            roboticsPrice,
           }}
           slotsLeft={slotsLeft}
         />

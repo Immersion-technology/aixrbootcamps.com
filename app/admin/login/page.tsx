@@ -1,3 +1,4 @@
+import Image from "next/image";
 import LoginForm from "./LoginForm";
 
 export default function LoginPage() {
@@ -5,7 +6,7 @@ export default function LoginPage() {
     <div className="min-h-screen w-full flex items-center justify-center bg-cream dot-grid px-5 py-10">
       <div className="w-full max-w-[420px] frosted-glass-dark rounded-3xl p-8 sm:p-10 anim-fade-up">
         <div className="flex justify-center mb-7">
-          <img src="/imm.png" alt="IMMERSIA" className="h-12 w-auto" />
+          <Image src="/imm.png" alt="IMMERSIA" width={3151} height={1036} priority sizes="220px" className="h-12 w-auto" />
         </div>
 
         <div className="text-center mb-7">

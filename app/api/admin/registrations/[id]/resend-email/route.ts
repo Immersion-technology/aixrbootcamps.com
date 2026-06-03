@@ -26,8 +26,10 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
     participantName: reg.participant.fullName,
     courses: reg.courses,
     laptopRental: reg.laptopRental,
+    roboticsElective: reg.roboticsElective,
     bootCampFeeKobo: reg.pricing.bootCampFee,
     laptopRentalKobo: reg.pricing.laptopRentalFee,
+    roboticsFeeKobo: reg.pricing.roboticsFee,
     totalKobo: reg.pricing.total,
     paidAt: reg.paidAt ?? new Date(),
   });
@@ -41,6 +43,7 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
       registrationId: reg.registrationId,
       courses: reg.courses,
       laptopRental: reg.laptopRental,
+      roboticsElective: reg.roboticsElective,
       totalKobo: reg.pricing.total,
       campStart,
     }),

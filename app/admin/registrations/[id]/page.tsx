@@ -79,14 +79,16 @@ export default async function RegistrationDetail({ params }: { params: { id: str
               </li>
             ))}
           </ul>
-          <div className="mt-4 pt-3 border-t border-black/5 text-[13px]">
-            Laptop rental: <strong>{reg.laptopRental ? "Yes" : "No"}</strong>
+          <div className="mt-4 pt-3 border-t border-black/5 text-[13px] space-y-1">
+            <div>Robotics elective: <strong>{reg.roboticsElective ? "Yes" : "No"}</strong></div>
+            <div>Laptop rental: <strong>{reg.laptopRental ? "Yes" : "No"}</strong></div>
           </div>
         </Card>
 
         <Card title="Pricing" tone="violet">
           <Row k="Tier" v={reg.pricing.tier} />
           <Row k="Boot camp fee" v={formatNaira(reg.pricing.bootCampFee)} />
+          {reg.pricing.roboticsFee > 0 && <Row k="Robotics elective" v={formatNaira(reg.pricing.roboticsFee)} />}
           <Row k="Laptop rental" v={formatNaira(reg.pricing.laptopRentalFee)} />
           <Row k="Total" v={<strong>{formatNaira(reg.pricing.total)}</strong>} />
           <Row k="Payment ref" v={<span className="font-mono text-[11px] break-all">{reg.paymentReference}</span>} />
