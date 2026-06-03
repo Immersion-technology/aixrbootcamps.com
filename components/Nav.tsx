@@ -88,12 +88,17 @@ export default function Nav() {
               <li><Link href="/contact"    className="hover:text-ink transition">Contact</Link></li>
             </ul>
 
-            <Link
-              href="/register"
-              className="justify-self-end inline-flex items-center gap-1.5 bg-grass-brand text-ink rounded-full px-5 py-2 text-[12.5px] font-bold tracking-wide hover:bg-grass-deep hover:text-white transition shadow-[0_8px_20px_-8px_rgba(34,197,94,.5)]"
-            >
-              Reserve <span aria-hidden>→</span>
-            </Link>
+            <div className="justify-self-end flex items-center gap-4 lg:gap-5">
+              <Link href="/login" className="text-[14px] text-neutral-700 font-medium hover:text-ink transition">
+                Log in
+              </Link>
+              <Link
+                href="/register"
+                className="inline-flex items-center gap-1.5 bg-grass-brand text-ink rounded-full px-5 py-2 text-[12.5px] font-bold tracking-wide hover:bg-grass-deep hover:text-white transition shadow-[0_8px_20px_-8px_rgba(34,197,94,.5)]"
+              >
+                Reserve <span aria-hidden>→</span>
+              </Link>
+            </div>
           </nav>
         </div>
       </header>
@@ -209,6 +214,13 @@ export default function Nav() {
             >
               RESERVE A SLOT
               <span aria-hidden>→</span>
+            </Link>
+            <Link
+              href="/login"
+              onClick={() => setOpen(false)}
+              className="block text-center text-[14px] font-semibold text-white/80 hover:text-white underline underline-offset-4 decoration-2 mt-4"
+            >
+              Log in
             </Link>
             <p className="text-center text-[11px] text-white/55 tracking-[.18em] uppercase font-bold mt-4">
               27 July – 21 August 2026
