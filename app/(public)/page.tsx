@@ -130,7 +130,7 @@ export default async function Landing() {
                   <ul className="text-[10px] sm:text-[11px] text-neutral-800 space-y-0.5 leading-snug whitespace-nowrap">
                     <li className="flex items-start gap-1.5"><span className="text-aqua-deep">•</span> 6 courses</li>
                     <li className="flex items-start gap-1.5"><span className="text-aqua-deep">•</span> Daily Mon – Fri</li>
-                    <li className="flex items-start gap-1.5"><span className="text-aqua-deep">•</span> 10 AM – 2:30 PM</li>
+                    <li className="flex items-start gap-1.5"><span className="text-aqua-deep">•</span> 9 AM – 1:30 PM</li>
                   </ul>
                 </div>
 
@@ -220,13 +220,13 @@ export default async function Landing() {
         <div className="max-w-[1180px] mx-auto px-5 sm:px-7">
           <div className="mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4 text-center md:text-left">
             <div>
-              <span className="text-[11px] font-bold tracking-[.22em] text-aqua-deep">MON – FRI · 10:00 AM – 2:30 PM · AGES 10–17</span>
+              <span className="text-[11px] font-bold tracking-[.22em] text-aqua-deep">MON – FRI · 9:00 AM – 1:30 PM · AGES 10–17</span>
               <h2 className="font-bubble text-[clamp(30px,4.2vw,52px)] leading-[1.02] tracking-tight mt-3 max-w-[640px] text-ink">
                 The actual week<br />your kid will live.
               </h2>
             </div>
             <p className="text-[13px] text-neutral-600 max-w-[340px] mx-auto md:mx-0">
-              Two 2-hour deep-work blocks per day, split by a structured 30-minute side attraction.
+              Two 2-hour deep-work blocks back-to-back, then a 30-minute break activity students choose with tokens.
             </p>
           </div>
 
@@ -241,22 +241,22 @@ export default async function Landing() {
                 <DayHeader>THU</DayHeader>
                 <DayHeader>FRI</DayHeader>
 
-                <TimeLabel main="10:00 – 12:00" hint="2 hrs" />
+                <TimeLabel main="9:00 – 11:00" hint="2 hrs" />
                 <Cell i={0} tone="cyan"      Icon={CodeIcon}        title="Vibe Coding & AI"   sub="" />
                 <Cell i={1} tone="pink"      Icon={VrGlassesIcon}   title="3D & VR World"      sub="" />
                 <Cell i={2} tone="ink"       Icon={CameraVideoIcon} title="Content Creation"   sub="External" />
                 <Cell i={3} tone="green"     Icon={Rocket01Icon}    title="Entrepreneurship ★" sub="" />
-                <Cell i={4} tone="orange"    Icon={RoboticIcon}     title="Robotics & Embedded" sub="" />
+                <Cell i={4} tone="orange"    Icon={RoboticIcon}     title="Robotics / Music"   sub="Paired elective" />
 
-                <TimeLabel main="12:00 – 12:30" hint="30 min break" />
-                <BreakRow i={5} />
+                <TimeLabel main="11:00 – 13:00" hint="2 hrs" />
+                <Cell i={5}  tone="green"    Icon={Rocket01Icon}    title="Entrepreneurship ★" sub="" />
+                <Cell i={6}  tone="orange"   Icon={RoboticIcon}     title="Robotics / Music"   sub="Paired elective" />
+                <Cell i={7}  tone="cyan"     Icon={CodeIcon}        title="Vibe Coding & AI"   sub="" />
+                <Cell i={8}  tone="pink"     Icon={VrGlassesIcon}   title="3D & VR World"      sub="" />
+                <Cell i={9}  tone="ink"      Icon={CameraVideoIcon} title="Content Creation"   sub="External" />
 
-                <TimeLabel main="12:30 – 14:30" hint="2 hrs" />
-                <Cell i={6}  tone="green"    Icon={Rocket01Icon}    title="Entrepreneurship ★" sub="" />
-                <Cell i={7} tone="orange"    Icon={RoboticIcon}     title="Robotics & Embedded" sub="" />
-                <Cell i={8}  tone="cyan"     Icon={CodeIcon}        title="Vibe Coding & AI"   sub="" />
-                <Cell i={9}  tone="pink"     Icon={VrGlassesIcon}   title="3D & VR World"      sub="" />
-                <Cell i={10} tone="mint"     Icon={MusicNote01Icon} title="AI Music"           sub="" />
+                <TimeLabel main="13:00 – 13:30" hint="30 min break" />
+                <BreakRow i={10} />
               </div>
             </div>
           </div>
@@ -266,29 +266,29 @@ export default async function Landing() {
               class tone for vertical scannability. */}
           <div className="md:hidden stagger-group space-y-4">
             <DayCard i={0} day="MON" rows={[
-              { time: "10:00 – 12:00", title: "Vibe Coding & AI",    sub: "",     tone: "cyan"  },
-              { time: "12:00 – 12:30", title: "Side Attraction",     sub: "Table Tennis · Go Karting · Pro Gaming", tone: "gray",  isBreak: true },
-              { time: "12:30 – 14:30", title: "Entrepreneurship ★",  sub: "",       tone: "green" },
+              { time: "9:00 – 11:00",   title: "Vibe Coding & AI",          sub: "",                  tone: "cyan"  },
+              { time: "11:00 – 13:00",  title: "Entrepreneurship ★",        sub: "",                  tone: "green" },
+              { time: "13:00 – 13:30",  title: "Break Activity",            sub: "Table Tennis · Go Karting · Pro Gaming", tone: "gray", isBreak: true },
             ]} />
             <DayCard i={1} day="TUE" rows={[
-              { time: "10:00 – 12:00", title: "3D & VR World",        sub: "",       tone: "pink"   },
-              { time: "12:00 – 12:30", title: "Side Attraction",      sub: "Table Tennis · Go Karting · Pro Gaming", tone: "gray", isBreak: true },
-              { time: "12:30 – 14:30", title: "Robotics & Embedded", sub: "", tone: "orange" },
+              { time: "9:00 – 11:00",   title: "3D & VR World",             sub: "",                  tone: "pink"  },
+              { time: "11:00 – 13:00",  title: "Robotics / Music",          sub: "Paired elective",   tone: "orange" },
+              { time: "13:00 – 13:30",  title: "Break Activity",            sub: "Table Tennis · Go Karting · Pro Gaming", tone: "gray", isBreak: true },
             ]} />
             <DayCard i={2} day="WED" rows={[
-              { time: "10:00 – 12:00", title: "Content Creation",     sub: "",     tone: "ink"   },
-              { time: "12:00 – 12:30", title: "Side Attraction",      sub: "Table Tennis · Go Karting · Pro Gaming", tone: "gray", isBreak: true },
-              { time: "12:30 – 14:30", title: "Vibe Coding & AI",     sub: "",     tone: "cyan"  },
+              { time: "9:00 – 11:00",   title: "Content Creation",          sub: "",                  tone: "ink"   },
+              { time: "11:00 – 13:00",  title: "Vibe Coding & AI",          sub: "",                  tone: "cyan"  },
+              { time: "13:00 – 13:30",  title: "Break Activity",            sub: "Table Tennis · Go Karting · Pro Gaming", tone: "gray", isBreak: true },
             ]} />
             <DayCard i={3} day="THU" rows={[
-              { time: "10:00 – 12:00", title: "Entrepreneurship ★",   sub: "",      tone: "green" },
-              { time: "12:00 – 12:30", title: "Side Attraction",      sub: "Table Tennis · Go Karting · Pro Gaming", tone: "gray", isBreak: true },
-              { time: "12:30 – 14:30", title: "3D & VR World",        sub: "",       tone: "pink"  },
+              { time: "9:00 – 11:00",   title: "Entrepreneurship ★",        sub: "",                  tone: "green" },
+              { time: "11:00 – 13:00",  title: "3D & VR World",             sub: "",                  tone: "pink"  },
+              { time: "13:00 – 13:30",  title: "Break Activity",            sub: "Table Tennis · Go Karting · Pro Gaming", tone: "gray", isBreak: true },
             ]} />
             <DayCard i={4} day="FRI" rows={[
-              { time: "10:00 – 12:00", title: "Robotics & Embedded", sub: "", tone: "orange" },
-              { time: "12:00 – 12:30", title: "Side Attraction",      sub: "Table Tennis · Go Karting · Pro Gaming", tone: "gray", isBreak: true },
-              { time: "12:30 – 14:30", title: "AI Music",             sub: "", tone: "mint" },
+              { time: "9:00 – 11:00",   title: "Robotics / Music",          sub: "Paired elective",   tone: "orange" },
+              { time: "11:00 – 13:00",  title: "Content Creation",          sub: "",                  tone: "ink"   },
+              { time: "13:00 – 13:30",  title: "Break Activity",            sub: "Table Tennis · Go Karting · Pro Gaming", tone: "gray", isBreak: true },
             ]} />
           </div>
 
@@ -296,13 +296,12 @@ export default async function Landing() {
             <LegendItem tone="cyan"   label="Vibe Coding & AI Prompt Engineering" />
             <LegendItem tone="green"  label="Entrepreneurship ★ COMPULSORY" />
             <LegendItem tone="ink"    label="Content Creation" />
-            <LegendItem tone="orange" label="Robotics & Embedded Systems" />
+            <LegendItem tone="orange" label="Robotics / Singing & AI Music · Paired Elective" />
             <LegendItem tone="pink"   label="3D Character & VR World" />
-            <LegendItem tone="mint"   label="AI Music Production" />
-            <LegendItem tone="gray"   label="Side Attraction · Table Tennis · Go Karting · Pro Gaming" />
+            <LegendItem tone="gray"   label="Break Activity · Table Tennis · Go Karting · Pro Gaming · token-based" />
           </div>
           <p className="mt-6 text-[12px] text-neutral-500 leading-relaxed max-w-[820px]">
-            ① Most courses run 2 sessions × 2 hrs = 4 hrs / week; AI Music runs once per week. ② Entrepreneurship is COMPULSORY for every camper (Mon afternoon + Thu morning). ③ All three side attractions (Table Tennis, Go Karting, Pro Gaming) are available every single day. Students freely choose. ④ Tentative and subject to change.
+            ① All 5 classes run 2 sessions × 2 hrs = 4 hrs / week = 8 hrs per cohort. ② Entrepreneurship is COMPULSORY for every camper (Mon late-morning + Thu early-morning). ③ Robotics & Embedded and Singing & AI Music are a paired elective. Pick one track. ④ All three break activities (Table Tennis, Go Karting, Pro Gaming) are available daily 1:00 – 1:30 PM via the in-app token system. ⑤ Tentative and subject to change.
           </p>
         </div>
       </section>
@@ -400,7 +399,7 @@ export default async function Landing() {
               THEY&apos;RE GONE.
             </h2>
             <p className="max-w-[480px] my-6 text-neutral-700 text-[14.5px] leading-relaxed mx-auto md:mx-0">
-              The 2026 cohorts run <strong>27 July – 4 September</strong> as three back-to-back 2-week sessions. Once we hit 50 paid registrations the camp closes. Next AI &amp; XR isn&apos;t until summer 2027. <strong>First 10 lock in {naira(cfg.earlyBirdPrice)}</strong> early-bird; regular price {naira(cfg.regularPrice)}. Both cover the 5 core courses, daily side attractions, snacks, materials and Demo Day — Robotics is an optional +₦25,000 elective.
+              The 2026 cohorts run <strong>27 July – 4 September</strong> as three back-to-back 2-week sessions. Once we hit 50 paid registrations the camp closes. Next AI &amp; XR isn&apos;t until summer 2027. <strong>First 10 lock in {naira(cfg.earlyBirdPrice)}</strong> early-bird; regular price {naira(cfg.regularPrice)}. Both cover the 5 core courses, daily side attractions, materials and Demo Day. Robotics is an optional +₦25,000 elective. Lunch and drinks are not provided. Campers bring their own.
             </p>
             <div className="flex flex-wrap gap-3 items-center justify-center md:justify-start">
               <Link href="/register" className="btn-grass">

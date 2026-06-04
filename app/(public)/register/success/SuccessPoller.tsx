@@ -8,7 +8,7 @@ type PollState = "checking" | "paid" | "pending" | "failed";
 const NEXT_STEPS = [
   { n: "1", t: "Check your email", d: "Confirmation + PDF receipt within 60 seconds. If it doesn't arrive, check spam and ping us." },
   { n: "2", t: "Save the date", d: "27 July – 21 August 2026, Mon–Fri, 10am–2:30pm. We'll WhatsApp the venue + drop-off details two weeks before." },
-  { n: "3", t: "Bring your kid + curiosity", d: "Lunch, t-shirt and all materials are included. Optional laptop rental if you ticked that box." },
+  { n: "3", t: "Bring your kid + curiosity + lunch", d: "T-shirt and all materials are included. Pack lunch, snacks and a water bottle. Optional laptop rental if you ticked that box." },
 ];
 
 export default function SuccessPoller({ reference }: { reference: string }) {

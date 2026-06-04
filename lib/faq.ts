@@ -50,7 +50,7 @@ export const FAQS: FaqItem[] = [
   {
     topic: "Logistics",
     q: "What about lunch?",
-    a: "Snacks and water included. Lunch is bring-your-own; a vetted food vendor is available for daily ordering.",
+    a: "Lunch, snacks and drinks are not provided. Campers bring their own food and water bottle.",
   },
   {
     topic: "Curriculum",

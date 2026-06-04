@@ -13,16 +13,16 @@ const CHANNELS: Array<{
 }> = [
   {
     label: "WhatsApp",
-    value: "+234 800 000 0000",
-    href: "https://wa.me/2348000000000",
+    value: "+234 813 701 3560",
+    href: "https://wa.me/2348137013560",
     note: "Fastest. We reply within 30 minutes during office hours.",
     glass: "/img/glass-orb.png",
     sticker: "green",
   },
   {
     label: "Phone",
-    value: "+234 800 000 0000",
-    href: "tel:+2348000000000",
+    value: "+234 813 701 3560",
+    href: "tel:+2348137013560",
     note: "Office hours: Mon – Sat, 9am – 6pm WAT.",
     glass: "/img/glass-paper-plane.png",
     sticker: "ink",
