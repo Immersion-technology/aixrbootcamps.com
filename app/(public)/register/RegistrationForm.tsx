@@ -256,10 +256,10 @@ export default function RegistrationForm({ pricing }: Props) {
           {/* Active breaks (info only, not pickable) */}
           <div className="frosted-glass-dark rounded-3xl p-6 md:p-7">
             <div className="text-[10.5px] font-bold tracking-[.22em] text-white/70 uppercase mb-3">
-              ☕ Daily active breaks · 30 min · free choice
+              ☕ Daily side attractions · 30 min · one token a day
             </div>
             <p className="text-[13px] text-white/85 leading-relaxed">
-              Pro Gaming, Table Tennis and Go Karting are available every single day from 12:00–12:30. Your camper picks freely each day. All included.
+              Pro Gaming, Table Tennis and Go Karting are available every single day from 1:00–1:30 PM. Your camper picks one with a token each day. All included.
             </p>
           </div>
 

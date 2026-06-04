@@ -34,8 +34,8 @@ export default function TermsPage() {
               <li><strong>Cohort 1:</strong> 27 July – 7 August 2026.</li>
               <li><strong>Cohort 2:</strong> 10 August – 21 August 2026.</li>
               <li><strong>Cohort 3:</strong> 24 August – 4 September 2026.</li>
-              <li>Monday to Friday, <strong>10:00 AM – 2:30 PM</strong>.</li>
-              <li>Demo Day is on the last Friday of each cohort, and attendance for the pitch is part of the programme.</li>
+              <li>Monday to Friday, <strong>9:00 AM – 1:30 PM</strong>.</li>
+              <li>Demo Day is on the Saturday after each cohort ends, and attendance for the pitch is part of the programme.</li>
             </ul>
           </Section>
 
@@ -55,9 +55,7 @@ export default function TermsPage() {
               <li>Payment is processed by <strong>Monnify</strong>. A slot is only held once payment clears.</li>
               <li>The first 10 paid registrations get the <strong>₦150,000 early-bird</strong> price. After that, ₦200,000 regular.</li>
               <li><strong>Instalments:</strong> ₦75,000 deposit on registration holds your slot; balance is due two weeks before your cohort starts.</li>
-              <li><strong>Sibling discount:</strong> 10% off each additional camper from the same family.</li>
-              <li><strong>Refunds:</strong> full refund within the first 3 days after the cohort starts. After that, no refunds.</li>
-              <li>If we cancel the cohort for any reason, every camper gets a full refund within 14 days.</li>
+              <li><strong>Refunds:</strong> none. All payments are final once a slot is confirmed.</li>
             </ul>
           </Section>
 

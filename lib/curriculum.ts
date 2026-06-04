@@ -97,7 +97,7 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     tools: ["Cursor", "ChatGPT", "Claude", "GitHub", "Vercel", "HTML / CSS / JS"],
     sampleProject:
-      "Pick a real problem at your school. Spec it. Build a working web app for it with AI as your pair. Deploy it. Demo it on closing Friday.",
+      "Pick a real problem at your school. Spec it. Build a working web app for it with AI as your pair. Deploy it. Demo it on closing Saturday.",
   },
   {
     slug: "entrepreneurship",
@@ -131,7 +131,7 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     tools: ["Notion", "Figma", "Pitch.com", "Spreadsheets"],
     sampleProject:
-      "Pitch your real business idea on Demo Day (21 August) to a panel of founders, parents and friends. The strongest pitch wins post-camp mentorship.",
+      "Pitch your real business idea on Demo Day — the Saturday after your cohort ends — to a panel of founders, parents and friends. The strongest pitch wins post-camp mentorship.",
   },
   {
     slug: "content-creation",
@@ -285,7 +285,7 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     icon: "GameController01Icon",
     tone: "blue",
-    shortDesc: "Coached competitive gaming on real rigs. Free to join during every active break.",
+    shortDesc: "Coached competitive gaming on real rigs. Daily, one token.",
     tagline: "Train like an e-sports pro: strategy, reaction time, and the business behind the screen.",
     whatYoullLearn: [
       "Pro warm-up routines used by competitive players",
@@ -319,8 +319,8 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     icon: "TableTennisBatIcon",
     tone: "orange",
-    shortDesc: "Sharpen reflexes between morning and afternoon courses. Daily, free choice.",
-    tagline: "The fastest racket sport in the world. A perfect 30-minute reset between deep-tech blocks.",
+    shortDesc: "A 30-minute reset in the afternoon break. Daily, one token.",
+    tagline: "The fastest racket sport in the world. A perfect 30-minute reset in the afternoon break.",
     whatYoullLearn: [
       "Forehand, backhand and the push shot",
       "Spin and serve fundamentals",
@@ -352,8 +352,8 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     icon: "RacingFlagIcon",
     tone: "petrol",
-    shortDesc: "Short, fully-supervised circuits. Daily, free choice, helmets included.",
-    tagline: "30 minutes of pure adrenaline that resets the brain for the afternoon block.",
+    shortDesc: "Short, fully-supervised circuits. Daily, one token, helmets included.",
+    tagline: "30 minutes of pure adrenaline that resets the brain in the afternoon break.",
     whatYoullLearn: [
       "Steering, braking and the racing line",
       "Safety procedures (every single time)",

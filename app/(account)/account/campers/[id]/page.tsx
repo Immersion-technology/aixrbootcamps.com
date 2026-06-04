@@ -5,7 +5,14 @@ import { getParentFromCookie } from "@/lib/account-auth";
 import { connectDB } from "@/lib/db";
 import { Registration } from "@/models/Registration";
 import { Attendance } from "@/models/Attendance";
+import { AttractionChoice, type Attraction } from "@/models/AttractionChoice";
 import { calcAge } from "@/lib/utils";
+
+const ATTRACTION_LABEL: Record<Attraction, string> = {
+  "table-tennis": "Table Tennis",
+  "go-karting": "Go Karting",
+  "pro-gaming": "Pro Gaming",
+};
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +33,18 @@ export default async function CamperProfilePage({ params }: { params: { id: stri
   const summary = attendance.reduce(
     (acc, a) => {
       acc[a.status] = (acc[a.status] ?? 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
+
+  const choices = await AttractionChoice.find({ registrationId: reg._id })
+    .sort({ date: -1 })
+    .lean();
+
+  const choiceSummary = choices.reduce(
+    (acc, c) => {
+      acc[c.attraction] = (acc[c.attraction] ?? 0) + 1;
       return acc;
     },
     {} as Record<string, number>
@@ -106,6 +125,36 @@ export default async function CamperProfilePage({ params }: { params: { id: stri
             </ul>
           )}
         </Card>
+
+        {/* SIDE ATTRACTIONS (token picks) */}
+        <div className="mt-6">
+          <Card title="Side attractions">
+            <div className="flex flex-wrap gap-2.5 mb-5">
+              <Pill tone="grass" label="TABLE TENNIS" value={choiceSummary["table-tennis"] ?? 0} />
+              <Pill tone="amber" label="GO KARTING" value={choiceSummary["go-karting"] ?? 0} />
+              <Pill tone="neutral" label="PRO GAMING" value={choiceSummary["pro-gaming"] ?? 0} />
+            </div>
+
+            {choices.length === 0 ? (
+              <p className="text-[13px] text-neutral-600 italic">
+                No side-attraction picks yet. Each day your camper spends one token on Table Tennis, Go Karting or Pro Gaming during the afternoon break.
+              </p>
+            ) : (
+              <ul className="divide-y divide-black/[.06]">
+                {choices.map((c) => (
+                  <li key={String(c._id)} className="py-2.5 flex items-baseline justify-between gap-3">
+                    <span className="font-mono text-[12.5px] text-neutral-700">
+                      {new Date(c.date).toLocaleDateString("en-NG", { weekday: "short", day: "numeric", month: "short" })}
+                    </span>
+                    <span className="shrink-0 rounded-full px-2.5 py-0.5 text-[10.5px] font-bold tracking-[.16em] uppercase bg-aqua-brand/15 text-aqua-deep">
+                      {ATTRACTION_LABEL[c.attraction]}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Card>
+        </div>
       </div>
     </section>
   );

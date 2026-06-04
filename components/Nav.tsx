@@ -223,7 +223,7 @@ export default function Nav() {
               Log in
             </Link>
             <p className="text-center text-[11px] text-white/55 tracking-[.18em] uppercase font-bold mt-4">
-              27 July – 21 August 2026
+              27 July – 4 September 2026
             </p>
           </div>
         </div>

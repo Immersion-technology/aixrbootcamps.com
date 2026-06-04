@@ -32,8 +32,8 @@ const EXPLORE = [
 ];
 
 const VISIT = [
-  { label: "27 July – 21 August 2026", muted: false },
-  { label: "Mon – Fri · 10am – 2:30pm", muted: true },
+  { label: "27 July – 4 September 2026", muted: false },
+  { label: "Mon – Fri · 9am – 1:30pm", muted: true },
   { label: "99 Adesanya Ogunsanya", muted: true },
   { label: "Leisure Mall, Surulere · Lagos", muted: true },
 ];

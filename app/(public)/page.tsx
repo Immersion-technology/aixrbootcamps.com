@@ -204,10 +204,10 @@ export default async function Landing() {
           <div className="mt-16">
             <div className="flex flex-col items-center text-center sm:flex-row sm:items-baseline sm:text-left flex-wrap gap-3 mb-5">
               <span className="font-bubble text-[28px] sm:text-[36px] leading-none text-ink">SIDE ATTRACTIONS</span>
-              <span className="text-[12.5px] text-neutral-600">30 min daily, free choice between morning &amp; afternoon courses</span>
+              <span className="text-[12.5px] text-neutral-600">30 min daily · each camper picks one with a token</span>
             </div>
             <div className="stagger-group grid grid-cols-1 sm:grid-cols-3 gap-5 -mx-5 sm:mx-0 px-5 sm:px-0 overflow-x-auto sm:overflow-visible snap-x snap-mandatory sm:snap-none flex sm:grid">
-              <SideAttraction i={0} slug="table-tennis"     Icon={TableTennisBatIcon} sticker="cyan"  title="TABLE TENNIS" desc="Sharpens reflexes before the afternoon block." />
+              <SideAttraction i={0} slug="table-tennis"     Icon={TableTennisBatIcon} sticker="cyan"  title="TABLE TENNIS" desc="A fast reset during the afternoon break." />
               <SideAttraction i={1} slug="go-karting"       Icon={RacingFlagIcon}     sticker="green" title="GO KARTING"   desc="Supervised circuits with full safety gear." />
               <SideAttraction i={2} slug="pro-gaming"       Icon={GameController01Icon} sticker="ink"   title="PRO GAMING"          desc="Coached competitive gaming on real rigs." />
             </div>
@@ -226,7 +226,7 @@ export default async function Landing() {
               </h2>
             </div>
             <p className="text-[13px] text-neutral-600 max-w-[340px] mx-auto md:mx-0">
-              Two 2-hour deep-work blocks back-to-back, then a 30-minute break activity students choose with tokens.
+              Two 2-hour deep-work blocks back-to-back, then a 30-minute side attraction each camper picks with a daily token.
             </p>
           </div>
 
@@ -301,7 +301,7 @@ export default async function Landing() {
             <LegendItem tone="gray"   label="Break Activity · Table Tennis · Go Karting · Pro Gaming · token-based" />
           </div>
           <p className="mt-6 text-[12px] text-neutral-500 leading-relaxed max-w-[820px]">
-            ① All 5 classes run 2 sessions × 2 hrs = 4 hrs / week = 8 hrs per cohort. ② Entrepreneurship is COMPULSORY for every camper (Mon late-morning + Thu early-morning). ③ Robotics & Embedded and Singing & AI Music are a paired elective. Pick one track. ④ All three break activities (Table Tennis, Go Karting, Pro Gaming) are available daily 1:00 – 1:30 PM via the in-app token system. ⑤ Tentative and subject to change.
+            ① All 5 classes run 2 sessions × 2 hrs = 4 hrs / week = 8 hrs per cohort. ② Entrepreneurship is COMPULSORY for every camper (Mon late-morning + Thu early-morning). ③ Robotics & Embedded and Singing & AI Music are a paired elective. Pick one track. ④ All three break activities (Table Tennis, Go Karting, Pro Gaming) are available daily 1:00 – 1:30 PM via the in-app token system.
           </p>
         </div>
       </section>
@@ -318,7 +318,7 @@ export default async function Landing() {
               <span aria-hidden className="absolute bottom-12 right-[18%] text-[30px] leading-none text-grass-brand/50 anim-pulse delay-2 inline-block">✦</span>
 
               <span className="stagger-rise inline-block text-[11px] font-bold tracking-[.22em] uppercase text-grass-deep mb-4 relative z-[2]" style={{ "--i": 0 } as React.CSSProperties}>
-                Week 4 · 21 August 2026
+                Demo Day · the Saturday after each cohort · 8 Aug · 22 Aug · 5 Sep 2026
               </span>
 
               <h2 className="stagger-rise font-bubble text-[clamp(34px,5vw,68px)] leading-[1.02] mb-6 relative z-[2] text-ink" style={{ "--i": 1 } as React.CSSProperties}>
@@ -348,7 +348,7 @@ export default async function Landing() {
               style={{ "--i": 0 } as React.CSSProperties}
             >
               <span className="w-1.5 h-1.5 rounded-full bg-aqua-brand inline-block anim-pulse" />
-              PARENT FAQ · TOP 10
+              PARENT FAQ
             </span>
             <h2
               className="stagger-rise font-bubble leading-[1] tracking-tight text-[clamp(34px,5vw,60px)] mb-3 text-ink"
@@ -361,7 +361,7 @@ export default async function Landing() {
               className="stagger-rise text-[14.5px] text-neutral-700 leading-relaxed max-w-[520px] mx-auto"
               style={{ "--i": 2 } as React.CSSProperties}
             >
-              The ten questions parents actually ask us before sending their kid. Tap one to expand.
+              The questions parents actually ask us before sending their kid. Tap one to expand.
             </p>
           </div>
 
@@ -399,7 +399,7 @@ export default async function Landing() {
               THEY&apos;RE GONE.
             </h2>
             <p className="max-w-[480px] my-6 text-neutral-700 text-[14.5px] leading-relaxed mx-auto md:mx-0">
-              The 2026 cohorts run <strong>27 July – 4 September</strong> as three back-to-back 2-week sessions. Once we hit 50 paid registrations the camp closes. Next AI &amp; XR isn&apos;t until summer 2027. <strong>First 10 lock in {naira(cfg.earlyBirdPrice)}</strong> early-bird; regular price {naira(cfg.regularPrice)}. Both cover the 5 core courses, daily side attractions, materials and Demo Day. Robotics is an optional +₦25,000 elective. Lunch and drinks are not provided. Campers bring their own.
+              The 2026 cohorts run <strong>27 July – 4 September</strong> as three back-to-back 2-week sessions. Once we hit 50 paid registrations the camp closes. Next AI &amp; XR isn&apos;t until summer 2027. <strong>First 10 lock in {naira(cfg.earlyBirdPrice)}</strong> early-bird; regular price {naira(cfg.regularPrice)}. Both cover the 5 core courses, daily side attractions, materials and Demo Day — Robotics is an optional +₦25,000 elective. Daily attractions are subject to token usage.
             </p>
             <div className="flex flex-wrap gap-3 items-center justify-center md:justify-start">
               <Link href="/register" className="btn-grass">

@@ -50,7 +50,7 @@ export const FAQS: FaqItem[] = [
   {
     topic: "Logistics",
     q: "What about lunch?",
-    a: "Lunch, snacks and drinks are not provided. Campers bring their own food and water bottle.",
+    a: "No lunch or drinks are provided, but campers can eat their own lunch during the break.",
   },
   {
     topic: "Curriculum",
@@ -60,12 +60,7 @@ export const FAQS: FaqItem[] = [
   {
     topic: "Money",
     q: "What if my child wants to drop out?",
-    a: "Full refund within the first 3 days. After that, no refunds.",
-  },
-  {
-    topic: "Money",
-    q: "Sibling discounts?",
-    a: "Yes. 10% off each additional camper.",
+    a: "No refunds. All payments are final.",
   },
 ];
 
