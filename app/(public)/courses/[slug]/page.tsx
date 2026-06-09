@@ -212,7 +212,7 @@ export default function CourseDetail({ params }: { params: { slug: string } }) {
         <div className="card-sticker card-sticker--ink card-sticker--no-tilt p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
           <div>
             <div className="text-[10.5px] font-bold tracking-[.22em] text-white/70 mb-1.5">READY?</div>
-            <div className="font-bubble text-[22px] sm:text-[28px] leading-tight text-white">
+            <div className="font-display font-bold text-[20px] sm:text-[26px] leading-tight text-white">
               Lock in your slot. Only 50 spots in the cohort.
             </div>
           </div>
@@ -236,7 +236,7 @@ export default function CourseDetail({ params }: { params: { slug: string } }) {
                     className="frosted-glass rounded-2xl p-4 hover:-translate-y-0.5 hover:shadow-[0_14px_30px_rgba(0,0,0,.06)] transition group"
                   >
                     <I size={28} className={cn("mb-3", THEME[c.cardColor].accentText)} />
-                    <div className="font-bubble text-[15px] leading-snug text-ink">{c.name}</div>
+                    <div className="font-display font-semibold text-[15px] leading-snug text-ink">{c.name}</div>
                   </Link>
                 );
               })}
@@ -267,7 +267,7 @@ function Card({
       )}>
         {eyebrow}
       </div>
-      <h2 className={cn("font-bubble text-[20px] sm:text-[24px] leading-tight mb-4", solid ? theme.onSolid : "text-ink")}>{title}</h2>
+      <h2 className={cn("font-display font-bold text-[19px] sm:text-[22px] leading-tight mb-4", solid ? theme.onSolid : "text-ink")}>{title}</h2>
       {children}
     </div>
   );

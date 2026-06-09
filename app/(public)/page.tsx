@@ -466,7 +466,7 @@ function CourseCard({
           {tag}
         </span>
       )}
-      <h3 className="font-bubble text-[22px] sm:text-[24px] leading-[1.05] tracking-tight mt-2">{title}</h3>
+      <h3 className="font-display font-bold text-[20px] sm:text-[22px] leading-[1.1] tracking-tight mt-2">{title}</h3>
       {sub && (
         <p className={`text-[12px] sm:text-[12.5px] leading-snug ${isDark ? "text-white/80" : "text-ink/75"}`}>{sub}</p>
       )}
@@ -486,7 +486,7 @@ function SideAttraction({
       style={{ "--i": i, "--tilt": `${i % 2 === 0 ? -2 : 2}deg` } as React.CSSProperties}
     >
       <Icon size={48} strokeWidth={1.8} className={isDark ? "text-white" : "text-ink"} />
-      <h3 className="font-bubble text-[22px] leading-tight tracking-tight mt-2">{title}</h3>
+      <h3 className="font-display font-bold text-[20px] leading-tight tracking-tight mt-2">{title}</h3>
       <p className={`text-[12.5px] leading-snug ${isDark ? "text-white/85" : "text-ink/85"}`}>{desc}</p>
       <span className={`mt-2 text-[10px] font-bold tracking-[.22em] uppercase ${isDark ? "text-white/70" : "text-ink/70"}`}>Daily · free choice</span>
     </Link>

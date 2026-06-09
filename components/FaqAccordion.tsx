@@ -59,7 +59,7 @@ export default function FaqAccordion({
                 <span className={`sticker-pill ${FAQ_TOPIC_STYLE[item.topic]} mt-0.5 shrink-0`} aria-hidden>
                   {item.topic}
                 </span>
-                <span className="font-bubble text-[15.5px] sm:text-[17px] leading-snug text-ink">
+                <span className="font-display font-semibold text-[15.5px] sm:text-[17px] leading-snug text-ink">
                   {item.q}
                 </span>
               </div>
