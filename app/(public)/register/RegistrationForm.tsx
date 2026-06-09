@@ -110,7 +110,7 @@ export default function RegistrationForm({ pricing }: Props) {
               aria-current={current ? "step" : undefined}
               className={cn(
                 "rounded-full px-3 py-2.5 text-[10.5px] font-bold tracking-[.16em] uppercase text-center transition flex items-center justify-center gap-1.5 min-h-[44px]",
-                done && "bg-grass-brand text-ink shadow-[0_4px_12px_-4px_rgba(34,197,94,.5)]",
+                done && "bg-grass-brand text-ink shadow-[0_4px_12px_-4px_rgba(251,86,7,.5)]",
                 current && "bg-ink text-white shadow-[0_4px_12px_-4px_rgba(15,15,15,.4)]",
                 !done && !current && "bg-paper text-neutral-500 border-2 border-black/[.08]",
               )}
@@ -354,7 +354,7 @@ export default function RegistrationForm({ pricing }: Props) {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full bg-grass-brand text-ink rounded-full py-4 min-h-[56px] font-bubble text-[18px] sm:text-[20px] tracking-tight hover:bg-grass-deep hover:text-white transition disabled:opacity-60 shadow-[0_14px_30px_-10px_rgba(34,197,94,.6)]"
+              className="w-full bg-grass-brand text-ink rounded-full py-4 min-h-[56px] font-bubble text-[18px] sm:text-[20px] tracking-tight hover:bg-grass-deep hover:text-white transition disabled:opacity-60 shadow-[0_14px_30px_-10px_rgba(251,86,7,.6)]"
             >
               {submitting ? "REDIRECTING TO MONNIFY…" : `PAY ${naira(total)} VIA MONNIFY →`}
             </button>

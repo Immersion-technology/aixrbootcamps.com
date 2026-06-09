@@ -3,6 +3,17 @@
 import { useState } from "react";
 import { FAQS, FAQ_TOPIC_STYLE } from "@/lib/faq";
 
+// soft palette tints, cycled per card so the FAQ reads as colorful "special
+// cards" rather than a stack of frosted-white panels. All are light enough to
+// keep the ink question text and neutral answer text comfortably readable.
+const CARD_TINTS = [
+  "bg-aqua-soft",
+  "bg-gold-soft",
+  "bg-jade-soft",
+  "bg-violet-soft",
+  "bg-grass-soft",
+];
+
 /**
  * Smooth FAQ accordion. Replaces the native <details> (which snaps open with no
  * transition) with a grid-rows 0fr→1fr height animation that eases both open and
@@ -31,7 +42,7 @@ export default function FaqAccordion({
         return (
           <div
             key={item.q}
-            className={`group frosted-glass rounded-2xl overflow-hidden ${revealClass}`}
+            className={`group ${CARD_TINTS[i % CARD_TINTS.length]} ring-1 ring-black/[.06] rounded-2xl overflow-hidden ${revealClass}`}
             style={
               reveal === "stagger"
                 ? ({ "--i": staggerOffset + i } as React.CSSProperties)

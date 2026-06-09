@@ -23,7 +23,7 @@ export function buildReceiptPdf(args: ReceiptArgs): Promise<Buffer> {
     doc.on("end", () => resolve(Buffer.concat(chunks)));
     doc.on("error", reject);
 
-    doc.fontSize(28).text("IMMERSIA", { continued: false });
+    doc.fontSize(28).fillColor("#3a86ff").text("IMMERSIA", { continued: false });
     doc.fontSize(11).fillColor("#555").text("Summer Tech Boot Camp 2026 · Payment Receipt");
     doc.moveDown(1.2);
 

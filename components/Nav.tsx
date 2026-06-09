@@ -45,10 +45,10 @@ export default function Nav() {
           <nav className="md:hidden flex items-center justify-between h-[68px]">
             <Link href="/" aria-label="IMMERSIA, home">
               <Image
-                src="/imm.png"
+                src="/logo.png"
                 alt="IMMERSIA, Virtual Reality, feel. everything"
-                width={3151}
-                height={1036}
+                width={1254}
+                height={1254}
                 priority
                 sizes="180px"
                 className="h-8 w-auto"
@@ -71,10 +71,10 @@ export default function Nav() {
           <nav className="hidden md:grid grid-cols-[1fr_auto_1fr] items-center h-[74px] gap-6">
             <Link href="/" aria-label="IMMERSIA, home" className="justify-self-start">
               <Image
-                src="/imm.png"
+                src="/logo.png"
                 alt="IMMERSIA, Virtual Reality, feel. everything"
-                width={3151}
-                height={1036}
+                width={1254}
+                height={1254}
                 priority
                 sizes="180px"
                 className="h-10 w-auto"
@@ -94,7 +94,7 @@ export default function Nav() {
               </Link>
               <Link
                 href="/register"
-                className="inline-flex items-center gap-1.5 bg-grass-brand text-ink rounded-full px-5 py-2 text-[12.5px] font-bold tracking-wide hover:bg-grass-deep hover:text-white transition shadow-[0_8px_20px_-8px_rgba(34,197,94,.5)]"
+                className="inline-flex items-center gap-1.5 bg-grass-brand text-ink rounded-full px-5 py-2 text-[12.5px] font-bold tracking-wide hover:bg-grass-deep hover:text-white transition shadow-[0_8px_20px_-8px_rgba(251,86,7,.5)]"
               >
                 Reserve <span aria-hidden>→</span>
               </Link>
@@ -141,10 +141,10 @@ export default function Nav() {
                 className="justify-self-center"
               >
                 <Image
-                  src="/imm.png"
+                  src="/logo.png"
                   alt=""
-                  width={3151}
-                  height={1036}
+                  width={1254}
+                  height={1254}
                   sizes="220px"
                   className="h-12 w-auto rounded-xl bg-white px-2.5 py-1.5"
                 />
@@ -206,7 +206,7 @@ export default function Nav() {
               className={[
                 "flex items-center justify-center gap-2 bg-grass-brand text-ink rounded-full py-4 min-h-[56px] font-bubble text-[18px] tracking-tight",
                 "hover:bg-grass-deep hover:text-white active:scale-[.98] transition",
-                "shadow-[0_14px_30px_-10px_rgba(34,197,94,.6)]",
+                "shadow-[0_14px_30px_-10px_rgba(251,86,7,.6)]",
                 "transition-all duration-500 ease-out",
                 open ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3",
               ].join(" ")}

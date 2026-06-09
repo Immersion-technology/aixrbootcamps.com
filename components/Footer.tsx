@@ -48,13 +48,13 @@ export default function Footer() {
             and the single primary (grass) CTA. Tucks down into the white
             footer card below via a negative margin so the two overlap. */}
         <section
-          className="relative overflow-hidden rounded-[24px] sm:rounded-[32px] bg-ink text-white
+          className="relative overflow-hidden rounded-[24px] sm:rounded-[32px] bg-petrol-brand text-white
                      px-5 sm:px-10 pt-10 sm:pt-20 pb-16 sm:pb-28 text-center"
         >
           {/* Ferrofluid base layer, brand-tinted glowing rims drifting upward */}
           <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
             <Ferrofluid
-              colors={["#19b8c8", "#22C55E", "#1f6f87"]}
+              colors={["#3a86ff", "#fb5607", "#8338ec"]}
               speed={0.4}
               scale={1.4}
               turbulence={1.1}
@@ -73,7 +73,7 @@ export default function Footer() {
           <div
             aria-hidden
             className="pointer-events-none absolute inset-x-0 -top-24 h-56 z-[1]
-                       bg-[radial-gradient(60%_100%_at_50%_0%,rgba(34,197,94,.28),transparent_70%)]"
+                       bg-[radial-gradient(60%_100%_at_50%_0%,rgba(251,86,7,.28),transparent_70%)]"
           />
           {/* faint aqua bloom bottom-left for depth */}
           <div
@@ -100,7 +100,7 @@ export default function Footer() {
                 className="inline-flex items-center gap-2 bg-grass-brand text-ink rounded-full
                            px-6 sm:px-7 py-3 sm:py-3.5 min-h-[46px] sm:min-h-[52px] font-bubble text-[15px] sm:text-[16px] tracking-tight
                            hover:bg-grass-deep hover:text-white active:scale-[.98] transition
-                           shadow-[0_14px_30px_-10px_rgba(34,197,94,.6)]"
+                           shadow-[0_14px_30px_-10px_rgba(251,86,7,.6)]"
               >
                 Reserve a slot <span aria-hidden>→</span>
               </Link>
@@ -142,10 +142,10 @@ export default function Footer() {
               {/* brand */}
               <div className="col-span-2 md:col-span-1 text-center md:text-left">
                 <Image
-                  src="/imm.png"
+                  src="/logo.png"
                   alt="IMMERSIA — Virtual Reality, feel. everything"
-                  width={3151}
-                  height={1036}
+                  width={1254}
+                  height={1254}
                   sizes="240px"
                   className="h-10 sm:h-14 w-auto mb-4 sm:mb-5 mx-auto md:mx-0"
                 />

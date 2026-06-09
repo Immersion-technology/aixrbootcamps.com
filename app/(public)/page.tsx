@@ -111,7 +111,7 @@ export default async function Landing() {
 
             {/* The wordmark, three stacked lines, bubble + outline */}
             <h1 className="flex flex-col items-center lg:items-end leading-[.92] tracking-tight mb-5 sm:mb-7 text-center lg:text-right">
-              <span className="font-bubble text-ink anim-fade-up delay-1 text-[clamp(72px,18vw,108px)]">AI &amp; XR</span>
+              <span className="font-bubble text-violet-brand anim-fade-up delay-1 text-[clamp(72px,18vw,108px)]">AI &amp; XR</span>
               <span className="wordmark anim-fade-up delay-2 text-[clamp(82px,22vw,140px)]">SUMMER</span>
               <span className="wordmark wordmark--green anim-fade-up delay-3 text-[clamp(82px,22vw,140px)]">BOOTCAMP</span>
             </h1>
@@ -125,20 +125,20 @@ export default async function Landing() {
               <div className="flex items-stretch gap-2.5 sm:gap-4 lg:gap-5 flex-nowrap lg:w-[580px]">
                 {/* AGES 10-17 frosted glass card. lg:flex-1 lets it fill the
                     remaining width inside the fixed-width inner group. */}
-                <div className="frosted-glass rounded-2xl px-4 py-3 sm:px-7 sm:py-4 lg:px-5 lg:py-4 rotate-[-2deg] flex flex-col justify-center min-w-[150px] sm:min-w-[210px] lg:flex-1">
-                  <div className="font-bubble text-[14px] sm:text-[18px] leading-none mb-1.5 text-ink">AGES 10–17</div>
-                  <ul className="text-[10px] sm:text-[11px] text-neutral-800 space-y-0.5 leading-snug whitespace-nowrap">
-                    <li className="flex items-start gap-1.5"><span className="text-aqua-deep">•</span> 6 courses</li>
-                    <li className="flex items-start gap-1.5"><span className="text-aqua-deep">•</span> Daily Mon – Fri</li>
-                    <li className="flex items-start gap-1.5"><span className="text-aqua-deep">•</span> 9 AM – 1:30 PM</li>
+                <div className="bg-petrol-brand text-white rounded-2xl px-4 py-3 sm:px-7 sm:py-4 lg:px-5 lg:py-4 rotate-[-2deg] flex flex-col justify-center min-w-[150px] sm:min-w-[210px] lg:flex-1 shadow-[0_12px_30px_-12px_rgba(45,46,131,.55)] ring-1 ring-white/10">
+                  <div className="font-bubble text-[14px] sm:text-[18px] leading-none mb-1.5 text-white">AGES 10–17</div>
+                  <ul className="text-[10px] sm:text-[11px] text-white/85 space-y-0.5 leading-snug whitespace-nowrap">
+                    <li className="flex items-start gap-1.5"><span className="text-white">•</span> 6 courses</li>
+                    <li className="flex items-start gap-1.5"><span className="text-white">•</span> Daily Mon – Fri</li>
+                    <li className="flex items-start gap-1.5"><span className="text-white">•</span> 9 AM – 1:30 PM</li>
                   </ul>
                 </div>
 
                 {/* JUL 27 date sticker */}
-                <div className="card-sticker card-sticker--cyan-soft card-sticker--tilt-l-lg px-3.5 py-3 sm:px-5 sm:py-4 lg:px-4 lg:py-4 shrink-0 flex flex-col justify-center" style={{ borderRadius: 18 }}>
-                  <div className="text-[8.5px] sm:text-[10px] font-bold tracking-[.22em] text-ink/70 uppercase">Boot camp starts</div>
-                  <div className="font-bubble text-[18px] sm:text-[24px] leading-none mt-1 text-ink">JUL 27</div>
-                  <div className="text-[8.5px] sm:text-[10px] font-bold tracking-[.18em] text-ink/70 uppercase mt-0.5">3 cohorts · 2 wks each</div>
+                <div className="card-sticker card-sticker--pink card-sticker--tilt-l-lg px-3.5 py-3 sm:px-5 sm:py-4 lg:px-4 lg:py-4 shrink-0 flex flex-col justify-center" style={{ borderRadius: 18 }}>
+                  <div className="text-[8.5px] sm:text-[10px] font-bold tracking-[.22em] text-white/85 uppercase">Boot camp starts</div>
+                  <div className="font-bubble text-[18px] sm:text-[24px] leading-none mt-1 text-white">JUL 27</div>
+                  <div className="text-[8.5px] sm:text-[10px] font-bold tracking-[.18em] text-white/85 uppercase mt-0.5">3 cohorts · 2 wks each</div>
                 </div>
               </div>
 
@@ -150,19 +150,19 @@ export default async function Landing() {
                 className="group block lg:w-full"
                 aria-label={`Reserve a slot. Early bird ${naira(cfg.earlyBirdPrice)}, first 10`}
               >
-                <div className="card-ticket flex items-stretch gap-4 sm:gap-5 group-hover:-translate-y-1 transition-transform h-full">
+                <div className="card-ticket card-ticket--amber flex items-stretch gap-4 sm:gap-5 group-hover:-translate-y-1 transition-transform h-full">
                   <div className="flex-1 pr-2 flex flex-col justify-center">
-                    <div className="text-[10px] sm:text-[10.5px] font-bold tracking-[.22em] uppercase text-grass-deep">Early bird · first 10</div>
-                    <div className="flex items-baseline gap-2 mt-1">
-                      <span className="font-bubble text-[24px] sm:text-[28px] leading-none text-ink">{naira(cfg.earlyBirdPrice)}</span>
-                      <span className="text-[12px] line-through text-neutral-500">{naira(cfg.regularPrice)}</span>
+                    <div className="text-[10px] sm:text-[10.5px] font-bold tracking-[.22em] uppercase text-ink/80">Early bird · first 10</div>
+                  <div className="flex items-baseline gap-2 mt-1">
+                      <span className="font-bubble text-[28px] sm:text-[34px] leading-none text-ink">{naira(cfg.earlyBirdPrice)}</span>
+                      <span className="text-[14px] sm:text-[18px] line-through text-ink/45">{naira(cfg.regularPrice)}</span>
                     </div>
-                    <div className="text-[10.5px] font-bold tracking-[.16em] uppercase text-neutral-500 mt-1">50 slots only</div>
+                    <div className="text-[10.5px] font-bold tracking-[.16em] uppercase text-ink/60 mt-1">50 slots only</div>
                   </div>
                   <div className="card-ticket__seam" aria-hidden />
                   <div className="flex flex-col items-center justify-center gap-2 pl-2">
                     <span className="card-ticket__barcode" aria-hidden />
-                    <span className="text-[9px] font-bold tracking-[.2em] uppercase text-neutral-500">Reserve →</span>
+                    <span className="text-[9px] font-bold tracking-[.2em] uppercase text-ink/70">Reserve →</span>
                   </div>
                 </div>
               </Link>
@@ -189,12 +189,12 @@ export default async function Landing() {
           </div>
 
           <div className="stagger-group grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-            <CourseCard i={0} num="01" slug="vibe-coding"      Icon={CodeIcon}        sticker="cyan"      title={<>VIBE CODING &amp; AI PROMPT ENGINEERING</>}  sub="Pair-program with AI to ship a deployed web app. No prior code needed." />
-            <CourseCard i={1} num="02" slug="entrepreneurship" Icon={Rocket01Icon}    sticker="green"     title={<>ENTREPRENEURSHIP &amp; PITCHING</>}          sub="Idea → product → live Demo Day pitch in two weeks."                        tag="★ COMPULSORY" />
-            <CourseCard i={2} num="03" slug="content-creation" Icon={CameraVideoIcon} sticker="ink"       title={<>CONTENT CREATION</>}                          sub="Script, shoot and edit short-form videos worth posting." />
-            <CourseCard i={3} num="04" slug="robotics"         Icon={RoboticIcon}     sticker="cyan-soft" title={<>ROBOTICS &amp; EMBEDDED SYSTEMS</>}          sub="Blink an LED on day one; build your own gadget and keep the kit by week's end." tag="✦ ELECTIVE · +₦25,000" />
-            <CourseCard i={4} num="05" slug="3d-vr"            Icon={VrGlassesIcon}   sticker="ink"       title={<>3D CHARACTER &amp; VR WORLD CREATION</>}    sub="Sculpt characters in Blender. Step inside the world you made." />
-            <CourseCard i={5} num="06" slug="ai-music"         Icon={MusicNote01Icon} sticker="green-soft" title={<>AI MUSIC PRODUCTION</>}                     sub="Produce a finished, mixed track with AI-assisted tools." />
+            <CourseCard i={0} num="01" slug="vibe-coding"      Icon={CodeIcon}        sticker="cyan"    title={<>VIBE CODING &amp; AI PROMPT ENGINEERING</>}  sub="Pair-program with AI to ship a deployed web app. No prior code needed." />
+            <CourseCard i={1} num="02" slug="entrepreneurship" Icon={Rocket01Icon}    sticker="green"   title={<>ENTREPRENEURSHIP &amp; PITCHING</>}          sub="Idea → product → live Demo Day pitch in two weeks."                        tag="★ COMPULSORY" />
+            <CourseCard i={2} num="03" slug="content-creation" Icon={CameraVideoIcon} sticker="pink"    title={<>CONTENT CREATION</>}                          sub="Script, shoot and edit short-form videos worth posting." />
+            <CourseCard i={3} num="04" slug="robotics"         Icon={RoboticIcon}     sticker="violet"  title={<>ROBOTICS &amp; EMBEDDED SYSTEMS</>}          sub="Blink an LED on day one; build your own gadget and keep the kit by week's end." tag="✦ ELECTIVE · +₦25,000" />
+            <CourseCard i={4} num="05" slug="3d-vr"            Icon={VrGlassesIcon}   sticker="emerald" title={<>3D CHARACTER &amp; VR WORLD CREATION</>}    sub="Sculpt characters in Blender. Step inside the world you made." />
+            <CourseCard i={5} num="06" slug="ai-music"         Icon={MusicNote01Icon} sticker="amber"   title={<>AI MUSIC PRODUCTION</>}                     sub="Produce a finished, mixed track with AI-assisted tools." />
           </div>
 
           {/* SIDE ATTRACTIONS, renamed from Active Breaks. Until the cutout photos
@@ -207,9 +207,9 @@ export default async function Landing() {
               <span className="text-[12.5px] text-neutral-600">30 min daily · each camper picks one with a token</span>
             </div>
             <div className="stagger-group grid grid-cols-1 sm:grid-cols-3 gap-5 -mx-5 sm:mx-0 px-5 sm:px-0 overflow-x-auto sm:overflow-visible snap-x snap-mandatory sm:snap-none flex sm:grid">
-              <SideAttraction i={0} slug="table-tennis"     Icon={TableTennisBatIcon} sticker="cyan"  title="TABLE TENNIS" desc="A fast reset during the afternoon break." />
-              <SideAttraction i={1} slug="go-karting"       Icon={RacingFlagIcon}     sticker="green" title="GO KARTING"   desc="Supervised circuits with full safety gear." />
-              <SideAttraction i={2} slug="pro-gaming"       Icon={GameController01Icon} sticker="ink"   title="PRO GAMING"          desc="Coached competitive gaming on real rigs." />
+              <SideAttraction i={0} slug="table-tennis"     Icon={TableTennisBatIcon} sticker="cobalt"  title="TABLE TENNIS" desc="A fast reset during the afternoon break." />
+              <SideAttraction i={1} slug="go-karting"       Icon={RacingFlagIcon}     sticker="emerald" title="GO KARTING"   desc="Supervised circuits with full safety gear." />
+              <SideAttraction i={2} slug="pro-gaming"       Icon={GameController01Icon} sticker="pink"  title="PRO GAMING"          desc="Coached competitive gaming on real rigs." />
             </div>
           </div>
         </div>
@@ -244,7 +244,7 @@ export default async function Landing() {
                 <TimeLabel main="9:00 – 11:00" hint="2 hrs" />
                 <Cell i={0} tone="cyan"      Icon={CodeIcon}        title="Vibe Coding & AI"   sub="" />
                 <Cell i={1} tone="pink"      Icon={VrGlassesIcon}   title="3D & VR World"      sub="" />
-                <Cell i={2} tone="ink"       Icon={CameraVideoIcon} title="Content Creation"   sub="External" />
+                <Cell i={2} tone="violet"    Icon={CameraVideoIcon} title="Content Creation"   sub="External" />
                 <Cell i={3} tone="green"     Icon={Rocket01Icon}    title="Entrepreneurship ★" sub="" />
                 <Cell i={4} tone="orange"    Icon={RoboticIcon}     title="Robotics / Music"   sub="Paired elective" />
 
@@ -253,7 +253,7 @@ export default async function Landing() {
                 <Cell i={6}  tone="orange"   Icon={RoboticIcon}     title="Robotics / Music"   sub="Paired elective" />
                 <Cell i={7}  tone="cyan"     Icon={CodeIcon}        title="Vibe Coding & AI"   sub="" />
                 <Cell i={8}  tone="pink"     Icon={VrGlassesIcon}   title="3D & VR World"      sub="" />
-                <Cell i={9}  tone="ink"      Icon={CameraVideoIcon} title="Content Creation"   sub="External" />
+                <Cell i={9}  tone="violet"   Icon={CameraVideoIcon} title="Content Creation"   sub="External" />
 
                 <TimeLabel main="13:00 – 13:30" hint="30 min break" />
                 <BreakRow i={10} />
@@ -276,7 +276,7 @@ export default async function Landing() {
               { time: "13:00 – 13:30",  title: "Break Activity",            sub: "Table Tennis · Go Karting · Pro Gaming", tone: "gray", isBreak: true },
             ]} />
             <DayCard i={2} day="WED" rows={[
-              { time: "9:00 – 11:00",   title: "Content Creation",          sub: "",                  tone: "ink"   },
+              { time: "9:00 – 11:00",   title: "Content Creation",          sub: "",                  tone: "violet" },
               { time: "11:00 – 13:00",  title: "Vibe Coding & AI",          sub: "",                  tone: "cyan"  },
               { time: "13:00 – 13:30",  title: "Break Activity",            sub: "Table Tennis · Go Karting · Pro Gaming", tone: "gray", isBreak: true },
             ]} />
@@ -287,7 +287,7 @@ export default async function Landing() {
             ]} />
             <DayCard i={4} day="FRI" rows={[
               { time: "9:00 – 11:00",   title: "Robotics / Music",          sub: "Paired elective",   tone: "orange" },
-              { time: "11:00 – 13:00",  title: "Content Creation",          sub: "",                  tone: "ink"   },
+              { time: "11:00 – 13:00",  title: "Content Creation",          sub: "",                  tone: "violet" },
               { time: "13:00 – 13:30",  title: "Break Activity",            sub: "Table Tennis · Go Karting · Pro Gaming", tone: "gray", isBreak: true },
             ]} />
           </div>
@@ -295,7 +295,7 @@ export default async function Landing() {
           <div className="mt-8 flex flex-wrap gap-x-5 gap-y-2">
             <LegendItem tone="cyan"   label="Vibe Coding & AI Prompt Engineering" />
             <LegendItem tone="green"  label="Entrepreneurship ★ COMPULSORY" />
-            <LegendItem tone="ink"    label="Content Creation" />
+            <LegendItem tone="violet" label="Content Creation" />
             <LegendItem tone="orange" label="Robotics / Singing & AI Music · Paired Elective" />
             <LegendItem tone="pink"   label="3D Character & VR World" />
             <LegendItem tone="gray"   label="Break Activity · Table Tennis · Go Karting · Pro Gaming · token-based" />
@@ -309,25 +309,25 @@ export default async function Landing() {
       {/* ============ PITCH DAY ============ */}
       <section className="relative overflow-hidden py-24 sm:py-28">
         <div className="max-w-[1180px] mx-auto px-5 sm:px-7">
-          <div className="bg-white border border-black/[.05] rounded-[32px]">
-            <div className="stagger-group relative px-6 sm:px-12 pt-16 pb-16 overflow-hidden rounded-[32px] text-center">
+          <div className="bg-violet-brand rounded-[32px] ring-1 ring-white/10 shadow-[0_30px_60px_-30px_rgba(131,56,236,.6)]">
+            <div className="stagger-group relative px-6 sm:px-12 pt-16 pb-16 overflow-hidden rounded-[32px] text-center text-white">
               {/* corner sparkles */}
-              <span aria-hidden className="absolute top-10 left-10 text-[36px] leading-none text-aqua-brand/50 anim-spin-slow inline-block">✦</span>
-              <span aria-hidden className="absolute top-12 right-12 text-[28px] leading-none text-grass-brand/60 anim-pulse inline-block">✦</span>
-              <span aria-hidden className="absolute bottom-10 left-[28%] text-[24px] leading-none text-aqua-brand/40 anim-pulse delay-1 inline-block">✦</span>
-              <span aria-hidden className="absolute bottom-12 right-[18%] text-[30px] leading-none text-grass-brand/50 anim-pulse delay-2 inline-block">✦</span>
+              <span aria-hidden className="absolute top-10 left-10 text-[36px] leading-none text-gold-brand/70 anim-spin-slow inline-block">✦</span>
+              <span aria-hidden className="absolute top-12 right-12 text-[28px] leading-none text-white/50 anim-pulse inline-block">✦</span>
+              <span aria-hidden className="absolute bottom-10 left-[28%] text-[24px] leading-none text-white/40 anim-pulse delay-1 inline-block">✦</span>
+              <span aria-hidden className="absolute bottom-12 right-[18%] text-[30px] leading-none text-gold-brand/60 anim-pulse delay-2 inline-block">✦</span>
 
-              <span className="stagger-rise inline-block text-[11px] font-bold tracking-[.22em] uppercase text-grass-deep mb-4 relative z-[2]" style={{ "--i": 0 } as React.CSSProperties}>
+              <span className="stagger-rise inline-block text-[11px] font-bold tracking-[.22em] uppercase text-white/85 mb-4 relative z-[2]" style={{ "--i": 0 } as React.CSSProperties}>
                 Demo Day · the Saturday after each cohort · 8 Aug · 22 Aug · 5 Sep 2026
               </span>
 
-              <h2 className="stagger-rise font-bubble text-[clamp(34px,5vw,68px)] leading-[1.02] mb-6 relative z-[2] text-ink" style={{ "--i": 1 } as React.CSSProperties}>
+              <h2 className="stagger-rise font-bubble text-[clamp(34px,5vw,68px)] leading-[1.02] mb-6 relative z-[2] text-white" style={{ "--i": 1 } as React.CSSProperties}>
                 BUILD A STARTUP.<br />
-                PITCH IT <span className="text-aqua-deep">LIVE</span>.<br />
+                PITCH IT <span className="text-gold-brand">LIVE</span>.<br />
                 WIN.
               </h2>
 
-              <p className="stagger-rise text-[14.5px] text-neutral-700 leading-relaxed max-w-[560px] mx-auto mb-10 relative z-[2]" style={{ "--i": 2 } as React.CSSProperties}>
+              <p className="stagger-rise text-[14.5px] text-white/85 leading-relaxed max-w-[560px] mx-auto mb-10 relative z-[2]" style={{ "--i": 2 } as React.CSSProperties}>
                 Every camper presents the startup idea they&apos;ve been building since week one to a live jury of working founders. Top three teams take home a prize pack and a feature on IMMERSIA&apos;s channels.
               </p>
 
@@ -422,11 +422,21 @@ const ICON_COLOR_LEGEND: Record<string, string> = {
   cyan:   "bg-aqua-brand",
   green:  "bg-grass-brand",
   ink:    "bg-ink",
+  violet: "bg-violet-brand",
   orange: "bg-orange-400",
   mint:   "bg-emerald-400",
   pink:   "bg-pink-400",
   gray:   "bg-neutral-400",
 };
+
+// sticker variants whose background is dark/saturated enough to need white text
+// (azure, violet, pink, cobalt, ink) — everything else (orange, amber, emerald,
+// and the -soft pastels) reads better with near-black ink text.
+const WHITE_TEXT_STICKERS = new Set(["cyan", "violet", "pink", "cobalt", "ink"]);
+
+type StickerTone =
+  | "cyan" | "cyan-soft" | "green" | "green-soft" | "ink"
+  | "pink" | "violet" | "emerald" | "amber" | "cobalt";
 
 function CourseCard({
   i, num, slug, Icon, sticker, title, sub, tag,
@@ -435,12 +445,12 @@ function CourseCard({
   num: string;
   slug: string;
   Icon: IconCmp;
-  sticker: "cyan" | "cyan-soft" | "green" | "green-soft" | "ink";
+  sticker: StickerTone;
   title: React.ReactNode;
   sub?: string;
   tag?: string;
 }) {
-  const isDark = sticker === "ink";
+  const isDark = WHITE_TEXT_STICKERS.has(sticker);
   return (
     <Link
       href={`/courses/${slug}`}
@@ -467,8 +477,8 @@ function CourseCard({
 
 function SideAttraction({
   i, slug, Icon, sticker, title, desc,
-}: { i: number; slug: string; Icon: IconCmp; sticker: "cyan" | "green" | "ink"; title: string; desc: string }) {
-  const isDark = sticker === "ink";
+}: { i: number; slug: string; Icon: IconCmp; sticker: StickerTone; title: string; desc: string }) {
+  const isDark = WHITE_TEXT_STICKERS.has(sticker);
   return (
     <Link
       href={`/courses/${slug}`}
@@ -505,12 +515,14 @@ function Cell({ i, tone, Icon, title, sub }: { i: number; tone: string; Icon: Ic
     cyan:   "bg-aqua-soft/60 border-aqua-brand/40 text-ink",
     green:  "bg-grass-soft/40 border-grass-brand/40 text-ink",
     ink:    "bg-ink text-white border-ink",
+    violet: "bg-violet-soft/60 border-violet-brand/40 text-ink",
     pink:   "bg-pink-soft/60 border-pink-deep/40 text-ink",
     orange: "bg-orange-100 border-orange-300/60 text-ink",
     mint:   "bg-mint-soft/60 border-mint-deep/40 text-ink",
   };
   const iconColor: Record<string, string> = {
     cyan: "text-aqua-deep", green: "text-grass-deep", ink: "text-white",
+    violet: "text-violet-brand",
     pink: "text-pink-deep", orange: "text-orange-600", mint: "text-mint-deep",
   };
   return (
@@ -555,13 +567,15 @@ function DayCard({
     cyan: "bg-aqua-brand",
     green: "bg-grass-brand",
     ink: "bg-ink",
+    violet: "bg-violet-brand",
     pink: "bg-pink-deep",
     orange: "bg-orange-400",
     gray: "bg-neutral-300",
   };
+  const dayTints = ["bg-aqua-soft", "bg-gold-soft", "bg-jade-soft", "bg-violet-soft", "bg-grass-soft"];
   return (
     <div
-      className="stagger-rise bg-white border border-black/[.06] rounded-3xl p-5 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.12)]"
+      className={`stagger-rise ${dayTints[i % dayTints.length]} border border-black/[.06] rounded-3xl p-5 shadow-[0_8px_24px_-12px_rgba(0,0,0,0.12)]`}
       style={{ "--i": i } as React.CSSProperties}
     >
       <div className="flex items-baseline justify-between mb-3">

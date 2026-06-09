@@ -21,6 +21,20 @@ export type Tone =
   | "blue"
   | "coral";
 
+/**
+ * Card accent color — the single source of truth for a course's brand hue.
+ * MUST mirror the landing course-grid sticker colors (app/(public)/page.tsx):
+ * the detail page themes itself entirely from this.
+ */
+export type CardColor =
+  | "azure"
+  | "orange"
+  | "pink"
+  | "violet"
+  | "emerald"
+  | "amber"
+  | "cobalt";
+
 /** hugeicons-react export name (resolved at use site to avoid pulling all icons here). */
 export type IconName =
   | "CodeIcon"
@@ -50,6 +64,8 @@ export type CurriculumItem = {
   scheduleSlots: ScheduleSlot[];
   icon: IconName;
   tone: Tone;
+  /** Brand hue for the card + its detail page. Mirrors the landing grid sticker. */
+  cardColor: CardColor;
   /** 1-line description for landing cards. */
   shortDesc: string;
   /** Punchy headline for the detail-page hero. */
@@ -79,6 +95,7 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     icon: "CodeIcon",
     tone: "violet",
+    cardColor: "azure",
     shortDesc: "Pair-program with AI to ship a real, deployed web app. Zero prior code required.",
     tagline: "Code the way pros build in 2026, alongside AI, not despite it.",
     whatYoullLearn: [
@@ -113,6 +130,7 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     icon: "Rocket01Icon",
     tone: "yellow",
+    cardColor: "orange",
     shortDesc: "Idea → built product → live Demo Day pitch. Compulsory for every camper.",
     tagline: "From the spark of an idea to a pitch in front of a real audience, in two weeks.",
     whatYoullLearn: [
@@ -146,6 +164,7 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     icon: "CameraVideoIcon",
     tone: "coral",
+    cardColor: "pink",
     shortDesc: "Script, shoot, edit. Walk out with a portfolio of short-form videos by week four.",
     tagline: "Become the storyteller every founder, athlete and brand wishes they had.",
     whatYoullLearn: [
@@ -181,6 +200,7 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     icon: "RoboticIcon",
     tone: "orange",
+    cardColor: "violet",
     shortDesc: "Blink your first LED on day one, then build sensors, sound, motors and a full alarm system — and design your own gadget. Keep the kit.",
     tagline: "Turn code into the real world: a blinking light on day one, your own working electronic gadget by the end.",
     whatYoullLearn: [
@@ -214,6 +234,7 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     icon: "MusicNote01Icon",
     tone: "mint",
+    cardColor: "amber",
     shortDesc: "Produce a finished, mixed track with AI-assisted tools.",
     tagline: "From an empty timeline to a finished track the algorithm wants to push.",
     whatYoullLearn: [
@@ -246,6 +267,7 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     icon: "VrGlassesIcon",
     tone: "pink",
+    cardColor: "emerald",
     shortDesc: "Sculpt an original character in Blender, build the world it lives in, then step inside that world in VR — and walk your guests through it.",
     tagline: "Build a world nobody has ever been to, wear a character you made, and walk your friends through it in VR.",
     whatYoullLearn: [
@@ -285,6 +307,7 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     icon: "GameController01Icon",
     tone: "blue",
+    cardColor: "pink",
     shortDesc: "Coached competitive gaming on real rigs. Daily, one token.",
     tagline: "Train like an e-sports pro: strategy, reaction time, and the business behind the screen.",
     whatYoullLearn: [
@@ -319,6 +342,7 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     icon: "TableTennisBatIcon",
     tone: "orange",
+    cardColor: "cobalt",
     shortDesc: "A 30-minute reset in the afternoon break. Daily, one token.",
     tagline: "The fastest racket sport in the world. A perfect 30-minute reset in the afternoon break.",
     whatYoullLearn: [
@@ -352,6 +376,7 @@ export const CURRICULUM: CurriculumItem[] = [
     ],
     icon: "RacingFlagIcon",
     tone: "petrol",
+    cardColor: "emerald",
     shortDesc: "Short, fully-supervised circuits. Daily, one token, helmets included.",
     tagline: "30 minutes of pure adrenaline that resets the brain in the afternoon break.",
     whatYoullLearn: [
