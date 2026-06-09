@@ -1,64 +1,34 @@
 import nodemailer from "nodemailer";
 
-function extractEmailAddress(value?: string): string {
-  if (!value) return "";
-  const angleMatch = value.match(/<([^>]+)>/);
-  if (angleMatch?.[1]) return angleMatch[1].trim();
-  const plainMatch = value.match(/[^\s<>@]+@[^\s<>@]+\.[^\s<>@]+/);
-  return plainMatch?.[0]?.trim() ?? "";
-}
-
-function normalizeSmtpSecret(value?: string): string {
-  return (value ?? "").replace(/\s+/g, "");
-}
-
-const SMTP_FROM = process.env.SMTP_FROM ?? "Immersia <noreply@immersia.ng>";
-const SMTP_USER = process.env.SMTP_USER?.trim() || extractEmailAddress(SMTP_FROM);
-const SMTP_PASS = normalizeSmtpSecret(process.env.SMTP_PASS);
-
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: Number(process.env.SMTP_PORT ?? 587),
   secure: process.env.SMTP_SECURE === "true",
-  auth: SMTP_USER && SMTP_PASS ? { user: SMTP_USER, pass: SMTP_PASS } : undefined,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
 });
 
+const FROM = process.env.SMTP_FROM ?? "Immersia <noreply@immersia.ng>";
 const APP_URL = process.env.APP_URL ?? "https://immersia.ng";
-const LOGO_URL = `${APP_URL}/logo.png`;
+const LOGO_URL = `${APP_URL}/imm.png`;
 
 interface SendOpts {
   to: string;
   subject: string;
   html: string;
   text?: string;
-  replyTo?: string;
   attachments?: Array<{ filename: string; content: Buffer | string; contentType?: string }>;
 }
 
-function assertMailConfig() {
-  const missing: string[] = [];
-  if (!process.env.SMTP_HOST) missing.push("SMTP_HOST");
-  if (!SMTP_USER) missing.push("SMTP_USER or a valid email in SMTP_FROM");
-  if (!SMTP_PASS) missing.push("SMTP_PASS");
-  if (missing.length) {
-    throw new Error(`SMTP is not configured. Missing: ${missing.join(", ")}.`);
-  }
-}
-
-export async function verifyMailTransport() {
-  assertMailConfig();
-  return transporter.verify();
-}
-
 export async function sendMail(opts: SendOpts) {
-  assertMailConfig();
   return transporter.sendMail({
-    from: SMTP_FROM,
+    from: FROM,
     to: opts.to,
     subject: opts.subject,
     html: opts.html,
     text: opts.text,
-    replyTo: opts.replyTo,
     attachments: opts.attachments,
   });
 }
@@ -101,7 +71,7 @@ function shell(content: string): string {
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:580px;background:#f1f1f1;">
           <tr>
             <td align="center" style="padding-bottom:24px;">
-              <img src="${LOGO_URL}" alt="IMMERSIA" width="72" style="display:block;height:auto;">
+              <img src="${LOGO_URL}" alt="IMMERSIA" width="140" style="display:block;height:auto;">
             </td>
           </tr>
           <tr>
@@ -109,12 +79,12 @@ function shell(content: string): string {
           </tr>
           <tr>
             <td style="padding:32px 0 8px;text-align:center;font-size:11px;color:#777;letter-spacing:0.18em;text-transform:uppercase;">
-              <strong style="color:#2563eb;">99 Adesanya Ogunsanya, Leisure Mall</strong> · 27 July – 4 September 2026 · Mon–Fri 9am–1:30pm
+              <strong style="color:#0e92a0;">99 Adesanya Ogunsanya, Leisure Mall</strong> · 27 July – 4 September 2026 · Mon–Fri 9am–1:30pm
             </td>
           </tr>
           <tr>
             <td style="padding:6px 0 0;text-align:center;font-size:11px;color:#999;">
-              <a href="${APP_URL}" style="color:#2563eb;text-decoration:none;font-weight:600;">immersia.ng</a>
+              <a href="${APP_URL}" style="color:#0e92a0;text-decoration:none;font-weight:600;">immersia.ng</a>
               &nbsp;·&nbsp;
               <a href="${APP_URL}/contact" style="color:#999;text-decoration:none;">Contact</a>
               &nbsp;·&nbsp;
@@ -150,7 +120,7 @@ export function parentConfirmationHtml(args: {
 
   const content = `
     <div style="background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:24px;padding:36px 28px;box-shadow:0 12px 40px rgba(15,15,15,0.06);">
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.22em;color:#2563eb;text-transform:uppercase;margin-bottom:8px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.22em;color:#0e92a0;text-transform:uppercase;margin-bottom:8px;">
         Payment confirmed · You're in
       </div>
       <h1 style="font-size:32px;line-height:1.05;margin:0 0 16px;letter-spacing:-0.02em;font-weight:800;text-transform:uppercase;">
@@ -181,7 +151,7 @@ export function parentConfirmationHtml(args: {
       </table>
 
       <div style="border-top:1px solid rgba(0,0,0,0.06);padding-top:16px;">
-        <div style="font-size:11px;font-weight:700;letter-spacing:0.18em;color:#2563eb;text-transform:uppercase;margin-bottom:8px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.18em;color:#0e92a0;text-transform:uppercase;margin-bottom:8px;">
           Courses selected
         </div>
         <ul style="margin:0;padding-left:18px;font-size:14px;line-height:1.5;">${courseList}</ul>
@@ -193,7 +163,7 @@ export function parentConfirmationHtml(args: {
     </div>
 
     <div style="background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:16px;padding:20px 22px;margin-top:14px;text-align:center;">
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.18em;color:#2563eb;text-transform:uppercase;margin-bottom:6px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.18em;color:#0e92a0;text-transform:uppercase;margin-bottom:6px;">
         Your parent portal
       </div>
       <p style="font-size:13px;line-height:1.6;color:#3a3a3a;margin:0 0 14px;">
@@ -215,7 +185,7 @@ export function magicLinkHtml(args: { name: string; url: string; role: "parent" 
   const portal = args.role === "teacher" ? "facilitator" : "parent";
   const content = `
     <div style="background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:24px;padding:36px 28px;box-shadow:0 12px 40px rgba(15,15,15,0.06);">
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.22em;color:#2563eb;text-transform:uppercase;margin-bottom:8px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.22em;color:#0e92a0;text-transform:uppercase;margin-bottom:8px;">
         Your login link
       </div>
       <h1 style="font-size:26px;line-height:1.1;margin:0 0 14px;font-weight:800;text-transform:uppercase;letter-spacing:-0.02em;">
@@ -231,7 +201,7 @@ export function magicLinkHtml(args: { name: string; url: string; role: "parent" 
       </div>
       <p style="font-size:12px;line-height:1.55;color:#999;margin:0;">
         If you didn't request this, you can safely ignore it, no one can sign in without this link. Trouble with the button? Paste this URL into your browser:<br>
-        <span style="word-break:break-all;color:#2563eb;">${args.url}</span>
+        <span style="word-break:break-all;color:#0e92a0;">${args.url}</span>
       </p>
     </div>
   `;
@@ -271,7 +241,7 @@ export function admissionRejectedHtml(args: {
 export function teacherWelcomeHtml(args: { name: string; loginUrl: string }): string {
   const content = `
     <div style="background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:24px;padding:36px 28px;box-shadow:0 12px 40px rgba(15,15,15,0.06);">
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.22em;color:#2563eb;text-transform:uppercase;margin-bottom:8px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.22em;color:#0e92a0;text-transform:uppercase;margin-bottom:8px;">
         You're on the IMMERSIA team
       </div>
       <h1 style="font-size:26px;line-height:1.1;margin:0 0 14px;font-weight:800;text-transform:uppercase;letter-spacing:-0.02em;">
@@ -286,7 +256,7 @@ export function teacherWelcomeHtml(args: { name: string; loginUrl: string }): st
         </a>
       </div>
       <p style="font-size:12px;line-height:1.55;color:#999;margin:0;">
-        Next time, just go to <a href="${APP_URL}/teacher/login" style="color:#2563eb;text-decoration:none;">${APP_URL}/teacher/login</a> and request a fresh link.
+        Next time, just go to <a href="${APP_URL}/teacher/login" style="color:#0e92a0;text-decoration:none;">${APP_URL}/teacher/login</a> and request a fresh link.
       </p>
     </div>
   `;
@@ -297,25 +267,23 @@ export function adminAlertHtml(args: {
   participantName: string;
   registrationId: string;
   parentName: string;
-  parentEmail: string;
   parentPhone: string;
   totalKobo: number;
   appUrl: string;
 }): string {
   const content = `
     <div style="background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:24px;padding:32px 28px;box-shadow:0 12px 40px rgba(15,15,15,0.06);">
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.22em;color:#2563eb;text-transform:uppercase;margin-bottom:8px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.22em;color:#0e92a0;text-transform:uppercase;margin-bottom:8px;">
         New paid registration
       </div>
       <h2 style="font-size:24px;line-height:1.1;margin:0 0 12px;font-weight:800;text-transform:uppercase;letter-spacing:-0.01em;">
         ${esc(args.participantName)}
       </h2>
-      <div style="font-family:'Orbitron','Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:#2563eb;margin-bottom:18px;">
+      <div style="font-family:'Orbitron','Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:#0e92a0;margin-bottom:18px;">
         ${esc(args.registrationId)}
       </div>
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size:14px;">
         <tr><td style="padding:5px 0;color:#777;">Parent</td><td style="text-align:right;font-weight:600;">${esc(args.parentName)}</td></tr>
-        <tr><td style="padding:5px 0;color:#777;">Email</td><td style="text-align:right;font-weight:600;">${esc(args.parentEmail)}</td></tr>
         <tr><td style="padding:5px 0;color:#777;">Phone</td><td style="text-align:right;font-weight:600;"><a href="tel:${esc(args.parentPhone)}" style="color:#0f0f0f;text-decoration:none;">${esc(args.parentPhone)}</a></td></tr>
         <tr><td style="padding:5px 0;color:#777;">Amount</td><td style="text-align:right;font-weight:700;font-family:'Orbitron','Space Grotesk',sans-serif;">${fmtNaira(args.totalKobo)}</td></tr>
       </table>
@@ -332,7 +300,7 @@ export function adminAlertHtml(args: {
 export function waitlistHtml(args: { parentName: string; participantName: string }): string {
   const content = `
     <div style="background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:24px;padding:36px 28px;box-shadow:0 12px 40px rgba(15,15,15,0.06);">
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.22em;color:#2563eb;text-transform:uppercase;margin-bottom:8px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.22em;color:#0e92a0;text-transform:uppercase;margin-bottom:8px;">
         You're on the waitlist
       </div>
       <h1 style="font-size:28px;line-height:1.05;margin:0 0 14px;font-weight:800;text-transform:uppercase;letter-spacing:-0.02em;">
@@ -341,7 +309,7 @@ export function waitlistHtml(args: { parentName: string; participantName: string
       <p style="font-size:15px;line-height:1.65;color:#3a3a3a;margin:0 0 18px;">
         ${esc(args.participantName)} is officially on the IMMERSIA waitlist. The 2026 cohort is currently full at 50 paid slots, but we open spots when paid registrations cancel within 7 days of camp start.
       </p>
-      <div style="background:#2d2e83;color:#fff;border-radius:16px;padding:18px 22px;margin:18px 0;">
+      <div style="background:#1f6f87;color:#fff;border-radius:16px;padding:18px 22px;margin:18px 0;">
         <div style="font-size:10px;font-weight:700;letter-spacing:0.22em;color:rgba(255,255,255,0.8);text-transform:uppercase;margin-bottom:4px;">
           What happens if a slot opens
         </div>
@@ -352,35 +320,6 @@ export function waitlistHtml(args: { parentName: string; participantName: string
       <p style="font-size:13px;line-height:1.6;color:#777;margin:0;">
         No payment is needed yet, we just wanted you on the list. If you have questions, reply to this email.
       </p>
-    </div>
-  `;
-  return shell(content);
-}
-
-export function parentFeedbackHtml(args: {
-  parentName: string;
-  parentEmail: string;
-  message: string;
-  submittedAt: string;
-}): string {
-  const content = `
-    <div style="background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:24px;padding:36px 28px;box-shadow:0 12px 40px rgba(15,15,15,0.06);">
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.22em;color:#2563eb;text-transform:uppercase;margin-bottom:8px;">
-        Parent dashboard feedback
-      </div>
-      <h1 style="font-size:26px;line-height:1.1;margin:0 0 14px;font-weight:800;text-transform:uppercase;letter-spacing:-0.02em;">
-        ${esc(args.parentName)}
-      </h1>
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 16px;font-size:14px;">
-        <tr><td style="padding:5px 0;color:#777;">Email</td><td style="text-align:right;font-weight:600;">${esc(args.parentEmail)}</td></tr>
-        <tr><td style="padding:5px 0;color:#777;">Submitted</td><td style="text-align:right;font-weight:600;">${esc(args.submittedAt)}</td></tr>
-      </table>
-      <div style="border-top:1px solid rgba(0,0,0,0.06);padding-top:16px;">
-        <div style="font-size:11px;font-weight:700;letter-spacing:0.18em;color:#2563eb;text-transform:uppercase;margin-bottom:8px;">
-          Message
-        </div>
-        <div style="white-space:pre-wrap;font-size:14px;line-height:1.7;color:#3a3a3a;">${esc(args.message)}</div>
-      </div>
     </div>
   `;
   return shell(content);
