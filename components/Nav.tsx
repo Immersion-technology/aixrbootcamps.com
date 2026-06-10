@@ -47,8 +47,8 @@ export default function Nav() {
               <Image
                 src="/logo.png"
                 alt="IMMERSIA, Virtual Reality, feel. everything"
-                width={1254}
-                height={1254}
+                width={1044}
+                height={335}
                 priority
                 sizes="180px"
                 className="h-8 w-auto"
@@ -73,8 +73,8 @@ export default function Nav() {
               <Image
                 src="/logo.png"
                 alt="IMMERSIA, Virtual Reality, feel. everything"
-                width={1254}
-                height={1254}
+                width={1044}
+                height={335}
                 priority
                 sizes="180px"
                 className="h-10 w-auto"
@@ -143,8 +143,8 @@ export default function Nav() {
                 <Image
                   src="/logo.png"
                   alt=""
-                  width={1254}
-                  height={1254}
+                  width={1044}
+                  height={335}
                   sizes="220px"
                   className="h-12 w-auto rounded-xl bg-white px-2.5 py-1.5"
                 />

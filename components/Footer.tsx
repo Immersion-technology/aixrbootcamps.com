@@ -144,8 +144,8 @@ export default function Footer() {
                 <Image
                   src="/logo.png"
                   alt="IMMERSIA — Virtual Reality, feel. everything"
-                  width={1254}
-                  height={1254}
+                  width={1044}
+                  height={335}
                   sizes="240px"
                   className="h-10 sm:h-14 w-auto mb-4 sm:mb-5 mx-auto md:mx-0"
                 />

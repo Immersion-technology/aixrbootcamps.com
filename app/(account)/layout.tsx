@@ -9,7 +9,7 @@ export default async function AccountLayout({ children }: { children: React.Reac
       <header className="border-b border-black/[.05] bg-paper/95 backdrop-blur sticky top-0 z-30">
         <nav className="max-w-[1180px] mx-auto px-5 sm:px-7 h-[64px] sm:h-[72px] flex items-center justify-between gap-4">
           <Link href="/" aria-label="AI & XR Summer Tech Bootcamp" className="block shrink-0">
-            <Image src="/logo.png" alt="IMMERSIA" width={1254} height={1254} priority sizes="180px" className="h-8 sm:h-9 w-auto" />
+            <Image src="/logo.png" alt="IMMERSIA" width={1044} height={335} priority sizes="180px" className="h-8 sm:h-9 w-auto" />
           </Link>
           {parent ? (
             <div className="flex items-center gap-4">
