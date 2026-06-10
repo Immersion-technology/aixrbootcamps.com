@@ -104,7 +104,7 @@ export default async function Landing() {
 
             {/* Sign-up banner, full-width lead-in to the AI & XR wordmark below */}
             <div className="relative mb-3 sm:mb-4 flex justify-center lg:justify-end">
-              <div className="card-sticker card-sticker--green card-sticker--tilt-r anim-fade-up delay-1 inline-block px-5 sm:px-6 py-2.5 sm:py-3 max-w-full" style={{ borderRadius: 18 }}>
+              <div className="card-sticker card-sticker--orange card-sticker--tilt-r anim-fade-up delay-1 inline-block px-5 sm:px-6 py-2.5 sm:py-3 max-w-full" style={{ borderRadius: 18 }}>
                 <div className="font-bubble whitespace-nowrap text-[clamp(14px,2.4vw,22px)] leading-none tracking-tight text-white">SIGN UP YOUR KIDS TODAY FOR…</div>
               </div>
             </div>
