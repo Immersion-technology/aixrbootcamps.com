@@ -93,10 +93,12 @@ textarea:focus-visible,
 .card-sticker--cyan-soft  { background: #bcd6ff; color: #0B1220; }
 .card-sticker--green      { background: #fb5607; color: #0B1220; }
 .card-sticker--green-soft { background: #ffb185; color: #0B1220; }
+/* deepened jewel tones so white text is readable on every course card */
+.card-sticker--orange     { background: #c2410c; color: #ffffff; }
 .card-sticker--amber      { background: #ffbe0b; color: #0B1220; }
 .card-sticker--violet     { background: #8338ec; color: #ffffff; }
 .card-sticker--pink       { background: #ff006e; color: #ffffff; }
-.card-sticker--emerald    { background: #06d6a0; color: #0B1220; }
+.card-sticker--emerald    { background: #047857; color: #ffffff; }
 .card-sticker--cobalt     { background: #2d2e83; color: #ffffff; }
 .card-sticker--ink        { background: #0f0f0f; color: #ffffff; }
 .card-sticker--ink:hover  {

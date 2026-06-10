@@ -190,7 +190,7 @@ export default async function Landing() {
 
           <div className="stagger-group grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
             <CourseCard i={0} num="01" slug="vibe-coding"      Icon={CodeIcon}        sticker="cyan"    title={<>VIBE CODING &amp; AI PROMPT ENGINEERING</>}  sub="Pair-program with AI to ship a deployed web app. No prior code needed." />
-            <CourseCard i={1} num="02" slug="entrepreneurship" Icon={Rocket01Icon}    sticker="green"   title={<>ENTREPRENEURSHIP &amp; PITCHING</>}          sub="Idea → product → live Demo Day pitch in two weeks."                        tag="★ COMPULSORY" />
+            <CourseCard i={1} num="02" slug="entrepreneurship" Icon={Rocket01Icon}    sticker="orange"  title={<>ENTREPRENEURSHIP &amp; PITCHING</>}          sub="Idea → product → live Demo Day pitch in two weeks."                        tag="★ COMPULSORY" />
             <CourseCard i={2} num="03" slug="content-creation" Icon={CameraVideoIcon} sticker="pink"    title={<>CONTENT CREATION</>}                          sub="Script, shoot and edit short-form videos worth posting." />
             <CourseCard i={3} num="04" slug="robotics"         Icon={RoboticIcon}     sticker="violet"  title={<>ROBOTICS &amp; EMBEDDED SYSTEMS</>}          sub="Blink an LED on day one; build your own gadget and keep the kit by week's end." tag="✦ ELECTIVE · +₦25,000" />
             <CourseCard i={4} num="05" slug="3d-vr"            Icon={VrGlassesIcon}   sticker="emerald" title={<>3D CHARACTER &amp; VR WORLD CREATION</>}    sub="Sculpt characters in Blender. Step inside the world you made." />
@@ -444,11 +444,11 @@ const ICON_COLOR_LEGEND: Record<string, string> = {
 // sticker variants whose background is dark/saturated enough to need white text
 // (azure, violet, pink, cobalt, ink) — everything else (orange, amber, emerald,
 // and the -soft pastels) reads better with near-black ink text.
-const WHITE_TEXT_STICKERS = new Set(["cyan", "violet", "pink", "cobalt", "ink"]);
+const WHITE_TEXT_STICKERS = new Set(["cyan", "orange", "violet", "pink", "cobalt", "ink", "emerald"]);
 
 type StickerTone =
   | "cyan" | "cyan-soft" | "green" | "green-soft" | "ink"
-  | "pink" | "violet" | "emerald" | "amber" | "cobalt";
+  | "pink" | "violet" | "emerald" | "amber" | "cobalt" | "orange";
 
 function CourseCard({
   i, num, slug, Icon, sticker, title, sub, tag,

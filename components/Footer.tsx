@@ -48,13 +48,22 @@ export default function Footer() {
             and the single primary (grass) CTA. Tucks down into the white
             footer card below via a negative margin so the two overlap. */}
         <section
-          className="relative overflow-hidden rounded-[24px] sm:rounded-[32px] bg-petrol-brand text-white
+          className="relative isolate overflow-hidden rounded-[24px] sm:rounded-[32px] text-white
                      px-5 sm:px-10 pt-10 sm:pt-20 pb-16 sm:pb-28 text-center"
+          style={{
+            backgroundImage:
+              "linear-gradient(110deg,#ffbe0b 0 14.3%,#fb5607 14.3% 28.6%,#ff006e 28.6% 42.9%,#8338ec 42.9% 57.1%,#3a86ff 57.1% 71.4%,#06d6a0 71.4% 85.7%,#2d2e83 85.7% 100%)",
+          }}
         >
-          {/* Ferrofluid base layer, brand-tinted glowing rims drifting upward */}
-          <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
+          {/* deepen the colour base into jewel tones (not neon, not pure black) so
+              the copy stays legible and the Ferrofluid rims can glow on top */}
+          <div aria-hidden className="pointer-events-none absolute inset-0 z-0 bg-black/50" />
+
+          {/* Ferrofluid: white glowing rims drifting upward — just a shimmer of
+              motion over the rainbow base, which already carries the colour */}
+          <div className="pointer-events-none absolute inset-0 z-[1]" aria-hidden>
             <Ferrofluid
-              colors={["#3a86ff", "#fb5607", "#8338ec"]}
+              colors={["#ffffff"]}
               speed={0.4}
               scale={1.4}
               turbulence={1.1}
@@ -64,25 +73,12 @@ export default function Footer() {
               shimmer={1.3}
               glow={2.2}
               flowDirection="up"
-              opacity={0.75}
+              opacity={0.9}
               mouseInteraction={false}
             />
           </div>
 
-          {/* soft glow that fades from the top edge inward, echoing the reference */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-x-0 -top-24 h-56 z-[1]
-                       bg-[radial-gradient(60%_100%_at_50%_0%,rgba(251,86,7,.28),transparent_70%)]"
-          />
-          {/* faint aqua bloom bottom-left for depth */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -bottom-20 -left-10 h-64 w-64 rounded-full z-[1]
-                       bg-aqua-brand/15 blur-3xl"
-          />
-
-          <div className="relative z-10">
+          <div className="relative z-10 [text-shadow:0_2px_12px_rgba(0,0,0,.5)]">
             <p className="text-[10px] sm:text-[11px] font-bold tracking-[.24em] uppercase text-grass-brand mb-2.5 sm:mb-5">
               Slots are limited
             </p>
@@ -98,7 +94,7 @@ export default function Footer() {
               <Link
                 href="/register"
                 className="inline-flex items-center gap-2 bg-grass-brand text-ink rounded-full
-                           px-6 sm:px-7 py-3 sm:py-3.5 min-h-[46px] sm:min-h-[52px] font-bubble text-[15px] sm:text-[16px] tracking-tight
+                           px-6 sm:px-7 py-3 sm:py-3.5 min-h-[46px] sm:min-h-[52px] font-semibold text-[15px] sm:text-[16px] tracking-tight
                            hover:bg-grass-deep hover:text-white active:scale-[.98] transition
                            shadow-[0_14px_30px_-10px_rgba(251,86,7,.6)]"
               >
