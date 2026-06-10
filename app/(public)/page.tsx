@@ -309,8 +309,20 @@ export default async function Landing() {
       {/* ============ PITCH DAY ============ */}
       <section className="relative overflow-hidden py-24 sm:py-28">
         <div className="max-w-[1180px] mx-auto px-5 sm:px-7">
-          <div className="bg-violet-brand rounded-[32px] ring-1 ring-white/10 shadow-[0_30px_60px_-30px_rgba(131,56,236,.6)]">
-            <div className="stagger-group relative px-6 sm:px-12 pt-16 pb-16 overflow-hidden rounded-[32px] text-center text-white">
+          <div
+            className="relative overflow-hidden rounded-[32px] ring-1 ring-white/15 shadow-[0_30px_60px_-30px_rgba(0,0,0,.55)]"
+            style={{
+              backgroundImage:
+                "linear-gradient(110deg,#ffbe0b 0 14.3%,#fb5607 14.3% 28.6%,#ff006e 28.6% 42.9%,#8338ec 42.9% 57.1%,#3a86ff 57.1% 71.4%,#06d6a0 71.4% 85.7%,#2d2e83 85.7% 100%)",
+            }}
+          >
+            {/* darkening scrim — keeps the white copy legible over the colour rush
+                while the saturated slices stay vivid toward the corners */}
+            <div
+              aria-hidden
+              className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(15,15,15,.62),rgba(15,15,15,.24))]"
+            />
+            <div className="stagger-group relative z-[1] px-6 sm:px-12 pt-16 pb-16 text-center text-white [text-shadow:0_2px_12px_rgba(0,0,0,.45)]">
               {/* corner sparkles */}
               <span aria-hidden className="absolute top-10 left-10 text-[36px] leading-none text-gold-brand/70 anim-spin-slow inline-block">✦</span>
               <span aria-hidden className="absolute top-12 right-12 text-[28px] leading-none text-white/50 anim-pulse inline-block">✦</span>
