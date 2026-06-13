@@ -71,7 +71,7 @@ function CheckingHero() {
         Hang tight…
       </h1>
       <p className="text-[14px] text-neutral-700 max-w-[420px] mx-auto leading-relaxed">
-        We&apos;re confirming your payment with Monnify. This usually takes a few seconds, don&apos;t close this page.
+        We&apos;re confirming your payment with Paystack. This usually takes a few seconds, don&apos;t close this page.
       </p>
     </div>
   );
@@ -155,7 +155,7 @@ function PendingView() {
           Hang on a moment.
         </h1>
         <p className="text-[14px] text-neutral-700 max-w-[440px] mx-auto leading-relaxed">
-          Monnify is taking longer than usual to confirm. If you completed payment, watch for your confirmation email in the next few minutes, no need to pay again. If you didn&apos;t finish, you can retry.
+          Paystack is taking longer than usual to confirm. If you completed payment, watch for your confirmation email in the next few minutes, no need to pay again. If you didn&apos;t finish, you can retry.
         </p>
       </div>
 

@@ -1,6 +1,13 @@
 import Link from "next/link";
 import FaqAccordion from "@/components/FaqAccordion";
 
+export const metadata = {
+  title: "FAQ · Everything parents ask",
+  description:
+    "Answers to the questions parents ask most about the IMMERSIA AI & XR Summer Tech Bootcamp 2026 — ages, dates, pricing, safety, laptops and what campers build.",
+  alternates: { canonical: "/faq" },
+};
+
 export default function FaqPage() {
   return (
     <section className="relative pt-12 pb-24 dot-grid min-h-[80vh]">

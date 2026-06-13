@@ -6,6 +6,13 @@ import RegistrationForm from "./RegistrationForm";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "Register · Reserve your camper's slot",
+  description:
+    "Secure a place at the IMMERSIA AI & XR Summer Tech Bootcamp 2026. Four short steps, about three minutes. Early-bird ₦150,000 for the first 10 campers.",
+  alternates: { canonical: "/register" },
+};
+
 const FALLBACK = {
   capacity: 50,
   paid: 0,
@@ -68,7 +75,7 @@ export default async function RegisterPage() {
         </h1>
 
         <p className="text-[14px] sm:text-[15px] text-neutral-700 leading-relaxed max-w-[560px] mb-10 anim-fade-up delay-2">
-          Four short steps. Takes about three minutes. Your camper&apos;s slot is held the moment payment lands. Monnify confirms in seconds.
+          Four short steps. Takes about three minutes. Your camper&apos;s slot is held the moment payment lands. Paystack confirms in seconds.
         </p>
 
         <RegistrationForm

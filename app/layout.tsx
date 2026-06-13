@@ -3,6 +3,14 @@ import localFont from "next/font/local";
 import { Space_Grotesk, Orbitron } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
+import {
+  SITE_URL,
+  SITE_NAME,
+  SITE_TITLE,
+  SITE_DESC,
+  SITE_KEYWORDS,
+  SITE_LOCALE,
+} from "@/lib/site";
 
 // Space Grotesk: the body + display workhorse (font-body / font-display).
 // Self-hosted via next/font so there's no render-blocking request to Google.
@@ -39,9 +47,43 @@ const superBeatpop = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "AI & XR Summer Tech Bootcamp 2026",
-  description:
-    "A 4-week tech adventure for kids aged 10–17. Robotics, AI, VR, e-sports, music & more. Starts 27 July 2026.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_TITLE} · ${SITE_NAME}`,
+    template: `%s · ${SITE_NAME}`,
+  },
+  description: SITE_DESC,
+  keywords: SITE_KEYWORDS,
+  applicationName: SITE_NAME,
+  authors: [{ name: SITE_NAME }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  category: "education",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: SITE_LOCALE,
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: `${SITE_TITLE} · ${SITE_NAME}`,
+    description: SITE_DESC,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_TITLE} · ${SITE_NAME}`,
+    description: SITE_DESC,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -20,6 +20,8 @@ import {
   type CardColor,
 } from "@/lib/curriculum";
 import { cn } from "@/lib/utils";
+import JsonLd from "@/components/JsonLd";
+import { SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site";
 
 const ICON_MAP: Record<IconName, typeof CodeIcon> = {
   CodeIcon,
@@ -66,10 +68,23 @@ export function generateStaticParams() {
 
 export function generateMetadata({ params }: { params: { slug: string } }) {
   const c = getBySlug(params.slug);
-  if (!c) return { title: "Not found · IMMERSIA" };
+  if (!c) return { title: "Not found" };
+  const canonical = `/courses/${c.slug}`;
   return {
-    title: `${c.name} · IMMERSIA`,
+    title: c.name,
     description: c.shortDesc,
+    alternates: { canonical },
+    openGraph: {
+      type: "article",
+      url: absoluteUrl(canonical),
+      title: `${c.name} · ${SITE_NAME}`,
+      description: c.shortDesc,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${c.name} · ${SITE_NAME}`,
+      description: c.shortDesc,
+    },
   };
 }
 
@@ -82,8 +97,18 @@ export default function CourseDetail({ params }: { params: { slug: string } }) {
   const eyebrowType = isClass ? "CLASS" : "ACTIVE BREAK";
   const t = THEME[course.cardColor];
 
+  const courseJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: course.name,
+    description: course.shortDesc,
+    url: absoluteUrl(`/courses/${course.slug}`),
+    provider: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+  };
+
   return (
     <section className="relative dot-grid pt-12 pb-24">
+      <JsonLd data={courseJsonLd} />
       <div className="max-w-[960px] mx-auto px-5 sm:px-7">
         {/* breadcrumb */}
         <Link

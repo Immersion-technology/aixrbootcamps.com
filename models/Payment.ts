@@ -3,8 +3,8 @@ import mongoose, { Schema, Model, Types } from "mongoose";
 export interface IPayment {
   registrationId: Types.ObjectId;
   paymentReference: string;
-  // Monnify's canonical transaction reference (MNFY|...). Captured from the
-  // webhook/status query. Kept for refunds and audit.
+  // Paystack's transaction reference. We pass our own paymentReference to
+  // Paystack as the reference, so the two coincide. Kept for refunds and audit.
   transactionReference?: string;
   amount: number;
   currency: string;

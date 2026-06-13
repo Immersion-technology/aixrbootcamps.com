@@ -52,7 +52,7 @@ export default function TermsPage() {
 
           <Section title="4. Payment, holds and refunds">
             <ul className="list-disc pl-5 space-y-1.5">
-              <li>Payment is processed by <strong>Monnify</strong>. A slot is only held once payment clears.</li>
+              <li>Payment is processed by <strong>Paystack</strong>. A slot is only held once payment clears.</li>
               <li>The first 10 paid registrations get the <strong>₦150,000 early-bird</strong> price. After that, ₦200,000 regular.</li>
               <li><strong>Instalments:</strong> ₦75,000 deposit on registration holds your slot; balance is due two weeks before your cohort starts.</li>
               <li><strong>Refunds:</strong> none. All payments are final once a slot is confirmed.</li>

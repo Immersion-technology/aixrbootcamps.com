@@ -3,7 +3,7 @@ import mongoose, { Schema, Model } from "mongoose";
 /**
  * A logged-in parent / guardian. One ParentAccount can be linked to one
  * or more Registration documents (multiple kids), matched by email. Created
- * automatically after Monnify confirms payment. Login is passwordless via a
+ * automatically after Paystack confirms payment. Login is passwordless via a
  * one-time magic link (see lib/magic-link.ts) — there is no password by design.
  */
 export interface IParentAccount {

@@ -1,5 +1,10 @@
 import Link from "next/link";
 
+export const metadata = {
+  title: "Payment not completed",
+  robots: { index: false, follow: false },
+};
+
 export default function FailedPage() {
   return (
     <section className="relative min-h-[80vh] dot-grid pt-12 pb-24 flex items-center">
@@ -21,7 +26,7 @@ export default function FailedPage() {
           <ul className="space-y-3 text-[13.5px] text-neutral-700">
             <li className="flex gap-3"><span className="text-aqua-deep font-bold">→</span> <span>Check that your card has funds and that international payments are enabled.</span></li>
             <li className="flex gap-3"><span className="text-aqua-deep font-bold">→</span> <span>Try again, your details are still in the form, just resubmit.</span></li>
-            <li className="flex gap-3"><span className="text-aqua-deep font-bold">→</span> <span>Or pay by bank transfer / USSD. Both options on Monnify&apos;s checkout page.</span></li>
+            <li className="flex gap-3"><span className="text-aqua-deep font-bold">→</span> <span>Or pay by bank transfer / USSD. Both options on Paystack&apos;s checkout page.</span></li>
           </ul>
         </div>
 

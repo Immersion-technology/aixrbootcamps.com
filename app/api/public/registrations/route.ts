@@ -4,7 +4,7 @@ import { Registration } from "@/models/Registration";
 import { getSetting, SETTING_KEYS } from "@/models/Setting";
 import { nextSeq } from "@/models/Counter";
 import { registrationCreateSchema } from "@/lib/validations";
-import { initTransaction } from "@/lib/monnify";
+import { initTransaction } from "@/lib/paystack";
 import { normalizePhone, shortRegistrationId, rateLimit, getClientIp } from "@/lib/utils";
 import { getClasses } from "@/lib/curriculum";
 
@@ -100,20 +100,20 @@ export async function POST(req: NextRequest) {
       statusLog: [{ action: "created", by: "system", at: new Date() }],
     });
 
-    // --- init Monnify ---
+    // --- init Paystack ---
     const appUrl = process.env.APP_URL ?? `${req.nextUrl.origin}`;
     const initRes = await initTransaction({
       email: data.parent.email,
-      amountNaira: total / 100, // pricing is stored in kobo; Monnify expects naira
+      amountKobo: total, // pricing is stored in kobo; Paystack also expects kobo
       reference: paymentReference,
       customerName: data.parent.fullName,
-      redirectUrl: `${appUrl}/register/success`,
+      callbackUrl: `${appUrl}/register/success`,
       metadata: { registrationId, participantName: data.participant.fullName },
     });
 
     return NextResponse.json({
       registrationId: reg.registrationId,
-      authorizationUrl: initRes.checkoutUrl,
+      authorizationUrl: initRes.authorizationUrl,
       reference: paymentReference,
     });
   } catch (e) {

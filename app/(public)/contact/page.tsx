@@ -1,6 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
 
+export const metadata = {
+  title: "Contact · Talk to a human",
+  description:
+    "Questions about the IMMERSIA AI & XR Summer Tech Bootcamp? Reach us on WhatsApp or phone, Mon–Sat 9am–6pm WAT. We usually reply within 30 minutes.",
+  alternates: { canonical: "/contact" },
+};
+
 type Sticker = "cyan" | "green" | "ink";
 
 const CHANNELS: Array<{

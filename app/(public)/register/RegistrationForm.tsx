@@ -356,7 +356,7 @@ export default function RegistrationForm({ pricing }: Props) {
               disabled={submitting}
               className="w-full bg-grass-brand text-ink rounded-full py-4 min-h-[56px] font-bubble text-[18px] sm:text-[20px] tracking-tight hover:bg-grass-deep hover:text-white transition disabled:opacity-60 shadow-[0_14px_30px_-10px_rgba(251,86,7,.6)]"
             >
-              {submitting ? "REDIRECTING TO MONNIFY…" : `PAY ${naira(total)} VIA MONNIFY →`}
+              {submitting ? "REDIRECTING TO PAYSTACK…" : `PAY ${naira(total)} VIA PAYSTACK →`}
             </button>
           </div>
         </div>

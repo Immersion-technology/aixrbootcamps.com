@@ -34,7 +34,7 @@ export default function PrivacyPage() {
               <li><strong>About the parent / guardian:</strong> full name, relationship, phone numbers, email, home address.</li>
               <li><strong>Emergency contact:</strong> name, phone, relationship.</li>
               <li><strong>Medical notes:</strong> only what you choose to disclose (allergies, conditions we should know about).</li>
-              <li><strong>Payment metadata:</strong> Monnify reference + status. We do <em>not</em> store card numbers or bank details, those live with Monnify.</li>
+              <li><strong>Payment metadata:</strong> Paystack reference + status. We do <em>not</em> store card numbers or bank details, those live with Paystack.</li>
               <li><strong>Site analytics:</strong> anonymous page-view data and request IPs used briefly for rate-limiting abuse.</li>
             </ul>
           </Section>
@@ -44,7 +44,7 @@ export default function PrivacyPage() {
               <li>To enrol your child in the cohort, assign them to courses, and produce their name badge / t-shirt.</li>
               <li>To reach you about logistics, drop-off, pick-up, schedule changes, and Demo Day.</li>
               <li>To contact your emergency contact if your child needs medical attention.</li>
-              <li>To process payment via Monnify.</li>
+              <li>To process payment via Paystack.</li>
               <li>To comply with the Nigeria Data Protection Regulation (NDPR) and the Nigeria Data Protection Act 2023.</li>
             </ul>
           </Section>
@@ -54,7 +54,7 @@ export default function PrivacyPage() {
               By default, <strong>nobody outside the IMMERSIA team</strong>. The exceptions:
             </p>
             <ul className="list-disc pl-5 space-y-1.5">
-              <li><strong>Monnify</strong>, to process payment.</li>
+              <li><strong>Paystack</strong>, to process payment.</li>
               <li><strong>Our email provider</strong>, to send registration confirmations, receipts and pre-camp logistics.</li>
               <li><strong>Medical responders</strong>, only if your child needs urgent care during camp.</li>
               <li><strong>Law enforcement</strong>, only if compelled by a valid Nigerian court order.</li>
@@ -91,7 +91,7 @@ export default function PrivacyPage() {
 
           <Section title="8. Security">
             <p>
-              Data is encrypted in transit (HTTPS) and at rest. Access is limited to the IMMERSIA team members who need it to run the cohort. We do not store any payment card data. Monnify handles that under PCI-DSS rules.
+              Data is encrypted in transit (HTTPS) and at rest. Access is limited to the IMMERSIA team members who need it to run the cohort. We do not store any payment card data. Paystack handles that under PCI-DSS rules.
             </p>
           </Section>
 

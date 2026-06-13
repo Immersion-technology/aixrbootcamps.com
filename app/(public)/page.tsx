@@ -13,9 +13,66 @@ import {
 } from "hugeicons-react";
 import ScrollReveal from "@/components/ScrollReveal";
 import FaqAccordion from "@/components/FaqAccordion";
+import JsonLd from "@/components/JsonLd";
 import { connectDB } from "@/lib/db";
 import { Registration } from "@/models/Registration";
 import { getSetting, SETTING_KEYS } from "@/models/Setting";
+import {
+  SITE_URL,
+  SITE_NAME,
+  SITE_DESC,
+  CAMP_START,
+  CAMP_END,
+  CONTACT_CITY,
+  CONTACT_COUNTRY,
+  PRICE_EARLY_BIRD,
+  absoluteUrl,
+} from "@/lib/site";
+
+export const metadata = {
+  title: "AI & XR Summer Tech Bootcamp 2026 for Kids 10–17",
+  description: SITE_DESC,
+  alternates: { canonical: "/" },
+};
+
+// Organization + Event structured data for rich results. Values come from
+// lib/site.ts so nothing is duplicated.
+const ORG_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  name: SITE_NAME,
+  url: SITE_URL,
+  logo: absoluteUrl("/logo.png"),
+  description: SITE_DESC,
+  address: { "@type": "PostalAddress", addressLocality: CONTACT_CITY, addressCountry: CONTACT_COUNTRY },
+};
+
+const EVENT_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "EducationEvent",
+  name: "IMMERSIA AI & XR Summer Tech Bootcamp 2026",
+  description: SITE_DESC,
+  startDate: CAMP_START,
+  endDate: CAMP_END,
+  eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+  eventStatus: "https://schema.org/EventScheduled",
+  url: SITE_URL,
+  image: absoluteUrl("/opengraph-image"),
+  location: {
+    "@type": "Place",
+    name: "IMMERSIA",
+    address: { "@type": "PostalAddress", addressLocality: CONTACT_CITY, addressCountry: CONTACT_COUNTRY },
+  },
+  organizer: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+  offers: {
+    "@type": "Offer",
+    price: PRICE_EARLY_BIRD,
+    priceCurrency: "NGN",
+    availability: "https://schema.org/InStock",
+    url: absoluteUrl("/register"),
+    validFrom: "2026-01-01",
+  },
+};
 
 type IconCmp = typeof RoboticIcon;
 
@@ -68,6 +125,8 @@ export default async function Landing() {
 
   return (
     <>
+      <JsonLd data={ORG_JSONLD} />
+      <JsonLd data={EVENT_JSONLD} />
       <ScrollReveal />
       {/* ============ HERO ============ */}
       <section className="relative pt-6 sm:pt-10 pb-20 sm:pb-24 overflow-hidden dot-grid">

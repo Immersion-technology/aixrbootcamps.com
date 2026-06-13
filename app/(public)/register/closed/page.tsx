@@ -1,5 +1,11 @@
 import WaitlistForm from "./WaitlistForm";
 
+export const metadata = {
+  title: "Join the waitlist",
+  description: "The current IMMERSIA cohort is full. Join the waitlist and we'll reach out the moment a slot opens up.",
+  alternates: { canonical: "/register" },
+};
+
 export default function ClosedPage() {
   return (
     <section className="relative min-h-[80vh] dot-grid pt-12 pb-24">
