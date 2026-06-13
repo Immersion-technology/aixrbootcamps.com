@@ -135,13 +135,11 @@ export async function reconcileAndConfirm(
     const appUrl = process.env.APP_URL ?? "http://localhost:3000";
     await sendMail({
       to: adminEmail,
-      replyTo: reg.parent.email,
       subject: `New registration: ${reg.participant.fullName} · ${reg.registrationId}${overflow ? " (OVERFLOW)" : ""}`,
       html: adminAlertHtml({
         participantName: reg.participant.fullName,
         registrationId: reg.registrationId,
         parentName: reg.parent.fullName,
-        parentEmail: reg.parent.email,
         parentPhone: reg.parent.phonePrimary,
         totalKobo: reg.pricing.total,
         appUrl,
