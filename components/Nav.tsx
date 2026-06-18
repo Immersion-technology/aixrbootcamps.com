@@ -9,6 +9,7 @@ const LINKS = [
   { href: "/",           label: "Home" },
   { href: "/#courses",   label: "Courses" },
   { href: "/#timetable", label: "Schedule" },
+  { href: "/teachers",   label: "Teachers" },
   { href: "/faq",        label: "FAQ" },
   { href: "/contact",    label: "Contact" },
 ];
@@ -47,8 +48,8 @@ export default function Nav() {
               <Image
                 src="/logo.png"
                 alt="IMMERSIA, Virtual Reality, feel. everything"
-                width={1044}
-                height={335}
+                width={668}
+                height={668}
                 priority
                 sizes="180px"
                 className="h-8 w-auto"
@@ -73,8 +74,8 @@ export default function Nav() {
               <Image
                 src="/logo.png"
                 alt="IMMERSIA, Virtual Reality, feel. everything"
-                width={1044}
-                height={335}
+                width={668}
+                height={668}
                 priority
                 sizes="180px"
                 className="h-10 w-auto"
@@ -84,6 +85,7 @@ export default function Nav() {
             <ul className="justify-self-center flex items-center gap-6 lg:gap-8 text-[14px] text-neutral-700 font-medium">
               <li><Link href="/#courses"   className="hover:text-ink transition">Courses</Link></li>
               <li><Link href="/#timetable" className="hover:text-ink transition">Schedule</Link></li>
+              <li><Link href="/teachers"   className="hover:text-ink transition">Teachers</Link></li>
               <li><Link href="/faq"        className="hover:text-ink transition">FAQ</Link></li>
               <li><Link href="/contact"    className="hover:text-ink transition">Contact</Link></li>
             </ul>
@@ -143,8 +145,8 @@ export default function Nav() {
                 <Image
                   src="/logo.png"
                   alt=""
-                  width={1044}
-                  height={335}
+                  width={668}
+                  height={668}
                   sizes="220px"
                   className="h-12 w-auto rounded-xl bg-white px-2.5 py-1.5"
                 />

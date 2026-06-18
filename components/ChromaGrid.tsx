@@ -165,10 +165,10 @@ const ChromaGrid: React.FC<ChromaGridProps> = ({
             )}
           </div>
           <div className="relative z-10 flex flex-col gap-2 px-4 pb-4 pt-2 font-sans">
-            <h3 className="m-0 font-bubble text-[1.45rem] leading-[1.05] tracking-tight text-[#0B1220]">
+            <h3 className="m-0 font-bubble text-[1.45rem] leading-[1.05] tracking-tight text-[#0B1220] line-clamp-2 min-h-[2.1em]">
               {c.title}
             </h3>
-            <p className="m-0 text-[0.82rem] leading-snug text-neutral-600 line-clamp-3 min-h-[3.2em]">
+            <p className="m-0 text-[0.82rem] leading-snug text-neutral-600 line-clamp-3 min-h-[4em]">
               {c.subtitle}
             </p>
             <footer className="mt-1.5 flex items-center justify-between gap-3">

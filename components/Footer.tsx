@@ -26,6 +26,7 @@ const SOCIALS: Array<{ label: string; href: string; path: string }> = [
 const EXPLORE = [
   { href: "/#courses",   label: "Courses" },
   { href: "/#timetable", label: "Schedule" },
+  { href: "/teachers",   label: "Teachers" },
   { href: "/register",   label: "Register" },
   { href: "/faq",        label: "FAQ" },
   { href: "/contact",    label: "Contact" },
@@ -140,8 +141,8 @@ export default function Footer() {
                 <Image
                   src="/logo.png"
                   alt="IMMERSIA — Virtual Reality, feel. everything"
-                  width={1044}
-                  height={335}
+                  width={668}
+                  height={668}
                   sizes="240px"
                   className="h-10 sm:h-14 w-auto mb-4 sm:mb-5 mx-auto md:mx-0"
                 />
