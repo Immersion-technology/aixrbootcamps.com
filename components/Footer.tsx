@@ -35,6 +35,7 @@ const EXPLORE = [
 const VISIT = [
   { label: "27 July – 4 September 2026", muted: false },
   { label: "Mon – Fri · 9am – 1:30pm", muted: true },
+  { label: "In-person in Lagos · or join online", muted: false },
   { label: "99 Adesanya Ogunsanya", muted: true },
   { label: "Leisure Mall, Surulere · Lagos", muted: true },
 ];
@@ -147,7 +148,7 @@ export default function Footer() {
                   className="h-10 sm:h-14 w-auto mb-4 sm:mb-5 mx-auto md:mx-0"
                 />
                 <p className="text-[13px] sm:text-[13.5px] text-neutral-600 leading-relaxed max-w-[330px] mx-auto md:mx-0">
-                  Lagos-based summer tech bootcamp for ages 10–17 — building the next
+                  Lagos-based &amp; online summer tech bootcamp for ages 10–17 — building the next
                   generation of African makers, coders and founders.
                 </p>
 

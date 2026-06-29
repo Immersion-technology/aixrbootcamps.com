@@ -19,6 +19,11 @@ export type FaqItem = {
 export const FAQS: FaqItem[] = [
   {
     topic: "Logistics",
+    q: "Can my child attend online?",
+    a: "Yes. Every cohort runs in-person in Lagos and live online — pick your mode when you register. Same classes, same schedule, same Demo Day, same price.",
+  },
+  {
+    topic: "Logistics",
     q: "Two sessions? What's the difference?",
     a: "They're identical in curriculum, instructors, and price. Pick whichever fits your family's August calendar.",
   },

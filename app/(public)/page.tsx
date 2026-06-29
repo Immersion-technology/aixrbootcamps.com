@@ -54,15 +54,21 @@ const EVENT_JSONLD = {
   description: SITE_DESC,
   startDate: CAMP_START,
   endDate: CAMP_END,
-  eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+  eventAttendanceMode: "https://schema.org/MixedEventAttendanceMode",
   eventStatus: "https://schema.org/EventScheduled",
   url: SITE_URL,
   image: absoluteUrl("/opengraph-image"),
-  location: {
-    "@type": "Place",
-    name: "IMMERSIA",
-    address: { "@type": "PostalAddress", addressLocality: CONTACT_CITY, addressCountry: CONTACT_COUNTRY },
-  },
+  location: [
+    {
+      "@type": "Place",
+      name: "IMMERSIA",
+      address: { "@type": "PostalAddress", addressLocality: CONTACT_CITY, addressCountry: CONTACT_COUNTRY },
+    },
+    {
+      "@type": "VirtualLocation",
+      url: absoluteUrl("/register"),
+    },
+  ],
   organizer: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
   offers: {
     "@type": "Offer",
@@ -88,7 +94,7 @@ async function getPublicConfig() {
     const [capacity, paid, earlyBirdCutoff, earlyBirdPrice, regularPrice, laptopPrice] = await Promise.all([
       getSetting<number>(SETTING_KEYS.CAPACITY, 50),
       Registration.countDocuments({ paymentStatus: "paid" }),
-      getSetting<string>(SETTING_KEYS.EARLY_BIRD_CUTOFF, "2026-06-30T23:59:59.000Z"),
+      getSetting<string>(SETTING_KEYS.EARLY_BIRD_CUTOFF, "2026-07-03T23:59:59.000Z"),
       getSetting<number>(SETTING_KEYS.EARLY_BIRD_PRICE, 8000000),
       getSetting<number>(SETTING_KEYS.REGULAR_PRICE, 10000000),
       getSetting<number>(SETTING_KEYS.LAPTOP_RENTAL_PRICE, 2000000),
@@ -158,7 +164,7 @@ export default async function Landing() {
           <div className="relative z-[5] order-1 lg:order-2 flex flex-col">
             {/* tiny welcome paragraph, desktop only (hidden on phones) */}
             <p className="hidden lg:block text-[13px] text-neutral-700 leading-relaxed max-w-[320px] mb-5 lg:ml-auto lg:text-right anim-fade-up">
-              Welcome to the AI &amp; XR Summer Tech Bootcamp. Nigeria&apos;s only summer programme where kids 10–17 ship a deployed AI app, build a VR world, produce an AI-assisted track and deliver a live startup pitch to a jury. <strong>27 July – 4 September 2026.</strong>
+              Welcome to the AI &amp; XR Summer Tech Bootcamp. Nigeria&apos;s only summer programme where kids 10–17 ship a deployed AI app, build a VR world, produce an AI-assisted track and deliver a live startup pitch to a jury. <strong>27 July – 4 September 2026.</strong> Join us <strong>in-person in Lagos or live online.</strong>
             </p>
 
             {/* Sign-up banner, full-width lead-in to the AI & XR wordmark below */}
@@ -211,7 +217,7 @@ export default async function Landing() {
               >
                 <div className="card-ticket card-ticket--amber flex items-stretch gap-4 sm:gap-5 group-hover:-translate-y-1 transition-transform h-full">
                   <div className="flex-1 pr-2 flex flex-col justify-center">
-                    <div className="text-[10px] sm:text-[10.5px] font-bold tracking-[.22em] uppercase text-ink/80">Early bird · first 10</div>
+                    <div className="text-[10px] sm:text-[10.5px] font-bold tracking-[.22em] uppercase text-ink/80">Early bird · ends Jul 3</div>
                   <div className="flex items-baseline gap-2 mt-1">
                       <span className="font-bubble text-[28px] sm:text-[34px] leading-none text-ink">{naira(cfg.earlyBirdPrice)}</span>
                       <span className="text-[14px] sm:text-[18px] line-through text-ink/45">{naira(cfg.regularPrice)}</span>
@@ -470,7 +476,7 @@ export default async function Landing() {
               THEY&apos;RE GONE.
             </h2>
             <p className="max-w-[480px] my-6 text-neutral-700 text-[14.5px] leading-relaxed mx-auto md:mx-0">
-              The 2026 cohorts run <strong>27 July – 4 September</strong> as three back-to-back 2-week sessions. Once we hit 50 paid registrations the camp closes. Next AI &amp; XR isn&apos;t until summer 2027. <strong>First 10 lock in {naira(cfg.earlyBirdPrice)}</strong> early-bird; regular price {naira(cfg.regularPrice)}. Both cover the 5 core courses, daily side attractions, materials and Demo Day — Robotics is an optional +₦25,000 elective. Daily attractions are subject to token usage.
+              The 2026 cohorts run <strong>27 July – 4 September</strong> as three back-to-back 2-week sessions. Once we hit 50 paid registrations the camp closes. Next AI &amp; XR isn&apos;t until summer 2027. <strong>Early-bird {naira(cfg.earlyBirdPrice)} ends 3 July</strong> — after that it&apos;s {naira(cfg.regularPrice)}. Both cover the 5 core courses, daily side attractions, materials and Demo Day — Robotics is an optional +₦25,000 elective. Daily attractions are subject to token usage.
             </p>
             <div className="flex flex-wrap gap-3 items-center justify-center md:justify-start">
               <Link href="/register" className="btn-grass">

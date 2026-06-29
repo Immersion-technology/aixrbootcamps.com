@@ -89,6 +89,7 @@ export async function POST(req: NextRequest) {
         phone: normalizePhone(data.emergencyContact.phone),
       },
       medicalNotes: data.medicalNotes,
+      attendanceMode: data.attendanceMode,
       courses: finalCourses,
       laptopRental: data.laptopRental,
       roboticsElective: data.roboticsElective,

@@ -49,6 +49,7 @@ export default async function RegistrationDetail({ params }: { params: { id: str
           <Row k="School" v={reg.participant.school} />
           <Row k="Class" v={reg.participant.classGrade || "–"} />
           <Row k="T-shirt" v={reg.participant.tshirtSize} />
+          <Row k="Attendance" v={reg.attendanceMode === "online" ? "Online" : "In-person (Lagos)"} />
         </Card>
 
         <Card title="Parent / Guardian">

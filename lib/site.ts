@@ -14,7 +14,8 @@ export const SITE_TITLE = "AI & XR Summer Tech Bootcamp 2026";
 
 export const SITE_DESC =
   "Nigeria's only summer tech camp where kids 10–17 ship a deployed AI app, build a VR world, " +
-  "produce an AI-assisted track and pitch a startup to a live jury. 27 July – 4 September 2026, Lagos.";
+  "produce an AI-assisted track and pitch a startup to a jury. 27 July – 4 September 2026. " +
+  "Join in-person in Lagos or live online.";
 
 export const SITE_KEYWORDS = [
   "summer tech camp Nigeria",
@@ -27,6 +28,8 @@ export const SITE_KEYWORDS = [
   "STEM summer camp",
   "AI and XR bootcamp",
   "kids entrepreneurship camp",
+  "online coding camp for kids",
+  "virtual tech camp Nigeria",
 ];
 
 // Bootcamp run dates (ISO). Used by JSON-LD Event schema + copy.

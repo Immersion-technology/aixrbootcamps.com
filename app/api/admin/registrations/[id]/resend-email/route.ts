@@ -44,6 +44,7 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
       courses: reg.courses,
       laptopRental: reg.laptopRental,
       roboticsElective: reg.roboticsElective,
+      attendanceMode: reg.attendanceMode ?? "in_person",
       totalKobo: reg.pricing.total,
       campStart,
     }),

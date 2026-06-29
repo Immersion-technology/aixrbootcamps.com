@@ -78,6 +78,9 @@ export default function ContactPage() {
             <p className="text-[13.5px] text-neutral-700 leading-relaxed">
               Leisure Mall, Lagos. Secure supervised facility with parking, a generator, and CCTV throughout. Drop-off + pick-up are ID-checked daily.
             </p>
+            <p className="text-[13.5px] text-neutral-700 leading-relaxed mt-3">
+              <strong className="text-ink">Prefer online?</strong> Campers can also join every live session from anywhere — no travel needed. Pick your mode when you register.
+            </p>
           </div>
           <div>
             <div className="text-[10.5px] font-bold tracking-[.22em] text-aqua-deep mb-2">CAMP DATES</div>

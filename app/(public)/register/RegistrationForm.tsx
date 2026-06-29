@@ -48,6 +48,7 @@ export default function RegistrationForm({ pricing }: Props) {
       },
       emergencyContact: { fullName: "", phone: "", relationship: "" },
       medicalNotes: "",
+      attendanceMode: "in_person" as const,
       laptopRental: false,
       roboticsElective: false,
       agreedToTerms: false as unknown as true,
@@ -223,6 +224,42 @@ export default function RegistrationForm({ pricing }: Props) {
         <div className="space-y-5 anim-fade-up">
           <Header eyebrow="Step 3 of 4" title="Your camper&rsquo;s programme" />
 
+          {/* Attendance mode — in-person in Lagos or live online */}
+          <div className="frosted-glass rounded-3xl p-6 md:p-7">
+            <div className="text-[10.5px] font-bold tracking-[.22em] text-aqua-deep uppercase mb-3">
+              How will your camper attend?
+            </div>
+            <div className="grid sm:grid-cols-2 gap-3">
+              {[
+                { value: "in_person", title: "In-person · Lagos", desc: "Join us on-site at our supervised Lagos venue." },
+                { value: "online", title: "Online · anywhere", desc: "Join every live session remotely from home." },
+              ].map((opt) => {
+                const active = values.attendanceMode === opt.value;
+                return (
+                  <label
+                    key={opt.value}
+                    className={cn(
+                      "ticket-card frosted-glass rounded-2xl p-4 flex items-start gap-3 cursor-pointer border-2 transition",
+                      active ? "border-aqua-brand" : "border-aqua-brand/20",
+                    )}
+                  >
+                    <input
+                      type="radio"
+                      value={opt.value}
+                      {...register("attendanceMode")}
+                      className="accent-aqua-brand mt-1"
+                    />
+                    <div className="flex-1">
+                      <div className="text-[14px] font-semibold text-ink">{opt.title}</div>
+                      <div className="text-[12px] text-neutral-600 mt-0.5 leading-snug">{opt.desc}</div>
+                    </div>
+                  </label>
+                );
+              })}
+            </div>
+            <p className="text-[11.5px] text-neutral-500 mt-3">Same classes, same schedule, same Demo Day — at no extra cost.</p>
+          </div>
+
           {/* Enrolled-in summary */}
           <div className="frosted-glass rounded-3xl p-6 md:p-7">
             <div className="flex items-baseline justify-between gap-3 mb-4 flex-wrap">
@@ -307,6 +344,7 @@ export default function RegistrationForm({ pricing }: Props) {
           ]} onEdit={() => setStep(1)} />
 
           <ReviewCard title="Programme" data={[
+            ["Attendance", values.attendanceMode === "online" ? "Online" : "In-person (Lagos)"],
             ["Core courses", `${ALWAYS_ATTENDED.length} (all attended)`],
             ["Active breaks", "Pro Gaming · Table Tennis · Go Karting"],
             ["Robotics elective", values.roboticsElective ? `Yes (+${naira(pricing.roboticsPrice)})` : "No"],

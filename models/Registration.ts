@@ -35,6 +35,7 @@ export interface IRegistration {
     relationship: string;
   };
   medicalNotes?: string;
+  attendanceMode: "in_person" | "online";
   courses: string[];
   laptopRental: boolean;
   roboticsElective: boolean;
@@ -91,6 +92,7 @@ const RegistrationSchema = new Schema<IRegistration>(
       relationship: { type: String, required: true, trim: true },
     },
     medicalNotes: { type: String, trim: true },
+    attendanceMode: { type: String, enum: ["in_person", "online"], default: "in_person", index: true },
     courses: { type: [String], required: true },
     laptopRental: { type: Boolean, default: false },
     roboticsElective: { type: Boolean, default: false },

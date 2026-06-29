@@ -39,6 +39,7 @@ export const registrationCreateSchema = z.object({
   parent: parentSchema,
   emergencyContact: emergencySchema,
   medicalNotes: z.string().trim().optional().default(""),
+  attendanceMode: z.enum(["in_person", "online"]).default("in_person"),
   laptopRental: z.boolean(),
   roboticsElective: z.boolean().optional().default(false),
   agreedToTerms: z.literal(true, {
