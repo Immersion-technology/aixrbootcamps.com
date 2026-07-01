@@ -74,9 +74,9 @@ export default function ContactPage() {
         <div className="frosted-glass rounded-3xl p-7 sm:p-8 anim-fade-up delay-4 grid sm:grid-cols-2 gap-6">
           <div>
             <div className="text-[10.5px] font-bold tracking-[.22em] text-aqua-deep mb-2">VENUE</div>
-            <h3 className="font-bubble text-[24px] sm:text-[28px] leading-tight mb-2 text-ink">99 Adesanya Ogunsanya</h3>
+            <h3 className="font-bubble text-[24px] sm:text-[28px] leading-tight mb-2 text-ink">Adeniran Ogunsanya St, Surulere</h3>
             <p className="text-[13.5px] text-neutral-700 leading-relaxed">
-              Leisure Mall, Lagos. Secure supervised facility with parking, a generator, and CCTV throughout. Drop-off + pick-up are ID-checked daily.
+              Lagos. Secure supervised facility with parking, a generator, and CCTV throughout. Drop-off + pick-up are ID-checked daily.
             </p>
             <p className="text-[13.5px] text-neutral-700 leading-relaxed mt-3">
               <strong className="text-ink">Prefer online?</strong> Campers can also join every live session from anywhere — no travel needed. Pick your mode when you register.
