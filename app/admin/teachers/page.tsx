@@ -14,6 +14,8 @@ export default async function AdminTeachersPage() {
     id: String(t._id),
     name: t.name,
     email: t.email,
+    bio: t.bio ?? "",
+    photoUrl: t.photoUrl ?? "",
     assignedCourses: t.assignedCourses ?? [],
     isActive: t.isActive,
     lastLoginAt: t.lastLoginAt ? new Date(t.lastLoginAt).toISOString() : null,

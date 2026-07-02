@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
 import { JWT_SECRET as SECRET } from "@/lib/jwt-secret";
+import { AUTH_BYPASS } from "@/lib/dev-auth";
 const ADMIN_COOKIE = "immersia_admin";
 const PARENT_COOKIE = "immersia_parent";
 const TEACHER_COOKIE = "immersia_teacher";
@@ -17,6 +18,10 @@ const PARENT_API_PUBLIC = ["/api/account/login"];
 const TEACHER_API_PUBLIC = ["/api/teacher/login"];
 
 export async function middleware(req: NextRequest) {
+  // Dev-only: skip all portal redirects so gated pages can be previewed without
+  // logging in. Only active when AUTH_BYPASS=1 — see lib/dev-auth.ts.
+  if (AUTH_BYPASS) return NextResponse.next();
+
   const { pathname } = req.nextUrl;
 
   // ---------- admin tree ----------

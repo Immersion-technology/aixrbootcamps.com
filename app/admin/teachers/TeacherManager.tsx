@@ -2,15 +2,19 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import TeacherPortrait from "@/components/TeacherPortrait";
 
 interface TeacherRow {
   id: string;
   name: string;
   email: string;
+  bio: string;
+  photoUrl: string;
   assignedCourses: string[];
   isActive: boolean;
   lastLoginAt: string | null;
 }
+
 interface ClassOption {
   slug: string;
   name: string;
@@ -26,13 +30,15 @@ export default function TeacherManager({
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [bio, setBio] = useState("");
+  const [photoUrl, setPhotoUrl] = useState("");
   const [courses, setCourses] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
   function toggleCourse(slug: string) {
-    setCourses((c) => (c.includes(slug) ? c.filter((s) => s !== slug) : [...c, slug]));
+    setCourses((current) => (current.includes(slug) ? current.filter((s) => s !== slug) : [...current, slug]));
   }
 
   async function addTeacher(e: React.FormEvent) {
@@ -41,32 +47,34 @@ export default function TeacherManager({
     setNotice(null);
     setBusy(true);
     try {
-      const r = await fetch("/api/admin/teachers", {
+      const response = await fetch("/api/admin/teachers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, assignedCourses: courses }),
+        body: JSON.stringify({ name, email, bio, photoUrl, assignedCourses: courses }),
       });
-      const j = await r.json();
-      if (!r.ok) throw new Error(j.error ?? "Failed");
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error ?? "Failed");
       setNotice(`Added ${name}. A login link was emailed to ${email}.`);
       setName("");
       setEmail("");
+      setBio("");
+      setPhotoUrl("");
       setCourses([]);
       router.refresh();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed");
     } finally {
       setBusy(false);
     }
   }
 
-  async function toggleActive(t: TeacherRow) {
+  async function toggleActive(teacher: TeacherRow) {
     setBusy(true);
     try {
       await fetch("/api/admin/teachers", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: t.id, isActive: !t.isActive }),
+        body: JSON.stringify({ id: teacher.id, isActive: !teacher.isActive }),
       });
       router.refresh();
     } finally {
@@ -74,14 +82,14 @@ export default function TeacherManager({
     }
   }
 
-  const classNames = new Map(classOptions.map((c) => [c.slug, c.name]));
+  const classNames = new Map(classOptions.map((option) => [option.slug, option.name]));
 
   return (
     <div className="space-y-8">
-      {/* ADD FORM */}
       <form onSubmit={addTeacher} className="frosted-glass rounded-3xl p-5 sm:p-6 space-y-4">
         <div className="text-[10.5px] font-bold tracking-[.22em] uppercase text-violet-brand">Add a facilitator</div>
-        <div className="grid sm:grid-cols-2 gap-4">
+
+        <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label className="label">Full name</label>
             <input className="input" value={name} onChange={(e) => setName(e.target.value)} required />
@@ -92,21 +100,47 @@ export default function TeacherManager({
           </div>
         </div>
 
+        <div className="grid gap-4">
+          <div>
+            <label className="label">Bio</label>
+            <textarea
+              className="input min-h-[110px] resize-y"
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              placeholder="Short public profile copy for the teachers page."
+            />
+          </div>
+          <div>
+            <label className="label">Profile picture URL</label>
+            <input
+              className="input"
+              value={photoUrl}
+              onChange={(e) => setPhotoUrl(e.target.value)}
+              placeholder="/teachers/tunde.jpg or https://..."
+            />
+            <p className="mt-2 text-[11.5px] text-neutral-500">
+              Leave blank to use the generated portrait fallback.
+            </p>
+          </div>
+        </div>
+
         <div>
           <label className="label">Assigned classes (optional)</label>
           <div className="flex flex-wrap gap-2 mt-1.5">
-            {classOptions.map((c) => {
-              const on = courses.includes(c.slug);
+            {classOptions.map((option) => {
+              const active = courses.includes(option.slug);
               return (
                 <button
+                  key={option.slug}
                   type="button"
-                  key={c.slug}
-                  onClick={() => toggleCourse(c.slug)}
+                  onClick={() => toggleCourse(option.slug)}
                   className={`text-[11.5px] font-semibold rounded-full px-3 py-1.5 border transition ${
-                    on ? "bg-violet-brand text-white border-violet-brand" : "bg-white text-neutral-700 border-black/10 hover:border-violet-brand"
+                    active
+                      ? "bg-violet-brand text-white border-violet-brand"
+                      : "bg-white text-neutral-700 border-black/10 hover:border-violet-brand"
                   }`}
                 >
-                  {c.name}
+                  {option.name}
                 </button>
               );
             })}
@@ -117,11 +151,10 @@ export default function TeacherManager({
         {notice && <p className="text-[12.5px] text-emerald-700 font-medium">✓ {notice}</p>}
 
         <button type="submit" className="btn-dark" disabled={busy}>
-          {busy ? "Adding…" : <>Add & email login link <span aria-hidden>→</span></>}
+          {busy ? "Adding..." : <>Add & email login link <span aria-hidden>{"->"}</span></>}
         </button>
       </form>
 
-      {/* LIST */}
       <div className="bg-white border border-black/[.06] rounded-2xl overflow-hidden">
         <table className="w-full text-[13px]">
           <thead className="bg-neutral-50 text-[10.5px] font-bold tracking-[.18em] uppercase text-neutral-500">
@@ -130,39 +163,59 @@ export default function TeacherManager({
               <th className="text-left p-3 hidden sm:table-cell">Classes</th>
               <th className="text-left p-3 hidden md:table-cell">Last login</th>
               <th className="text-left p-3">Status</th>
-              <th className="text-right p-3"></th>
+              <th className="text-right p-3" />
             </tr>
           </thead>
           <tbody>
             {initial.length === 0 ? (
-              <tr><td colSpan={5} className="p-6 text-center text-neutral-500 text-[13px]">No facilitators yet.</td></tr>
+              <tr>
+                <td colSpan={5} className="p-6 text-center text-neutral-500 text-[13px]">
+                  No facilitators yet.
+                </td>
+              </tr>
             ) : (
-              initial.map((t) => (
-                <tr key={t.id} className="border-t border-black/[.05]">
+              initial.map((teacher) => (
+                <tr key={teacher.id} className="border-t border-black/[.05]">
                   <td className="p-3">
-                    <div className="font-semibold">{t.name}</div>
-                    <div className="text-[11.5px] text-neutral-500">{t.email}</div>
+                    <div className="flex items-start gap-3">
+                      <TeacherPortrait
+                        name={teacher.name}
+                        photoUrl={teacher.photoUrl}
+                        className="h-14 w-14 shrink-0 rounded-2xl"
+                      />
+                      <div className="min-w-0">
+                        <div className="font-semibold">{teacher.name}</div>
+                        <div className="text-[11.5px] text-neutral-500">{teacher.email}</div>
+                        <div className="text-[11.5px] text-neutral-600 mt-1">
+                          {teacher.bio ? excerptText(teacher.bio, 88) : teacherHeadline(teacher, classNames)}
+                        </div>
+                      </div>
+                    </div>
                   </td>
                   <td className="p-3 hidden sm:table-cell text-[12px] text-neutral-600">
-                    {t.assignedCourses.length === 0
+                    {teacher.assignedCourses.length === 0
                       ? "—"
-                      : t.assignedCourses.map((s) => classNames.get(s) ?? s).join(", ")}
+                      : teacher.assignedCourses.map((slug) => classNames.get(slug) ?? slug).join(", ")}
                   </td>
                   <td className="p-3 hidden md:table-cell text-[12px] text-neutral-500">
-                    {t.lastLoginAt ? new Date(t.lastLoginAt).toLocaleDateString("en-NG") : "Never"}
+                    {teacher.lastLoginAt ? new Date(teacher.lastLoginAt).toLocaleDateString("en-NG") : "Never"}
                   </td>
                   <td className="p-3">
-                    <span className={`rounded-full px-2.5 py-0.5 text-[10.5px] font-bold tracking-[.14em] uppercase ${t.isActive ? "bg-emerald-100 text-emerald-800" : "bg-neutral-200 text-neutral-600"}`}>
-                      {t.isActive ? "Active" : "Disabled"}
+                    <span
+                      className={`rounded-full px-2.5 py-0.5 text-[10.5px] font-bold tracking-[.14em] uppercase ${
+                        teacher.isActive ? "bg-emerald-100 text-emerald-800" : "bg-neutral-200 text-neutral-600"
+                      }`}
+                    >
+                      {teacher.isActive ? "Active" : "Disabled"}
                     </span>
                   </td>
                   <td className="p-3 text-right">
                     <button
-                      onClick={() => toggleActive(t)}
+                      onClick={() => toggleActive(teacher)}
                       disabled={busy}
                       className="text-[11.5px] font-semibold text-neutral-500 hover:text-violet-brand transition disabled:opacity-50"
                     >
-                      {t.isActive ? "Disable" : "Re-enable"}
+                      {teacher.isActive ? "Disable" : "Re-enable"}
                     </button>
                   </td>
                 </tr>
@@ -173,4 +226,18 @@ export default function TeacherManager({
       </div>
     </div>
   );
+}
+
+function teacherHeadline(teacher: TeacherRow, classNames: Map<string, string>) {
+  const courses = teacher.assignedCourses.map((slug) => classNames.get(slug) ?? slug);
+  if (courses.length === 0) return "Supports the full camp";
+  if (courses.length === 1) return `Leads ${courses[0]}`;
+  if (courses.length === 2) return `Leads ${courses[0]} and ${courses[1]}`;
+  return `Leads ${courses[0]}, ${courses[1]} and ${courses.length - 2} more`;
+}
+
+function excerptText(text: string, maxLength: number) {
+  if (text.length <= maxLength) return text;
+  const shortened = text.slice(0, maxLength).replace(/\s+\S*$/, "");
+  return `${shortened.trimEnd()}...`;
 }

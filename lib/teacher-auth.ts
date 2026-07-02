@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { JWT_SECRET as SECRET } from "@/lib/jwt-secret";
+import { AUTH_BYPASS, DEV_TEACHER } from "@/lib/dev-auth";
 
 /**
  * Teacher-side auth: separate cookie + JWT audience from admin/parent so a
@@ -53,8 +54,10 @@ export function clearTeacherCookie() {
 
 export async function getTeacherFromCookie(): Promise<TeacherPayload | null> {
   const token = cookies().get(COOKIE_NAME)?.value;
-  if (!token) return null;
-  return verifyTeacherToken(token);
+  const payload = token ? await verifyTeacherToken(token) : null;
+  if (payload) return payload;
+  if (AUTH_BYPASS) return DEV_TEACHER; // dev-only preview, see lib/dev-auth.ts
+  return null;
 }
 
 export const TEACHER_COOKIE_NAME = COOKIE_NAME;

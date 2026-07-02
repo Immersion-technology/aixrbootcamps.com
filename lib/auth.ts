@@ -2,6 +2,7 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
 import { JWT_SECRET as SECRET } from "@/lib/jwt-secret";
+import { AUTH_BYPASS, DEV_ADMIN } from "@/lib/dev-auth";
 
 const COOKIE_NAME = "immersia_admin";
 const COOKIE_MAX_AGE = 60 * 60 * 12; // 12 hours
@@ -57,8 +58,10 @@ export async function clearAdminCookie() {
 
 export async function getAdminFromCookie(): Promise<AdminPayload | null> {
   const token = cookies().get(COOKIE_NAME)?.value;
-  if (!token) return null;
-  return verifyAdminToken(token);
+  const payload = token ? await verifyAdminToken(token) : null;
+  if (payload) return payload;
+  if (AUTH_BYPASS) return DEV_ADMIN; // dev-only preview, see lib/dev-auth.ts
+  return null;
 }
 
 export const ADMIN_COOKIE_NAME = COOKIE_NAME;

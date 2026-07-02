@@ -13,6 +13,15 @@ const createSchema = z.object({
   name: z.string().trim().min(2, "Name is required"),
   email: z.string().trim().toLowerCase().email("Enter a valid email"),
   assignedCourses: z.array(z.string()).optional().default([]),
+  bio: z
+    .preprocess((value) => (typeof value === "string" ? value.trim() : value), z.string().max(1200).optional())
+    .transform((value) => (value ? value : undefined)),
+  photoUrl: z
+    .preprocess((value) => (typeof value === "string" ? value.trim() : value), z.string().max(500).optional())
+    .transform((value) => (value ? value : undefined))
+    .refine((value) => !value || /^(https?:\/\/|\/)/i.test(value), {
+      message: "Photo URL must start with / or http(s)://",
+    }),
 });
 
 const patchSchema = z.object({
@@ -50,6 +59,8 @@ export async function POST(req: Request) {
       name: parsed.data.name,
       email: parsed.data.email,
       assignedCourses: parsed.data.assignedCourses,
+      bio: parsed.data.bio,
+      photoUrl: parsed.data.photoUrl,
       isActive: true,
     });
 
