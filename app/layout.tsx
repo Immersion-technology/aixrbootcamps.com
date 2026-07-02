@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { Space_Grotesk, Orbitron } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
+import { Analytics } from "@vercel/analytics/next";
 import {
   SITE_URL,
   SITE_NAME,
@@ -95,6 +96,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-paper text-ink font-body antialiased">
         <SmoothScroll />
         {children}
+        <Analytics />
       </body>
     </html>
   );
