@@ -3,6 +3,7 @@
  * root layout metadata, sitemap, robots, manifest, OG image, per-page metadata
  * and JSON-LD structured data so nothing is duplicated.
  */
+import { PRICING } from "@/lib/pricing";
 
 // Canonical production URL. Override per-environment with NEXT_PUBLIC_SITE_URL
 // (no trailing slash). Falls back to the live domain.
@@ -42,10 +43,10 @@ export const CONTACT_PHONE = "+2348137013560";
 export const CONTACT_CITY = "Lagos";
 export const CONTACT_COUNTRY = "NG";
 
-// Pricing in naira (for Offer structured data; pricing source of truth for
-// charging lives in the registration route).
-export const PRICE_EARLY_BIRD = 150000;
-export const PRICE_REGULAR = 200000;
+// Pricing in naira, for Offer structured data only. Derived from the kobo source of
+// truth in lib/pricing.ts (env-configurable) so SEO and checkout never disagree.
+export const PRICE_EARLY_BIRD = PRICING.earlyBird / 100;
+export const PRICE_REGULAR = PRICING.regular / 100;
 
 /** Build an absolute URL from a site-relative path. */
 export function absoluteUrl(path = "/"): string {

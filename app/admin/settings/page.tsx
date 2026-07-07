@@ -10,13 +10,10 @@ export default async function SettingsPage() {
   const map: Record<string, unknown> = {};
   for (const s of all) map[s.key] = s.value;
 
+  // Prices are configured via env (lib/pricing.ts); only operational settings live here.
   const initial = {
     [SETTING_KEYS.EARLY_BIRD_CUTOFF]: (map[SETTING_KEYS.EARLY_BIRD_CUTOFF] as string) ?? "",
     [SETTING_KEYS.CAPACITY]: (map[SETTING_KEYS.CAPACITY] as number) ?? 50,
-    [SETTING_KEYS.EARLY_BIRD_PRICE]: (map[SETTING_KEYS.EARLY_BIRD_PRICE] as number) ?? 15000000,
-    [SETTING_KEYS.REGULAR_PRICE]: (map[SETTING_KEYS.REGULAR_PRICE] as number) ?? 20000000,
-    [SETTING_KEYS.LAPTOP_RENTAL_PRICE]: (map[SETTING_KEYS.LAPTOP_RENTAL_PRICE] as number) ?? 2000000,
-    [SETTING_KEYS.ROBOTICS_ELECTIVE_PRICE]: (map[SETTING_KEYS.ROBOTICS_ELECTIVE_PRICE] as number) ?? 2500000,
     [SETTING_KEYS.CAMP_START_DATE]: (map[SETTING_KEYS.CAMP_START_DATE] as string) ?? "",
     [SETTING_KEYS.CAMP_END_DATE]: (map[SETTING_KEYS.CAMP_END_DATE] as string) ?? "",
     [SETTING_KEYS.ADMIN_ALERT_EMAIL]: (map[SETTING_KEYS.ADMIN_ALERT_EMAIL] as string) ?? "",
@@ -30,7 +27,8 @@ export default async function SettingsPage() {
           Settings
         </h1>
         <p className="text-[13.5px] text-neutral-600 mt-3 max-w-[480px]">
-          Edit pricing, dates and capacity. Changes save automatically when you click out of each field.
+          Edit cohort dates and capacity. Changes save automatically when you click out of each field.
+          Prices are set via environment variables — see the Pricing note below.
         </p>
       </div>
 

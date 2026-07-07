@@ -2,61 +2,52 @@ import { connectDB } from "@/lib/db";
 import { Registration } from "@/models/Registration";
 import { getSetting, SETTING_KEYS } from "@/models/Setting";
 import { redirect } from "next/navigation";
+import { PRICING, EARLY_BIRD_CUTOFF_DEFAULT, isEarlyBird as isEarlyBirdNow, nairaFromKobo } from "@/lib/pricing";
 import RegistrationForm from "./RegistrationForm";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Register · Reserve your camper's slot",
-  description:
-    "Secure a place at the IMMERSIA AI & XR Summer Tech Bootcamp 2026. Four short steps, about three minutes. Early-bird ₦150,000 for the first 10 campers.",
-  alternates: { canonical: "/register" },
-};
-
-const FALLBACK = {
-  capacity: 50,
-  paid: 0,
-  earlyBirdCutoff: "2026-07-03T23:59:59.000Z",
-  earlyBirdPrice: 15000000,  // ₦150,000, first 10
-  regularPrice: 20000000,    // ₦200,000
-  laptopPrice: 2000000,      // +₦20,000
-  roboticsPrice: 2500000,    // +₦25,000 robotics elective
-};
-
-async function getRegisterData() {
+export async function generateMetadata() {
+  // Reflect the price a visitor actually pays right now (early-bird vs regular).
+  let cutoff = EARLY_BIRD_CUTOFF_DEFAULT;
   try {
     await connectDB();
-    const [capacity, paid, earlyBirdCutoff] =
-      await Promise.all([
-        getSetting<number>(SETTING_KEYS.CAPACITY, 50),
-        Registration.countDocuments({ paymentStatus: "paid" }),
-        getSetting<string>(SETTING_KEYS.EARLY_BIRD_CUTOFF, FALLBACK.earlyBirdCutoff),
-      ]);
-    // Force the new two-tier pricing here (₦100k early-bird / ₦150k regular) until
-    // the DB settings are updated. The DB Setting fields are intentionally ignored.
-    return {
-      capacity,
-      paid,
-      earlyBirdCutoff,
-      earlyBirdPrice: FALLBACK.earlyBirdPrice,
-      regularPrice: FALLBACK.regularPrice,
-      laptopPrice: FALLBACK.laptopPrice,
-      roboticsPrice: FALLBACK.roboticsPrice,
-    };
+    cutoff = await getSetting<string>(SETTING_KEYS.EARLY_BIRD_CUTOFF, EARLY_BIRD_CUTOFF_DEFAULT);
   } catch {
-    return FALLBACK;
+    /* fall back to the default cutoff */
+  }
+  const price = isEarlyBirdNow(cutoff) ? PRICING.earlyBird : PRICING.regular;
+  return {
+    title: "Register · Reserve your camper's slot",
+    description: `Secure a place at the IMMERSIA AI & XR Summer Tech Bootcamp 2026. Four short steps, about three minutes. Boot camp fee ${nairaFromKobo(price)}.`,
+    alternates: { canonical: "/register" },
+  };
+}
+
+async function getRegisterData() {
+  // Prices come from lib/pricing.ts (env-configurable). Capacity + cutoff are admin-editable
+  // via DB Settings, falling back to the single shared defaults.
+  try {
+    await connectDB();
+    const [capacity, paid, earlyBirdCutoff] = await Promise.all([
+      getSetting<number>(SETTING_KEYS.CAPACITY, 50),
+      Registration.countDocuments({ paymentStatus: "paid" }),
+      getSetting<string>(SETTING_KEYS.EARLY_BIRD_CUTOFF, EARLY_BIRD_CUTOFF_DEFAULT),
+    ]);
+    return { capacity, paid, earlyBirdCutoff };
+  } catch {
+    return { capacity: 50, paid: 0, earlyBirdCutoff: EARLY_BIRD_CUTOFF_DEFAULT };
   }
 }
 
 export default async function RegisterPage() {
-  const { capacity, paid, earlyBirdCutoff, earlyBirdPrice, regularPrice, laptopPrice, roboticsPrice } =
-    await getRegisterData();
+  const { capacity, paid, earlyBirdCutoff } = await getRegisterData();
 
   if (paid >= capacity) {
     redirect("/register/closed");
   }
 
-  const isEarlyBird = new Date() < new Date(earlyBirdCutoff);
+  const isEarlyBird = isEarlyBirdNow(earlyBirdCutoff);
   // Match the hero: hold slotsLeft at full capacity until the DB-backed count is trusted.
   const slotsLeft = capacity;
 
@@ -81,10 +72,10 @@ export default async function RegisterPage() {
         <RegistrationForm
           pricing={{
             isEarlyBird,
-            earlyBirdPrice,
-            regularPrice,
-            laptopPrice,
-            roboticsPrice,
+            earlyBirdPrice: PRICING.earlyBird,
+            regularPrice: PRICING.regular,
+            laptopPrice: PRICING.laptop,
+            roboticsPrice: PRICING.robotics,
           }}
           slotsLeft={slotsLeft}
         />

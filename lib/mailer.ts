@@ -142,6 +142,8 @@ export function parentConfirmationHtml(args: {
   laptopRental: boolean;
   roboticsElective: boolean;
   attendanceMode: "in_person" | "online";
+  discountKobo?: number;
+  promoCode?: string;
   totalKobo: number;
   campStart: string;
 }): string {
@@ -185,6 +187,11 @@ export function parentConfirmationHtml(args: {
         <tr><td style="padding:6px 0;color:#777;">Attendance</td><td style="text-align:right;font-weight:600;">${attendanceLabel}</td></tr>
         <tr><td style="padding:6px 0;color:#777;">Robotics elective</td><td style="text-align:right;font-weight:600;">${args.roboticsElective ? "Yes" : "No"}</td></tr>
         <tr><td style="padding:6px 0;color:#777;">Laptop rental</td><td style="text-align:right;font-weight:600;">${args.laptopRental ? "Yes" : "No"}</td></tr>
+        ${
+          args.discountKobo && args.discountKobo > 0
+            ? `<tr><td style="padding:6px 0;color:#777;">Promo${args.promoCode ? ` (${esc(args.promoCode)})` : ""}</td><td style="text-align:right;font-weight:600;color:#059669;">−${fmtNaira(args.discountKobo)}</td></tr>`
+            : ""
+        }
         <tr><td style="padding:6px 0;color:#777;">Amount paid</td><td style="text-align:right;font-weight:700;font-family:'Orbitron','Space Grotesk',sans-serif;">${fmtNaira(args.totalKobo)}</td></tr>
       </table>
 

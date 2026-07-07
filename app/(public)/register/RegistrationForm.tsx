@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registrationCreateSchema, type RegistrationCreateInput } from "@/lib/validations";
@@ -28,10 +28,24 @@ const CLASSES: CurriculumItem[] = CURRICULUM.filter((c) => c.type === "class");
 const ALWAYS_ATTENDED: CurriculumItem[] = CLASSES.filter((c) => !c.isElective);
 const ELECTIVES: CurriculumItem[] = CLASSES.filter((c) => c.isElective);
 
+interface AppliedPromo {
+  code: string;
+  discountKobo: number;
+  newTotalKobo: number;
+}
+
 export default function RegistrationForm({ pricing }: Props) {
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Promo code (applied separately from the RHF fields; the server re-validates on submit).
+  const [promoInput, setPromoInput] = useState("");
+  const [applied, setApplied] = useState<AppliedPromo | null>(null);
+  const [promoChecking, setPromoChecking] = useState(false);
+  const [promoError, setPromoError] = useState<string | null>(null);
+  const [promoNote, setPromoNote] = useState<string | null>(null);
+  const appliedRef = useRef(false);
 
   const form = useForm<RegistrationCreateInput>({
     resolver: zodResolver(registrationCreateSchema),
@@ -77,7 +91,61 @@ export default function RegistrationForm({ pricing }: Props) {
   const laptopFee = values.laptopRental ? pricing.laptopPrice : 0;
   const roboticsFee = values.roboticsElective ? pricing.roboticsPrice : 0;
   const total = bootCampFee + laptopFee + roboticsFee;
+  const discountKobo = applied ? applied.discountKobo : 0;
+  const payableTotal = Math.max(0, total - discountKobo);
   const naira = (k: number) => `₦${(k / 100).toLocaleString("en-NG")}`;
+
+  // A promo's discount depends on the order subtotal, so if the add-ons change after a code
+  // was applied we drop it and ask the camper to re-apply — keeping the shown total honest.
+  useEffect(() => {
+    if (appliedRef.current) {
+      appliedRef.current = false;
+      setApplied(null);
+      setPromoError(null);
+      setPromoNote("Your add-ons changed — re-apply your promo code.");
+    }
+  }, [values.laptopRental, values.roboticsElective]);
+
+  async function applyPromo() {
+    const code = promoInput.trim().toUpperCase();
+    if (!code) return;
+    setPromoChecking(true);
+    setPromoError(null);
+    setPromoNote(null);
+    try {
+      const r = await fetch("/api/public/promo/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code,
+          laptopRental: values.laptopRental,
+          roboticsElective: values.roboticsElective,
+        }),
+      });
+      const json = await r.json();
+      if (json.valid) {
+        setApplied({ code: json.code, discountKobo: json.discountKobo, newTotalKobo: json.newTotalKobo });
+        appliedRef.current = true;
+        setPromoNote(json.message ?? "Discount applied.");
+      } else {
+        setApplied(null);
+        appliedRef.current = false;
+        setPromoError(json.message ?? "That code isn't valid.");
+      }
+    } catch {
+      setPromoError("Couldn't check that code. Try again.");
+    } finally {
+      setPromoChecking(false);
+    }
+  }
+
+  function removePromo() {
+    setApplied(null);
+    appliedRef.current = false;
+    setPromoInput("");
+    setPromoError(null);
+    setPromoNote(null);
+  }
 
   async function onSubmit(data: RegistrationCreateInput) {
     setError(null);
@@ -86,7 +154,9 @@ export default function RegistrationForm({ pricing }: Props) {
       const r = await fetch("/api/public/registrations", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        // The applied code is sent alongside the form; the server re-validates and is the
+        // authoritative source of the charged amount.
+        body: JSON.stringify({ ...data, promoCode: applied?.code }),
       });
       const json = await r.json();
       if (!r.ok) throw new Error(json.error ?? "Could not create registration");
@@ -309,7 +379,7 @@ export default function RegistrationForm({ pricing }: Props) {
                 <div className="text-[14px] font-semibold text-ink">{c.name}</div>
                 <div className="text-[12px] text-neutral-600 mt-0.5 leading-snug">{c.shortDesc}</div>
               </div>
-              <div className="font-accent font-extrabold text-[18px] text-ink shrink-0">+{naira(c.electiveFeeKobo ?? 0)}</div>
+              <div className="font-accent font-extrabold text-[18px] text-ink shrink-0">+{naira(pricing.roboticsPrice)}</div>
             </label>
           ))}
 
@@ -372,12 +442,69 @@ export default function RegistrationForm({ pricing }: Props) {
                     <td className="text-right py-1.5 font-mono">{naira(laptopFee)}</td>
                   </tr>
                 )}
+                {applied && discountKobo > 0 && (
+                  <tr className="text-grass-brand">
+                    <td className="py-1.5">Promo ({applied.code})</td>
+                    <td className="text-right py-1.5 font-mono">−{naira(discountKobo)}</td>
+                  </tr>
+                )}
                 <tr className="border-t border-white/15">
                   <td className="pt-3 text-white font-bold">Total</td>
-                  <td className="text-right pt-3 font-accent font-extrabold text-white text-[24px]">{naira(total)}</td>
+                  <td className="text-right pt-3 font-accent font-extrabold text-white text-[24px]">{naira(payableTotal)}</td>
                 </tr>
               </tbody>
             </table>
+
+            {/* Promo code — validated server-side; the discount above reflects the preview. */}
+            <div className="mb-5">
+              {!applied ? (
+                <>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={promoInput}
+                      onChange={(e) => {
+                        setPromoInput(e.target.value.toUpperCase());
+                        if (promoError) setPromoError(null);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          applyPromo();
+                        }
+                      }}
+                      placeholder="Promo code (optional)"
+                      autoCapitalize="characters"
+                      className="input flex-1 !bg-white/10 !border-white/20 !text-white placeholder:!text-white/40 uppercase"
+                      aria-label="Promo code"
+                    />
+                    <button
+                      type="button"
+                      onClick={applyPromo}
+                      disabled={promoChecking || !promoInput.trim()}
+                      className="shrink-0 rounded-full px-5 bg-white/15 text-white text-[13px] font-bold hover:bg-white/25 transition disabled:opacity-40"
+                    >
+                      {promoChecking ? "Checking…" : "Apply"}
+                    </button>
+                  </div>
+                  {promoError && <p className="text-[12px] text-pink-soft mt-2">⚠ {promoError}</p>}
+                  {promoNote && !promoError && <p className="text-[12px] text-white/60 mt-2">{promoNote}</p>}
+                </>
+              ) : (
+                <div className="flex items-center justify-between gap-3 rounded-2xl bg-grass-brand/15 border border-grass-brand/30 px-4 py-2.5">
+                  <span className="text-[12.5px] text-white/90">
+                    <span className="font-bold text-grass-brand">✓ {applied.code}</span> applied — you save {naira(discountKobo)}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={removePromo}
+                    className="text-[11.5px] font-semibold text-white/70 hover:text-white underline underline-offset-2"
+                  >
+                    Remove
+                  </button>
+                </div>
+              )}
+            </div>
 
             <label className="flex items-start gap-3 mb-5 text-[13px] text-white/90">
               <input type="checkbox" {...register("agreedToTerms")} className="mt-1 accent-aqua-brand" />
@@ -394,7 +521,7 @@ export default function RegistrationForm({ pricing }: Props) {
               disabled={submitting}
               className="w-full bg-grass-brand text-ink rounded-full py-4 min-h-[56px] font-bubble text-[18px] sm:text-[20px] tracking-tight hover:bg-grass-deep hover:text-white transition disabled:opacity-60 shadow-[0_14px_30px_-10px_rgba(251,86,7,.6)]"
             >
-              {submitting ? "REDIRECTING TO PAYSTACK…" : `PAY ${naira(total)} VIA PAYSTACK →`}
+              {submitting ? "REDIRECTING TO PAYSTACK…" : `PAY ${naira(payableTotal)} VIA PAYSTACK →`}
             </button>
           </div>
         </div>

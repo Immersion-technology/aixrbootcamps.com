@@ -7,6 +7,8 @@
  * any backwards-compatible reads against the DB Course collection.
  */
 
+import { PRICING, nairaFromKobo } from "@/lib/pricing";
+
 export type Course = {
   code: string;
   name: string;
@@ -24,7 +26,7 @@ export const SEED_COURSES: Course[] = [
   { code: "vibe-coding", name: "Vibe Coding & AI Prompt Engineering", category: "Tech", description: "Pair-program with AI to ship a real, deployed web app. Zero prior code required.", isActive: true, order: 1 },
   { code: "entrepreneurship", name: "Entrepreneurship & Pitching", category: "Business", description: "Idea → built product → live Demo Day pitch. Compulsory for every camper.", isCompulsory: true, isActive: true, order: 2 },
   { code: "content-creation", name: "Content Creation", category: "Creative", description: "Script, shoot, edit. Walk out with a portfolio of short-form videos.", isActive: true, order: 3 },
-  { code: "robotics", name: "Robotics & Embedded Systems", category: "STEM", description: "Build sensors, sound, motors and a full alarm system, then design your own gadget and keep the kit. Optional paid elective (+₦25,000).", isActive: true, order: 4 },
+  { code: "robotics", name: "Robotics & Embedded Systems", category: "STEM", description: `Build sensors, sound, motors and a full alarm system, then design your own gadget and keep the kit. Optional paid elective (+${nairaFromKobo(PRICING.robotics)}).`, isActive: true, order: 4 },
   { code: "3d-vr", name: "3D Character Design & VR World Creation", category: "Creative Tech", description: "Sculpt a character in Blender, build its world, then walk through it in VR.", isActive: true, order: 5 },
   { code: "ai-music", name: "AI Music Production", category: "Creative", description: "Produce a finished, mixed track with AI-assisted tools.", isActive: true, order: 6 },
 

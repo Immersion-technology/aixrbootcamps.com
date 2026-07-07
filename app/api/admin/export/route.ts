@@ -45,6 +45,8 @@ export async function GET(req: NextRequest) {
     "Robotics elective": r.roboticsElective ? "Yes" : "No",
     "Laptop rental": r.laptopRental ? "Yes" : "No",
     "Pricing tier": r.pricing.tier,
+    "Promo code": r.pricing.promoCode ?? "",
+    "Discount (NGN)": r.pricing.discountKobo ? formatNaira(r.pricing.discountKobo) : "",
     "Total (NGN)": formatNaira(r.pricing.total),
     "Total (kobo)": r.pricing.total,
     "Payment status": r.paymentStatus,

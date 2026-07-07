@@ -43,13 +43,11 @@ async function main() {
   console.log(`✓ Seeded ${SEED_COURSES.length} courses (incl. ${SEED_COURSES.filter((c) => c.isAttraction).length} active breaks)`);
 
   // --- Settings ---
+  // Prices are configured via env (lib/pricing.ts), so only operational settings are seeded.
   const defaults: Array<[string, unknown]> = [
-    [SETTING_KEYS.EARLY_BIRD_CUTOFF, "2026-06-30T23:59:59.000Z"],
+    // Past date = early-bird closed. Set a FUTURE date here (or in admin Settings) to re-open it.
+    [SETTING_KEYS.EARLY_BIRD_CUTOFF, "2026-07-03T23:59:59.000Z"],
     [SETTING_KEYS.CAPACITY, 50],
-    [SETTING_KEYS.EARLY_BIRD_PRICE, 15000000],  // ₦150,000 (kobo), first 10
-    [SETTING_KEYS.REGULAR_PRICE, 20000000],     // ₦200,000
-    [SETTING_KEYS.LAPTOP_RENTAL_PRICE, 2000000], // +₦20,000
-    [SETTING_KEYS.ROBOTICS_ELECTIVE_PRICE, 2500000], // +₦25,000 robotics elective
     [SETTING_KEYS.CAMP_START_DATE, "2026-07-27"],
     [SETTING_KEYS.CAMP_END_DATE, "2026-09-04"], // Cohort 3 ends 4 Sep 2026
     [SETTING_KEYS.ADMIN_ALERT_EMAIL, process.env.ADMIN_ALERT_EMAIL ?? "registrations@immersia.ng"],

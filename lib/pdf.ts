@@ -11,6 +11,8 @@ interface ReceiptArgs {
   bootCampFeeKobo: number;
   laptopRentalKobo: number;
   roboticsFeeKobo: number;
+  discountKobo?: number;
+  promoCode?: string;
   totalKobo: number;
   paidAt: Date;
 }
@@ -46,6 +48,10 @@ export function buildReceiptPdf(args: ReceiptArgs): Promise<Buffer> {
     doc.text(`Boot camp fee:    ${formatNaira(args.bootCampFeeKobo)}`);
     if (args.roboticsElective) doc.text(`Robotics elective: ${formatNaira(args.roboticsFeeKobo)}`);
     if (args.laptopRental) doc.text(`Laptop rental:    ${formatNaira(args.laptopRentalKobo)}`);
+    if (args.discountKobo && args.discountKobo > 0) {
+      const label = args.promoCode ? `Promo (${args.promoCode}):` : "Discount:";
+      doc.text(`${label.padEnd(18)}-${formatNaira(args.discountKobo)}`);
+    }
     doc.moveDown(0.3);
     doc.fontSize(14).text(`TOTAL PAID:       ${formatNaira(args.totalKobo)}`, { underline: true });
 

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PRICING, nairaFromKobo } from "@/lib/pricing";
 
 export const metadata = {
   title: "Rules of Conduct | AI & XR Summer Tech Bootcamp",
@@ -47,14 +48,14 @@ export default function TermsPage() {
               <li>Use of camp laptops, headsets, robotics kits and gaming rigs.</li>
               <li>Demo Day, including the live pitch panel and prize for the winning team.</li>
             </ul>
-            <p className="mt-2">Not included: transport to and from the venue, take-home equipment beyond what&apos;s explicitly stated, the optional Robotics elective (+₦25,000, which covers the Arduino kit and components your camper keeps), and the optional laptop rental add-on.</p>
+            <p className="mt-2">Not included: transport to and from the venue, take-home equipment beyond what&apos;s explicitly stated, the optional Robotics elective (+{nairaFromKobo(PRICING.robotics)}, which covers the Arduino kit and components your camper keeps), and the optional laptop rental add-on.</p>
           </Section>
 
           <Section title="4. Payment, holds and refunds">
             <ul className="list-disc pl-5 space-y-1.5">
               <li>Payment is processed by <strong>Paystack</strong>. A slot is only held once payment clears.</li>
-              <li>The first 10 paid registrations get the <strong>₦150,000 early-bird</strong> price. After that, ₦200,000 regular.</li>
-              <li><strong>Instalments:</strong> ₦75,000 deposit on registration holds your slot; balance is due two weeks before your cohort starts.</li>
+              <li>The boot camp fee is <strong>{nairaFromKobo(PRICING.regular)}</strong>. Any active early-bird window or promo-code discount is applied and shown at checkout before you pay.</li>
+              <li><strong>Instalments:</strong> {nairaFromKobo(PRICING.deposit)} deposit on registration holds your slot; balance is due two weeks before your cohort starts.</li>
               <li><strong>Refunds:</strong> none. All payments are final once a slot is confirmed.</li>
             </ul>
           </Section>

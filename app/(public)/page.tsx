@@ -14,9 +14,11 @@ import {
 import ScrollReveal from "@/components/ScrollReveal";
 import FaqAccordion from "@/components/FaqAccordion";
 import JsonLd from "@/components/JsonLd";
+import { TESTIMONIALS, type Testimonial } from "@/lib/testimonials";
 import { connectDB } from "@/lib/db";
 import { Registration } from "@/models/Registration";
 import { getSetting, SETTING_KEYS } from "@/models/Setting";
+import { PRICING, EARLY_BIRD_CUTOFF_DEFAULT, isEarlyBird as isEarlyBirdNow } from "@/lib/pricing";
 import {
   SITE_URL,
   SITE_NAME,
@@ -26,6 +28,7 @@ import {
   CONTACT_CITY,
   CONTACT_COUNTRY,
   PRICE_EARLY_BIRD,
+  PRICE_REGULAR,
   absoluteUrl,
 } from "@/lib/site";
 
@@ -82,57 +85,59 @@ const EVENT_JSONLD = {
 
 type IconCmp = typeof RoboticIcon;
 
-// ISR: regenerate the static HTML at most once a minute. Capacity / paid-count
-// rarely change between renders, so the DB roundtrip can sit behind an edge cache.
-// (The cfg override below forces price + slots anyway, we mainly need this to
-// avoid hitting MongoDB on every visit.)
+// ISR: regenerate the static HTML at most once a minute. Capacity / paid-count and the
+// early-bird cutoff rarely change between renders, so the DB roundtrip can sit behind an
+// edge cache rather than hitting MongoDB on every visit.
 export const revalidate = 60;
 
 async function getPublicConfig() {
+  // Prices are env-configured in lib/pricing.ts; only capacity + cutoff come from the DB.
   try {
     await connectDB();
-    const [capacity, paid, earlyBirdCutoff, earlyBirdPrice, regularPrice, laptopPrice] = await Promise.all([
+    const [capacity, paid, earlyBirdCutoff] = await Promise.all([
       getSetting<number>(SETTING_KEYS.CAPACITY, 50),
       Registration.countDocuments({ paymentStatus: "paid" }),
-      getSetting<string>(SETTING_KEYS.EARLY_BIRD_CUTOFF, "2026-07-03T23:59:59.000Z"),
-      getSetting<number>(SETTING_KEYS.EARLY_BIRD_PRICE, 8000000),
-      getSetting<number>(SETTING_KEYS.REGULAR_PRICE, 10000000),
-      getSetting<number>(SETTING_KEYS.LAPTOP_RENTAL_PRICE, 2000000),
+      getSetting<string>(SETTING_KEYS.EARLY_BIRD_CUTOFF, EARLY_BIRD_CUTOFF_DEFAULT),
     ]);
-    const isEarlyBird = new Date() < new Date(earlyBirdCutoff);
     return {
       slotsTotal: capacity,
       slotsPaid: paid,
       slotsLeft: Math.max(0, capacity - paid),
-      isEarlyBird,
-      earlyBirdPrice,
-      regularPrice,
-      laptopPrice,
+      earlyBirdCutoff,
       isClosed: paid >= capacity,
     };
   } catch {
     return {
       slotsTotal: 50,
-      slotsPaid: 10,
-      slotsLeft: 40,
-      isEarlyBird: true,
-      earlyBirdPrice: 15000000,
-      regularPrice: 20000000,
-      laptopPrice: 2000000,
+      slotsPaid: 0,
+      slotsLeft: 50,
+      earlyBirdCutoff: EARLY_BIRD_CUTOFF_DEFAULT,
+      isClosed: false,
     };
   }
 }
 
 export default async function Landing() {
-  const cfgRaw = await getPublicConfig();
-  // Force two-tier pricing (₦150k early-bird / ₦200k regular) until the DB seed catches up.
-  const cfg = { ...cfgRaw, slotsLeft: 50, earlyBirdPrice: 15000000, regularPrice: 20000000 };
+  const cfg = await getPublicConfig();
+  const earlyBird = isEarlyBirdNow(cfg.earlyBirdCutoff);
+  const earlyBirdPrice = PRICING.earlyBird;
+  const regularPrice = PRICING.regular;
   const naira = (k: number) => `₦${(k / 100).toLocaleString("en-NG")}`;
+  // Human date derived from the cutoff so the promo copy can never go stale (e.g. "27 Jul").
+  const cutoffLabel = new Date(cfg.earlyBirdCutoff).toLocaleDateString("en-NG", {
+    day: "numeric",
+    month: "short",
+  });
+  // SEO Offer price reflects the price a visitor actually pays right now (env-driven).
+  const eventJsonLd = {
+    ...EVENT_JSONLD,
+    offers: { ...EVENT_JSONLD.offers, price: earlyBird ? PRICE_EARLY_BIRD : PRICE_REGULAR },
+  };
 
   return (
     <>
       <JsonLd data={ORG_JSONLD} />
-      <JsonLd data={EVENT_JSONLD} />
+      <JsonLd data={eventJsonLd} />
       <ScrollReveal />
       {/* ============ HERO ============ */}
       <section className="relative pt-6 sm:pt-10 pb-20 sm:pb-24 overflow-hidden dot-grid">
@@ -207,22 +212,28 @@ export default async function Landing() {
                 </div>
               </div>
 
-              {/* Ticket coupon CTA: EARLY BIRD · FIRST 10 · ₦100,000 (was ₦150,000).
-                  block + lg:w-full so on desktop it stretches across the full right
-                  column, sitting as the widest element of the cascade. */}
+              {/* Ticket coupon CTA. The eyebrow + price adapt to whether early-bird is still
+                  live (derived from the cutoff), so it never advertises an expired promo.
+                  block + lg:w-full so on desktop it stretches across the full right column. */}
               <Link
                 href="/register"
                 className="group block lg:w-full"
-                aria-label={`Reserve a slot. Early bird ${naira(cfg.earlyBirdPrice)}, first 10`}
+                aria-label={
+                  earlyBird
+                    ? `Reserve a slot. Early bird ${naira(earlyBirdPrice)}, ends ${cutoffLabel}`
+                    : `Reserve a slot. Boot camp fee ${naira(regularPrice)}`
+                }
               >
                 <div className="card-ticket card-ticket--amber flex items-stretch gap-4 sm:gap-5 group-hover:-translate-y-1 transition-transform h-full">
                   <div className="flex-1 pr-2 flex flex-col justify-center">
-                    <div className="text-[10px] sm:text-[10.5px] font-bold tracking-[.22em] uppercase text-ink/80">Early bird · ends Jul 3</div>
-                  <div className="flex items-baseline gap-2 mt-1">
-                      <span className="font-bubble text-[28px] sm:text-[34px] leading-none text-ink">{naira(cfg.earlyBirdPrice)}</span>
-                      <span className="text-[14px] sm:text-[18px] line-through text-ink/45">{naira(cfg.regularPrice)}</span>
+                    <div className="text-[10px] sm:text-[10.5px] font-bold tracking-[.22em] uppercase text-ink/80">
+                      {earlyBird ? `Early bird · ends ${cutoffLabel}` : "Boot camp fee"}
                     </div>
-                    <div className="text-[10.5px] font-bold tracking-[.16em] uppercase text-ink/60 mt-1">50 slots only</div>
+                  <div className="flex items-baseline gap-2 mt-1">
+                      <span className="font-bubble text-[28px] sm:text-[34px] leading-none text-ink">{naira(earlyBird ? earlyBirdPrice : regularPrice)}</span>
+                      {earlyBird && <span className="text-[14px] sm:text-[18px] line-through text-ink/45">{naira(regularPrice)}</span>}
+                    </div>
+                    <div className="text-[10.5px] font-bold tracking-[.16em] uppercase text-ink/60 mt-1">{cfg.slotsTotal} slots only</div>
                   </div>
                   <div className="card-ticket__seam" aria-hidden />
                   <div className="flex flex-col items-center justify-center gap-2 pl-2">
@@ -257,7 +268,7 @@ export default async function Landing() {
             <CourseCard i={0} num="01" slug="vibe-coding"      Icon={CodeIcon}        sticker="cyan"    title={<>VIBE CODING &amp; AI PROMPT ENGINEERING</>}  sub="Pair-program with AI to ship a deployed web app. No prior code needed." />
             <CourseCard i={1} num="02" slug="entrepreneurship" Icon={Rocket01Icon}    sticker="orange"  title={<>ENTREPRENEURSHIP &amp; PITCHING</>}          sub="Idea → product → live Demo Day pitch in two weeks."                        tag="★ COMPULSORY" />
             <CourseCard i={2} num="03" slug="content-creation" Icon={CameraVideoIcon} sticker="pink"    title={<>CONTENT CREATION</>}                          sub="Script, shoot and edit short-form videos worth posting." />
-            <CourseCard i={3} num="04" slug="robotics"         Icon={RoboticIcon}     sticker="violet"  title={<>ROBOTICS &amp; EMBEDDED SYSTEMS</>}          sub="Blink an LED on day one; build your own gadget and keep the kit by week's end." tag="✦ ELECTIVE · +₦25,000" />
+            <CourseCard i={3} num="04" slug="robotics"         Icon={RoboticIcon}     sticker="violet"  title={<>ROBOTICS &amp; EMBEDDED SYSTEMS</>}          sub="Blink an LED on day one; build your own gadget and keep the kit by week's end." tag={`✦ ELECTIVE · +${naira(PRICING.robotics)}`} />
             <CourseCard i={4} num="05" slug="3d-vr"            Icon={VrGlassesIcon}   sticker="emerald" title={<>3D CHARACTER &amp; VR WORLD CREATION</>}    sub="Sculpt characters in Blender. Step inside the world you made." />
             <CourseCard i={5} num="06" slug="ai-music"         Icon={MusicNote01Icon} sticker="amber"   title={<>AI MUSIC PRODUCTION</>}                     sub="Produce a finished, mixed track with AI-assisted tools." />
           </div>
@@ -416,6 +427,34 @@ export default async function Landing() {
         </div>
       </section>
 
+      {/* ============ TESTIMONIALS ============ */}
+      <section className="relative py-20 sm:py-24 bg-white border-y border-black/[.05]">
+        <div className="stagger-group max-w-[1180px] mx-auto px-5 sm:px-7">
+          <div className="text-center mb-10 sm:mb-14">
+            <span
+              className="stagger-rise inline-flex items-center gap-2 frosted-glass rounded-full px-3.5 py-1.5 text-[10.5px] font-bold tracking-[.22em] mb-5"
+              style={{ "--i": 0 } as React.CSSProperties}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-grass-brand inline-block anim-pulse" />
+              LOVED BY FAMILIES
+            </span>
+            <h2
+              className="stagger-rise font-bubble leading-[1] tracking-tight text-[clamp(34px,5vw,60px)] text-ink"
+              style={{ "--i": 1 } as React.CSSProperties}
+            >
+              WHAT PARENTS &amp;<br />
+              <span className="wordmark wordmark--green">CAMPERS SAY.</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+            {TESTIMONIALS.map((t, i) => (
+              <TestimonialCard key={i} i={i} t={t} />
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ============ PARENT FAQ ============ */}
       <section className="relative py-20 sm:py-24">
         <div className="stagger-group max-w-[860px] mx-auto px-5 sm:px-7">
@@ -476,7 +515,13 @@ export default async function Landing() {
               THEY&apos;RE GONE.
             </h2>
             <p className="max-w-[480px] my-6 text-neutral-700 text-[14.5px] leading-relaxed mx-auto md:mx-0">
-              The 2026 cohorts run <strong>27 July – 4 September</strong> as three back-to-back 2-week sessions. Once we hit 50 paid registrations the camp closes. Next AI &amp; XR isn&apos;t until summer 2027. <strong>Early-bird {naira(cfg.earlyBirdPrice)} ends 3 July</strong> — after that it&apos;s {naira(cfg.regularPrice)}. Both cover the 5 core courses, daily side attractions, materials and Demo Day — Robotics is an optional +₦25,000 elective. Daily attractions are subject to token usage.
+              The 2026 cohorts run <strong>27 July – 4 September</strong> as three back-to-back 2-week sessions. Once we hit {cfg.slotsTotal} paid registrations the camp closes. Next AI &amp; XR isn&apos;t until summer 2027.{" "}
+              {earlyBird ? (
+                <><strong>Early-bird {naira(earlyBirdPrice)} ends {cutoffLabel}</strong> — after that it&apos;s {naira(regularPrice)}.</>
+              ) : (
+                <>The boot camp fee is <strong>{naira(regularPrice)}</strong>.</>
+              )}{" "}
+              It covers the 5 core courses, daily side attractions, materials and Demo Day — Robotics is an optional +{naira(PRICING.robotics)} elective. Daily attractions are subject to token usage.
             </p>
             <div className="flex flex-wrap gap-3 items-center justify-center md:justify-start">
               <Link href="/register" className="btn-grass">
@@ -672,6 +717,41 @@ function DayCard({
         ))}
       </ul>
     </div>
+  );
+}
+
+function TestimonialCard({ i, t }: { i: number; t: Testimonial }) {
+  const avatarTone: Record<Testimonial["tone"], string> = {
+    cyan: "bg-aqua-brand text-ink",
+    green: "bg-grass-brand text-ink",
+    violet: "bg-violet-brand text-white",
+    pink: "bg-pink-deep text-white",
+    amber: "bg-gold-brand text-ink",
+  };
+  return (
+    <figure
+      className="stagger-rise bg-cream border border-black/[.06] rounded-3xl p-6 sm:p-8 flex flex-col shadow-[0_8px_24px_-14px_rgba(0,0,0,0.14)]"
+      style={{ "--i": i } as React.CSSProperties}
+    >
+      <div className="font-bubble text-[40px] leading-none text-grass-brand mb-2" aria-hidden>
+        &ldquo;
+      </div>
+      <blockquote className="text-[15px] sm:text-[16px] leading-relaxed text-ink/85 flex-1">
+        {t.quote}
+      </blockquote>
+      <figcaption className="mt-5 flex items-center gap-3">
+        <span
+          className={`w-11 h-11 rounded-full grid place-items-center font-bubble text-[15px] shrink-0 ${avatarTone[t.tone]}`}
+          aria-hidden
+        >
+          {t.initials}
+        </span>
+        <span>
+          <span className="block font-display font-bold text-[14px] text-ink leading-tight">{t.name}</span>
+          <span className="block text-[12px] text-neutral-500">{t.role}</span>
+        </span>
+      </figcaption>
+    </figure>
   );
 }
 

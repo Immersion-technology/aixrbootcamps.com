@@ -7,6 +7,8 @@ import { registrationCreateSchema } from "@/lib/validations";
 import { initTransaction } from "@/lib/paystack";
 import { normalizePhone, shortRegistrationId, rateLimit, getClientIp } from "@/lib/utils";
 import { getClasses } from "@/lib/curriculum";
+import { PRICING, bootCampFeeKobo, EARLY_BIRD_CUTOFF_DEFAULT } from "@/lib/pricing";
+import { validatePromo } from "@/lib/promo";
 
 export const dynamic = "force-dynamic";
 
@@ -35,20 +37,12 @@ export async function POST(req: NextRequest) {
   try {
     await connectDB();
 
-    // Pricing is forced here (₦100k early-bird / ₦150k regular / +₦20k laptop) so
-    // we charge the right amount even if the DB Settings collection holds stale
-    // values left over from earlier seeds. Update both here AND on the register
-    // page if pricing ever changes again.
-    const earlyBirdPrice = 15000000;
-    const regularPrice = 20000000;
-    const laptopPrice = 2000000;
-    const roboticsPrice = 2500000; // +₦25,000 elective — Arduino board, servos/motors and consumables the camper keeps
-
     // --- capacity check ---
+    // Prices come from lib/pricing.ts (env-configurable, single source of truth).
     const [capacity, paidCount, earlyBirdCutoff] = await Promise.all([
       getSetting<number>(SETTING_KEYS.CAPACITY, 50),
       Registration.countDocuments({ paymentStatus: "paid" }),
-      getSetting<string>(SETTING_KEYS.EARLY_BIRD_CUTOFF, "2026-06-30T23:59:59.000Z"),
+      getSetting<string>(SETTING_KEYS.EARLY_BIRD_CUTOFF, EARLY_BIRD_CUTOFF_DEFAULT),
     ]);
 
     if (paidCount >= capacity) {
@@ -61,12 +55,25 @@ export async function POST(req: NextRequest) {
       .filter((c) => !c.isElective || data.roboticsElective)
       .map((c) => c.slug);
 
-    // --- pricing ---
+    // --- pricing (server-authoritative; the client never dictates the amount) ---
     const tier = new Date() < new Date(earlyBirdCutoff) ? "early_bird" : "regular";
-    const bootCampFee = tier === "early_bird" ? earlyBirdPrice : regularPrice;
-    const laptopRentalFee = data.laptopRental ? laptopPrice : 0;
-    const roboticsFee = data.roboticsElective ? roboticsPrice : 0;
-    const total = bootCampFee + laptopRentalFee + roboticsFee;
+    const bootCampFee = bootCampFeeKobo(tier);
+    const laptopRentalFee = data.laptopRental ? PRICING.laptop : 0;
+    const roboticsFee = data.roboticsElective ? PRICING.robotics : 0;
+    const subtotal = bootCampFee + laptopRentalFee + roboticsFee;
+
+    // --- promo code (optional) — validated + applied here, never trusted from the client ---
+    let discountKobo = 0;
+    let appliedPromoCode: string | undefined;
+    if (data.promoCode) {
+      const promo = await validatePromo(data.promoCode, subtotal);
+      if (!promo.ok) {
+        return NextResponse.json({ error: promo.message ?? "Invalid promo code" }, { status: 400 });
+      }
+      discountKobo = promo.discount!.discountKobo;
+      appliedPromoCode = promo.promo!.code;
+    }
+    const total = subtotal - discountKobo;
 
     // --- sequential registration ID + payment reference ---
     const seq = await nextSeq("registration");
@@ -93,7 +100,7 @@ export async function POST(req: NextRequest) {
       courses: finalCourses,
       laptopRental: data.laptopRental,
       roboticsElective: data.roboticsElective,
-      pricing: { tier, bootCampFee, laptopRentalFee, roboticsFee, total },
+      pricing: { tier, bootCampFee, laptopRentalFee, roboticsFee, subtotal, discountKobo, promoCode: appliedPromoCode, total },
       paymentStatus: "pending",
       admissionStatus: "pending",
       paymentReference,

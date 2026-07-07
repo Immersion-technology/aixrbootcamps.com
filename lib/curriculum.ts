@@ -8,6 +8,8 @@
  * Update once, ripples everywhere.
  */
 
+import { PRICING } from "@/lib/pricing";
+
 export type Day = "Mon" | "Tue" | "Wed" | "Thu" | "Fri";
 
 export type Tone =
@@ -190,7 +192,7 @@ export const CURRICULUM: CurriculumItem[] = [
     name: "Robotics & Embedded Systems",
     type: "class",
     isElective: true,
-    electiveFeeKobo: 2500000, // +₦25,000 — covers the Arduino board, servos/motors and consumables the camper keeps
+    electiveFeeKobo: PRICING.robotics, // env-configurable; covers the Arduino board, servos/motors and consumables the camper keeps
     facilitators: [],
     hoursPerWeek: 4,
     sessionsPerWeek: 2,

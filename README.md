@@ -19,27 +19,34 @@ Default admin login (override in `.env.local`):
 
 ```
 app/
-  (public)/                       public routes: landing, register, faq, contact
-    page.tsx                      landing (SOFT HARP-styled)
-    register/                     multi-step form + Paystack flow
+  (public)/                       public routes: landing, register, courses, teachers, faq, contact
+    page.tsx                      landing (hero, courses, timetable, testimonials, FAQ)
+    register/                     multi-step form + promo codes + Paystack flow
       page.tsx
       RegistrationForm.tsx
       success/                    Paystack callback lands here
       failed/                     retry page
       closed/                     waitlist when sold out
+  (account)/                      parent portal (passwordless magic-link login)
+  (teacher)/                      facilitator portal (roster + attendance)
   admin/                          JWT-protected admin dashboard
     page.tsx                      stats + recent activity
+    analytics/                    traffic dashboard
     registrations/                list + detail + admit/reject
-    settings/                     edit pricing, cutoff date, capacity
+    attendance/                   daily attendance
+    teachers/                     facilitator manager
+    promos/                       promo-code manager (create / pause / delete)
+    settings/                     cohort dates, capacity, alert email (prices are via env)
     export/                       CSV download
     waitlist/                     waitlist viewer
   api/
-    public/                       config, courses, registrations, paystack webhook, waitlist
-    admin/                        auth, stats, registrations CRUD, settings, export
+    public/                       config, courses, registrations, promo/validate, paystack webhook, waitlist
+    admin/                        auth, stats, registrations CRUD, settings, promos, teachers, export
 lib/
-  db.ts, auth.ts, paystack.ts, confirm-payment.ts, mailer.ts, pdf.ts, utils.ts, validations.ts
+  db, auth, pricing, promo, paystack, confirm-payment, mailer, pdf, utils, validations, curriculum, site
 models/
-  Admin, Registration, Payment, Course, Setting, Waitlist, Counter
+  Admin, Registration, Payment, PromoCode, Course, Setting, Waitlist, Counter,
+  Teacher, Attendance, ParentAccount, LoginToken, PageView
 middleware.ts                     gates /admin and /api/admin
 scripts/seed.ts                   one-shot DB seeder
 ```
@@ -47,6 +54,14 @@ scripts/seed.ts                   one-shot DB seeder
 ## Money
 
 All amounts are stored as **kobo** (₦1 = 100 kobo) and rendered with `formatNaira()` from `lib/utils.ts`. Paystack also works in **kobo**, so no conversion is needed: the registration route passes `amountKobo = total` directly, and the webhook compares Paystack's `amount` to `pricing.total` kobo-for-kobo.
+
+Any promo discount is baked into `pricing.total` **server-side before** both `Registration.create` and Paystack init, so `pricing.total` always equals what Paystack charges (the confirm step rejects any mismatch as `amount_mismatch`).
+
+## Pricing & promo codes
+
+**Prices are configured via environment variables** — the single source of truth is `lib/pricing.ts`, which reads `PRICE_EARLY_BIRD_KOBO`, `PRICE_REGULAR_KOBO`, `PRICE_LAPTOP_RENTAL_KOBO`, `PRICE_ROBOTICS_ELECTIVE_KOBO` (all kobo) and `EARLY_BIRD_CUTOFF` (ISO), each with a sensible default. Every price shown or charged flows from here — the register page, homepage, public config API and the charge route. To change a price, set the env var and redeploy. (The admin Settings page no longer edits prices; it manages cohort dates, capacity and the alert email. The early-bird cutoff stays admin-overridable under "Cohort dates".)
+
+**Promo codes** are managed in the admin panel at `/admin/promos`: create percentage or fixed-amount codes with an optional expiry and usage cap. A camper enters a code at checkout; it's previewed via `POST /api/public/promo/validate` and **re-validated + applied authoritatively** in the charge route (`lib/promo.ts` + `applyPromo` in `lib/pricing.ts`). Discounts always leave a payable balance (`MIN_PAYABLE_KOBO`) — a code can never zero an order; use an admin manual payment for full comps. A code's `usedCount` is incremented once per **paid** registration in `reconcileAndConfirm`.
 
 ## Paystack flow
 
@@ -81,6 +96,8 @@ For Gmail / Google Workspace SMTP, use `SMTP_HOST=smtp.gmail.com`, `SMTP_PORT=46
 
 Email + password (bcrypt hashed). JWT in an httpOnly + secure + sameSite=strict cookie. `middleware.ts` gates everything under `/admin` and `/api/admin` (except the login endpoint).
 
+> **Non-technical operator guide:** [`docs/ADMIN_MANUAL.md`](docs/ADMIN_MANUAL.md) — login, registrations, promo codes, settings, exports.
+
 To create more admins, seed them manually with a script; there is no public signup.
 
 ## Deploy
@@ -101,6 +118,10 @@ To create more admins, seed them manually with a script; there is no public sign
 | `npm run lint` | Lint |
 | `npm run seed` | One-time seed: admin, courses, settings |
 
-## What's out of scope (per spec)
+## Included
 
-No participant logins, facilitator portal, assignment submission, grading, attendance, certificates, or in-app messaging. Communication happens via email and WhatsApp. The admin dashboard is the single source of truth.
+Parent portal (passwordless magic-link login to track a camper), facilitator portal (roster + daily attendance), promo codes, a traffic analytics dashboard, CSV export, and PDF receipts. Parents and facilitators log in via one-time email links; there is no public admin signup.
+
+## Out of scope
+
+Assignment submission, grading, certificates, and in-app messaging. Parent/facilitator comms happen via email and WhatsApp; the admin dashboard remains the operational source of truth.

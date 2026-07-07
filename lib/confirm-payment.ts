@@ -2,6 +2,7 @@ import { connectDB } from "@/lib/db";
 import { Registration } from "@/models/Registration";
 import { Payment } from "@/models/Payment";
 import { ParentAccount } from "@/models/ParentAccount";
+import { PromoCode } from "@/models/PromoCode";
 import { getSetting, SETTING_KEYS } from "@/models/Setting";
 import { verifyTransaction } from "@/lib/paystack";
 import { sendMail, parentConfirmationHtml, adminAlertHtml } from "@/lib/mailer";
@@ -94,6 +95,17 @@ export async function reconcileAndConfirm(
     rawWebhookPayload: opts.rawPayload as Record<string, unknown> | undefined,
   });
 
+  // Count a confirmed use of the promo code. This runs only on the once-only success path
+  // (reconcile no-ops when a Payment already exists), so a code is incremented exactly once
+  // per paid registration. Best-effort: a promo-count failure must not block confirmation.
+  if (reg.pricing.promoCode) {
+    try {
+      await PromoCode.updateOne({ code: reg.pricing.promoCode }, { $inc: { usedCount: 1 } });
+    } catch (promoErr) {
+      console.error("[confirm-payment promo-count]", promoErr);
+    }
+  }
+
   // Fire confirmation emails (best-effort; failure shouldn't block confirmation).
   try {
     const campStart = await getSetting<string>(SETTING_KEYS.CAMP_START_DATE, "2026-07-27");
@@ -112,6 +124,8 @@ export async function reconcileAndConfirm(
       bootCampFeeKobo: reg.pricing.bootCampFee,
       laptopRentalKobo: reg.pricing.laptopRentalFee,
       roboticsFeeKobo: reg.pricing.roboticsFee,
+      discountKobo: reg.pricing.discountKobo ?? 0,
+      promoCode: reg.pricing.promoCode,
       totalKobo: reg.pricing.total,
       paidAt: reg.paidAt!,
     });
@@ -127,6 +141,8 @@ export async function reconcileAndConfirm(
         laptopRental: reg.laptopRental,
         roboticsElective: reg.roboticsElective,
         attendanceMode: reg.attendanceMode,
+        discountKobo: reg.pricing.discountKobo ?? 0,
+        promoCode: reg.pricing.promoCode,
         totalKobo: reg.pricing.total,
         campStart,
       }),

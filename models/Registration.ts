@@ -44,6 +44,13 @@ export interface IRegistration {
     bootCampFee: number;
     laptopRentalFee: number;
     roboticsFee: number;
+    /** Order total before any promo discount (bootcamp + add-ons). */
+    subtotal?: number;
+    /** Promo discount applied, in kobo (0 when no code). */
+    discountKobo?: number;
+    /** The promo code used, if any (stored UPPERCASE). */
+    promoCode?: string;
+    /** Final charged amount, in kobo. Must equal what Paystack charges. */
     total: number;
   };
   paymentStatus: PaymentStatus;
@@ -101,6 +108,11 @@ const RegistrationSchema = new Schema<IRegistration>(
       bootCampFee: { type: Number, required: true },
       laptopRentalFee: { type: Number, required: true, default: 0 },
       roboticsFee: { type: Number, required: true, default: 0 },
+      // Optional (not required) so pre-promo legacy registrations can still be re-saved
+      // by reconcileAndConfirm without failing validation; always set on new registrations.
+      subtotal: { type: Number },
+      discountKobo: { type: Number, default: 0 },
+      promoCode: { type: String, trim: true, uppercase: true },
       total: { type: Number, required: true },
     },
     paymentStatus: {

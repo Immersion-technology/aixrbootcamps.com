@@ -42,6 +42,9 @@ export const registrationCreateSchema = z.object({
   attendanceMode: z.enum(["in_person", "online"]).default("in_person"),
   laptopRental: z.boolean(),
   roboticsElective: z.boolean().optional().default(false),
+  // Optional promo code — the discount is validated + applied server-side; the client
+  // only sends the string. Empty is treated as "no code" by the charge route.
+  promoCode: z.string().trim().toUpperCase().max(40).optional(),
   agreedToTerms: z.literal(true, {
     errorMap: () => ({ message: "You must agree to the rules of conduct" }),
   }),
@@ -82,3 +85,39 @@ export const settingValueSchema = z.union([
   z.boolean(),
   z.null(),
 ]);
+
+// --- Promo codes (admin) ---
+// discountValue is a percent (1–100) when type is "percent", or a kobo amount when
+// type is "fixed". maxUses null = unlimited. Dates are ISO strings (mongoose casts to Date).
+export const promoCreateSchema = z
+  .object({
+    code: z
+      .string()
+      .trim()
+      .min(2, "Code must be at least 2 characters")
+      .max(40)
+      .regex(/^[A-Za-z0-9_-]+$/, "Use only letters, numbers, - and _"),
+    description: z.string().trim().max(200).optional(),
+    discountType: z.enum(["percent", "fixed"]),
+    discountValue: z.number().int("Enter a whole number").positive("Must be greater than 0"),
+    maxUses: z.number().int().positive().nullable().optional().default(null),
+    minSubtotalKobo: z.number().int().nonnegative().optional(),
+    active: z.boolean().optional().default(true),
+    startsAt: z.string().datetime().optional(),
+    expiresAt: z.string().datetime().optional(),
+  })
+  .refine((d) => d.discountType !== "percent" || d.discountValue <= 100, {
+    message: "A percentage discount can't exceed 100",
+    path: ["discountValue"],
+  });
+
+export const promoUpdateSchema = z
+  .object({
+    active: z.boolean().optional(),
+    description: z.string().trim().max(200).optional(),
+    discountValue: z.number().int().positive().optional(),
+    maxUses: z.number().int().positive().nullable().optional(),
+    minSubtotalKobo: z.number().int().nonnegative().nullable().optional(),
+    expiresAt: z.string().datetime().nullable().optional(),
+  })
+  .refine((d) => Object.keys(d).length > 0, { message: "Nothing to update" });

@@ -11,7 +11,6 @@ export default function robots(): MetadataRoute.Robots {
         "/account",
         "/teacher",
         "/api",
-        "/test",
         "/register/success",
         "/register/failed",
       ],

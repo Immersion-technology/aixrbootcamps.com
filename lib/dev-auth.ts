@@ -1,6 +1,6 @@
 /**
  * DEV-ONLY auth bypass — lets you preview the gated portals (/admin, /account,
- * /teacher) without logging in, e.g. via the /test passageway.
+ * /teacher) without logging in.
  *
  * Active ONLY when the AUTH_BYPASS environment variable is exactly "1".
  * Turn it on locally by adding this line to .env.local, then restart `npm run dev`:

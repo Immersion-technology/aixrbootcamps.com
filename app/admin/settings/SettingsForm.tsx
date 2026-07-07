@@ -37,35 +37,18 @@ export default function SettingsForm({ initial }: Props) {
 
   return (
     <div className="space-y-5">
-      {/* PRICING */}
-      <Section title="Pricing" eyebrow="Naira (kobo)">
-        <div className="grid md:grid-cols-3 gap-4">
-          <Field label="Early-bird (kobo)">
-            <input type="number" className="input"
-              value={vals[SETTING_KEYS.EARLY_BIRD_PRICE]}
-              onChange={(e) => set(SETTING_KEYS.EARLY_BIRD_PRICE, Number(e.target.value))}
-              onBlur={() => save(SETTING_KEYS.EARLY_BIRD_PRICE, vals[SETTING_KEYS.EARLY_BIRD_PRICE])} />
-          </Field>
-          <Field label="Regular (kobo)">
-            <input type="number" className="input"
-              value={vals[SETTING_KEYS.REGULAR_PRICE]}
-              onChange={(e) => set(SETTING_KEYS.REGULAR_PRICE, Number(e.target.value))}
-              onBlur={() => save(SETTING_KEYS.REGULAR_PRICE, vals[SETTING_KEYS.REGULAR_PRICE])} />
-          </Field>
-          <Field label="Laptop rental (kobo)">
-            <input type="number" className="input"
-              value={vals[SETTING_KEYS.LAPTOP_RENTAL_PRICE]}
-              onChange={(e) => set(SETTING_KEYS.LAPTOP_RENTAL_PRICE, Number(e.target.value))}
-              onBlur={() => save(SETTING_KEYS.LAPTOP_RENTAL_PRICE, vals[SETTING_KEYS.LAPTOP_RENTAL_PRICE])} />
-          </Field>
-          <Field label="Robotics elective (kobo)">
-            <input type="number" className="input"
-              value={vals[SETTING_KEYS.ROBOTICS_ELECTIVE_PRICE]}
-              onChange={(e) => set(SETTING_KEYS.ROBOTICS_ELECTIVE_PRICE, Number(e.target.value))}
-              onBlur={() => save(SETTING_KEYS.ROBOTICS_ELECTIVE_PRICE, vals[SETTING_KEYS.ROBOTICS_ELECTIVE_PRICE])} />
-          </Field>
-        </div>
-        <p className="text-[11.5px] text-neutral-500 mt-2">Prices are stored in kobo. ₦1 = 100 kobo. Currently ₦{(Number(vals[SETTING_KEYS.EARLY_BIRD_PRICE])/100).toLocaleString("en-NG")} early / ₦{(Number(vals[SETTING_KEYS.REGULAR_PRICE])/100).toLocaleString("en-NG")} regular.</p>
+      {/* PRICING — now configured via environment variables (see lib/pricing.ts / .env). */}
+      <Section title="Pricing" eyebrow="Set via env">
+        <p className="text-[13px] text-neutral-600 leading-relaxed">
+          Boot-camp prices are configured through environment variables
+          (<code className="text-[12px] bg-black/[.05] rounded px-1.5 py-0.5">PRICE_EARLY_BIRD_KOBO</code>,
+          <code className="text-[12px] bg-black/[.05] rounded px-1.5 py-0.5 ml-1">PRICE_REGULAR_KOBO</code>,
+          <code className="text-[12px] bg-black/[.05] rounded px-1.5 py-0.5 ml-1">PRICE_LAPTOP_RENTAL_KOBO</code>,
+          <code className="text-[12px] bg-black/[.05] rounded px-1.5 py-0.5 ml-1">PRICE_ROBOTICS_ELECTIVE_KOBO</code>)
+          so there's a single source of truth for what campers are shown and charged. Update them in your
+          deployment's environment and redeploy. To run limited-time discounts, use{" "}
+          <a href="/admin/promos" className="text-violet-brand font-semibold hover:underline">promo codes</a>.
+        </p>
       </Section>
 
       {/* COHORT DATES */}

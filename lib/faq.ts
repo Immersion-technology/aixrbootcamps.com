@@ -8,6 +8,8 @@
  * Update once, both surfaces stay in sync.
  */
 
+import { PRICING, nairaFromKobo } from "@/lib/pricing";
+
 export type FaqTopic = "Logistics" | "Money" | "Curriculum" | "Safety";
 
 export type FaqItem = {
@@ -45,7 +47,7 @@ export const FAQS: FaqItem[] = [
   {
     topic: "Money",
     q: "Can I pay in instalments?",
-    a: "Yes. ₦75,000 deposit on registration, balance two weeks before cohort start.",
+    a: `Yes. ${nairaFromKobo(PRICING.deposit)} deposit on registration, balance two weeks before cohort start.`,
   },
   {
     topic: "Logistics",

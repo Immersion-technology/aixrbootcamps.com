@@ -91,6 +91,15 @@ export default async function RegistrationDetail({ params }: { params: { id: str
           <Row k="Boot camp fee" v={formatNaira(reg.pricing.bootCampFee)} />
           {reg.pricing.roboticsFee > 0 && <Row k="Robotics elective" v={formatNaira(reg.pricing.roboticsFee)} />}
           <Row k="Laptop rental" v={formatNaira(reg.pricing.laptopRentalFee)} />
+          {reg.pricing.discountKobo > 0 && (
+            <>
+              <Row k="Subtotal" v={formatNaira(reg.pricing.subtotal ?? reg.pricing.total + reg.pricing.discountKobo)} />
+              <Row
+                k={`Promo${reg.pricing.promoCode ? ` (${reg.pricing.promoCode})` : ""}`}
+                v={<span>−{formatNaira(reg.pricing.discountKobo)}</span>}
+              />
+            </>
+          )}
           <Row k="Total" v={<strong>{formatNaira(reg.pricing.total)}</strong>} />
           <Row k="Payment ref" v={<span className="font-mono text-[11px] break-all">{reg.paymentReference}</span>} />
           {reg.paidAt && <Row k="Paid at" v={new Date(reg.paidAt).toLocaleString("en-NG")} />}
