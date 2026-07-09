@@ -21,3 +21,6 @@ d0e7d470dbf49fb7b4a5ba4776c7ecd9.webp
 # (Project-licensed font files live in app/fonts/ and are committed.)
 Read-Me-Please.txt
 More Info.txt
+
+# Credentialed admin manual — contains a live password, keep local only
+docs/ADMIN_MANUAL.pdf

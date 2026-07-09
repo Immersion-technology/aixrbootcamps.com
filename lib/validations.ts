@@ -7,12 +7,10 @@ const naijaPhone = z
 
 export const participantSchema = z.object({
   fullName: z.string().trim().min(2, "Full name is required"),
-  dateOfBirth: z.string().refine((d) => {
-    const dob = new Date(d);
-    if (isNaN(dob.getTime())) return false;
-    const age = (Date.now() - dob.getTime()) / (365.25 * 24 * 60 * 60 * 1000);
-    return age >= 10 && age <= 17;
-  }, "Participant must be between 10 and 17 years old"),
+  // Age restriction lifted — any age is accepted. We still require a real, parseable
+  // date so the DB stores a valid dateOfBirth. (Applies to both the form and the API,
+  // since this schema is shared.)
+  dateOfBirth: z.string().refine((d) => !isNaN(new Date(d).getTime()), "Enter a valid date of birth"),
   gender: z.enum(["Male", "Female", "Prefer not to say"]),
   school: z.string().trim().min(2, "School name is required"),
   classGrade: z.string().trim().optional().default(""),
