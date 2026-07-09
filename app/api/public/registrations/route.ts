@@ -62,11 +62,15 @@ export async function POST(req: NextRequest) {
     const roboticsFee = data.roboticsElective ? PRICING.robotics : 0;
     const subtotal = bootCampFee + laptopRentalFee + roboticsFee;
 
-    // --- promo code (optional) — validated + applied here, never trusted from the client ---
+    // --- promo code (optional) — validated + applied here, never trusted from the client.
+    // The discount applies to the boot camp fee only; add-ons are always charged in full.
     let discountKobo = 0;
     let appliedPromoCode: string | undefined;
     if (data.promoCode) {
-      const promo = await validatePromo(data.promoCode, subtotal);
+      const promo = await validatePromo(data.promoCode, {
+        bootCampFeeKobo: bootCampFee,
+        orderSubtotalKobo: subtotal,
+      });
       if (!promo.ok) {
         return NextResponse.json({ error: promo.message ?? "Invalid promo code" }, { status: 400 });
       }

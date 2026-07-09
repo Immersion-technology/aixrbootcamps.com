@@ -36,12 +36,17 @@ export async function POST(req: NextRequest) {
     await connectDB();
     const cutoff = await getSetting<string>(SETTING_KEYS.EARLY_BIRD_CUTOFF, EARLY_BIRD_CUTOFF_DEFAULT);
     const tier = isEarlyBird(cutoff) ? "early_bird" : "regular";
+    const bootCampFee = bootCampFeeKobo(tier);
     const subtotal =
-      bootCampFeeKobo(tier) +
+      bootCampFee +
       (parsed.data.laptopRental ? PRICING.laptop : 0) +
       (parsed.data.roboticsElective ? PRICING.robotics : 0);
 
-    const result = await validatePromo(parsed.data.code, subtotal);
+    // Discount applies to the boot camp fee only; add-ons are never discounted.
+    const result = await validatePromo(parsed.data.code, {
+      bootCampFeeKobo: bootCampFee,
+      orderSubtotalKobo: subtotal,
+    });
     if (!result.ok) {
       // 200 with valid:false — an invalid code is an expected outcome, not an error.
       return NextResponse.json({ valid: false, message: result.message });

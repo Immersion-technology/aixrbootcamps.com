@@ -33,15 +33,17 @@ export function normalizeCode(code: string): string {
 
 /**
  * Authoritative promo validation. Looks up the normalized code and checks it is active,
- * within its start/expiry window, under its usage cap and above any minimum subtotal, then
- * computes the discount for the given order subtotal (kobo).
+ * within its start/expiry window, under its usage cap and above any minimum order subtotal,
+ * then computes the discount. The discount applies to the BOOT CAMP FEE ONLY
+ * (`amounts.bootCampFeeKobo`); `amounts.orderSubtotalKobo` (fee + add-ons) is used for the
+ * minimum-order check and to derive the final total.
  *
  * Used by BOTH the public preview endpoint and the registration charge route — the client is
  * never trusted to compute or send a price. `now` is injectable for testing.
  */
 export async function validatePromo(
   rawCode: string,
-  subtotalKobo: number,
+  amounts: { bootCampFeeKobo: number; orderSubtotalKobo: number },
   now: Date = new Date()
 ): Promise<PromoResult> {
   const code = normalizeCode(rawCode);
@@ -53,9 +55,9 @@ export async function validatePromo(
   if (promo.startsAt && now < promo.startsAt) return reject("not_started");
   if (promo.expiresAt && now > promo.expiresAt) return reject("expired");
   if (promo.maxUses != null && promo.usedCount >= promo.maxUses) return reject("max_uses");
-  if (promo.minSubtotalKobo && subtotalKobo < promo.minSubtotalKobo) return reject("min_subtotal");
+  if (promo.minSubtotalKobo && amounts.orderSubtotalKobo < promo.minSubtotalKobo) return reject("min_subtotal");
 
-  const discount = applyPromo(subtotalKobo, promo);
+  const discount = applyPromo(amounts.bootCampFeeKobo, amounts.orderSubtotalKobo, promo);
   return { ok: true, promo, discount };
 }
 

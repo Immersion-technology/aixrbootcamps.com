@@ -5,6 +5,7 @@ import { connectDB } from "@/lib/db";
 import { Registration } from "@/models/Registration";
 import { Attendance } from "@/models/Attendance";
 import { calcAge } from "@/lib/utils";
+import { nairaFromKobo } from "@/lib/pricing";
 import FeedbackPanel from "./FeedbackPanel";
 
 export const dynamic = "force-dynamic";
@@ -77,6 +78,24 @@ export default async function ParentDashboard() {
                       Payment: <strong>{r.paymentStatus}</strong>
                     </li>
                   </ul>
+                  <div className="mb-4">
+                    <div className="text-[10px] font-bold tracking-[.18em] uppercase text-neutral-500 mb-2">
+                      {r.paymentStatus === "paid" ? "Paid for" : "Included in registration"}
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      <MiniTag tone="ink">Boot camp fee</MiniTag>
+                      {r.laptopRental && <MiniTag tone="aqua">Laptop rental</MiniTag>}
+                      {r.roboticsElective && <MiniTag tone="grass">Robotics elective</MiniTag>}
+                    </div>
+                    <div className="mt-3 flex items-center justify-between gap-3 rounded-2xl bg-white/60 px-3 py-2 border border-black/[.05]">
+                      <span className="text-[10px] font-bold tracking-[.18em] uppercase text-neutral-500">
+                        {r.paymentStatus === "paid" ? "Total paid" : "Amount due"}
+                      </span>
+                      <span className="font-bubble text-[18px] text-ink">
+                        {nairaFromKobo(r.pricing.total)}
+                      </span>
+                    </div>
+                  </div>
                   <div className="flex flex-wrap gap-2 text-[10.5px] font-bold tracking-[.16em] uppercase">
                     <Badge tone="grass">Present {counts.present}</Badge>
                     <Badge tone="amber">Late {counts.late}</Badge>
@@ -114,6 +133,15 @@ function Badge({ tone, children }: { tone: "grass" | "amber" | "rose"; children:
     grass: "bg-emerald-100 text-emerald-800",
     amber: "bg-amber-100 text-amber-800",
     rose: "bg-rose-100 text-rose-800",
+  }[tone];
+  return <span className={`rounded-full px-2.5 py-1 ${cls}`}>{children}</span>;
+}
+
+function MiniTag({ tone, children }: { tone: "ink" | "aqua" | "grass"; children: React.ReactNode }) {
+  const cls = {
+    ink: "bg-neutral-100 text-neutral-800",
+    aqua: "bg-cyan-100 text-cyan-900",
+    grass: "bg-emerald-100 text-emerald-800",
   }[tone];
   return <span className={`rounded-full px-2.5 py-1 ${cls}`}>{children}</span>;
 }

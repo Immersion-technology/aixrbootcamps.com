@@ -6,6 +6,7 @@ import { connectDB } from "@/lib/db";
 import { Registration } from "@/models/Registration";
 import { Attendance } from "@/models/Attendance";
 import { AttractionChoice, type Attraction } from "@/models/AttractionChoice";
+import { nairaFromKobo } from "@/lib/pricing";
 import { calcAge } from "@/lib/utils";
 
 const ATTRACTION_LABEL: Record<Attraction, string> = {
@@ -51,6 +52,11 @@ export default async function CamperProfilePage({ params }: { params: { id: stri
   );
 
   const age = calcAge(reg.participant.dateOfBirth);
+  const paidItems = [
+    "Boot camp fee",
+    ...(reg.laptopRental ? ["Laptop rental"] : []),
+    ...(reg.roboticsElective ? ["Robotics elective"] : []),
+  ];
 
   return (
     <section className="px-5 sm:px-7 py-12">
@@ -93,6 +99,32 @@ export default async function CamperProfilePage({ params }: { params: { id: stri
                 <p className="text-[12.5px] text-neutral-800 leading-snug">{reg.medicalNotes}</p>
               </div>
             )}
+          </Card>
+        </div>
+
+        {/* PAYMENT SUMMARY */}
+        <div className="mb-6">
+          <Card title="Payment">
+            <Row k="Status" v={<StatusBadge status={reg.paymentStatus} />} />
+            <Row
+              k="Paid for"
+              v={
+                <div className="flex flex-wrap justify-end gap-1.5">
+                  {paidItems.map((item) => (
+                    <span key={item} className="rounded-full bg-neutral-100 px-2.5 py-1 text-[10.5px] font-bold tracking-[.16em] uppercase text-neutral-700">
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              }
+            />
+            <Row k="Boot camp fee" v={nairaFromKobo(reg.pricing.bootCampFee)} />
+            {reg.laptopRental && <Row k="Laptop rental" v={nairaFromKobo(reg.pricing.laptopRentalFee)} />}
+            {reg.roboticsElective && <Row k="Robotics elective" v={nairaFromKobo(reg.pricing.roboticsFee)} />}
+            {reg.pricing.discountKobo && reg.pricing.discountKobo > 0 && (
+              <Row k="Promo discount" v={<span className="text-emerald-700">−{nairaFromKobo(reg.pricing.discountKobo)}</span>} />
+            )}
+            <Row k="Total" v={<strong>{nairaFromKobo(reg.pricing.total)}</strong>} />
           </Card>
         </div>
 
@@ -171,7 +203,7 @@ function Card({ title, children }: { title: string; children: React.ReactNode })
   );
 }
 
-function Row({ k, v }: { k: string; v: string }) {
+function Row({ k, v }: { k: string; v: React.ReactNode }) {
   return (
     <div className="flex items-baseline justify-between gap-3 text-[13px]">
       <span className="text-neutral-500">{k}</span>

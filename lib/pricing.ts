@@ -75,24 +75,32 @@ export interface AppliedDiscount {
 }
 
 /**
- * Compute the discount for a promo against an order subtotal (kobo). Pure and shared by
- * BOTH the live-preview endpoint and the authoritative charge route, so the preview a
- * camper sees can never diverge from what they're actually charged.
+ * Compute a promo discount. The discount is calculated against the BOOT CAMP FEE ONLY
+ * (`discountBaseKobo`) — the add-ons (laptop rental, robotics kit) are hard-cost
+ * pass-throughs and are never discounted. `orderSubtotalKobo` is the full order
+ * (fee + add-ons); the returned `totalKobo` is that minus the discount.
  *
- * - percent: floor(subtotal × value / 100)
- * - fixed:   min(value, subtotal)
+ * Pure and shared by BOTH the live-preview endpoint and the authoritative charge route,
+ * so the preview a camper sees can never diverge from what they're actually charged.
  *
- * The discount is clamped so the remaining total is always ≥ MIN_PAYABLE_KOBO.
+ * - percent: floor(base × value / 100)
+ * - fixed:   min(value, base)
+ *
+ * Clamped so the discount never exceeds the base fee and the order total stays ≥ MIN_PAYABLE_KOBO.
  */
-export function applyPromo(subtotalKobo: number, promo: PromoLike): AppliedDiscount {
+export function applyPromo(
+  discountBaseKobo: number,
+  orderSubtotalKobo: number,
+  promo: PromoLike
+): AppliedDiscount {
   const raw =
     promo.discountType === "percent"
-      ? Math.floor((subtotalKobo * promo.discountValue) / 100)
-      : Math.min(promo.discountValue, subtotalKobo);
+      ? Math.floor((discountBaseKobo * promo.discountValue) / 100)
+      : Math.min(promo.discountValue, discountBaseKobo);
 
-  const maxDiscount = Math.max(0, subtotalKobo - MIN_PAYABLE_KOBO);
+  const maxDiscount = Math.max(0, Math.min(discountBaseKobo, orderSubtotalKobo - MIN_PAYABLE_KOBO));
   const discountKobo = Math.max(0, Math.min(raw, maxDiscount));
-  return { discountKobo, totalKobo: subtotalKobo - discountKobo };
+  return { discountKobo, totalKobo: orderSubtotalKobo - discountKobo };
 }
 
 /** Format a kobo amount as a Naira display string (e.g. 15000000 → "₦150,000"). */
