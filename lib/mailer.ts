@@ -142,6 +142,7 @@ export function parentConfirmationHtml(args: {
   laptopRental: boolean;
   roboticsElective: boolean;
   attendanceMode: "in_person" | "online";
+  deliveryFeeKobo?: number;
   discountKobo?: number;
   promoCode?: string;
   totalKobo: number;
@@ -154,7 +155,7 @@ export function parentConfirmationHtml(args: {
   const isOnline = args.attendanceMode === "online";
   const attendanceLabel = isOnline ? "Online" : "In-person (Lagos)";
   const whatsNext = isOnline
-    ? `A WhatsApp invite to the parent group lands two weeks before camp with your live join link and the Day 1 schedule. Questions? Just reply to this email.`
+    ? `Your welcome kit (t-shirt + materials) ships to the delivery address you gave. A WhatsApp invite to the parent group lands two weeks before camp with your live join link and the Day 1 schedule. Questions? Just reply to this email.`
     : `A WhatsApp invite to the parent group lands two weeks before camp with the venue address, drop-off details and Day 1 schedule. Questions? Just reply to this email.`;
 
   const content = `
@@ -185,8 +186,12 @@ export function parentConfirmationHtml(args: {
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 16px;font-size:14px;">
         <tr><td style="padding:6px 0;color:#777;">Camp starts</td><td style="text-align:right;font-weight:600;">${esc(args.campStart)}</td></tr>
         <tr><td style="padding:6px 0;color:#777;">Attendance</td><td style="text-align:right;font-weight:600;">${attendanceLabel}</td></tr>
-        <tr><td style="padding:6px 0;color:#777;">Robotics elective</td><td style="text-align:right;font-weight:600;">${args.roboticsElective ? "Yes" : "No"}</td></tr>
-        <tr><td style="padding:6px 0;color:#777;">Laptop rental</td><td style="text-align:right;font-weight:600;">${args.laptopRental ? "Yes" : "No"}</td></tr>
+        ${
+          isOnline
+            ? `<tr><td style="padding:6px 0;color:#777;">Welcome-kit delivery</td><td style="text-align:right;font-weight:600;">${fmtNaira(args.deliveryFeeKobo ?? 0)}</td></tr>`
+            : `<tr><td style="padding:6px 0;color:#777;">Robotics elective</td><td style="text-align:right;font-weight:600;">${args.roboticsElective ? "Yes" : "No"}</td></tr>
+        <tr><td style="padding:6px 0;color:#777;">Laptop rental</td><td style="text-align:right;font-weight:600;">${args.laptopRental ? "Yes" : "No"}</td></tr>`
+        }
         ${
           args.discountKobo && args.discountKobo > 0
             ? `<tr><td style="padding:6px 0;color:#777;">Promo${args.promoCode ? ` (${esc(args.promoCode)})` : ""}</td><td style="text-align:right;font-weight:600;color:#059669;">−${fmtNaira(args.discountKobo)}</td></tr>`

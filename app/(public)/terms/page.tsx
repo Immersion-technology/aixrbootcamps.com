@@ -31,7 +31,7 @@ export default function TermsPage() {
 
           <Section title="2. Camp dates &amp; hours">
             <ul className="list-disc pl-5 space-y-1.5">
-              <li><strong>Three cohorts of 2 weeks each.</strong> Same curriculum, same instructors, same price. Pick whichever fits your family&apos;s calendar.</li>
+              <li><strong>Three cohorts of 2 weeks each.</strong> Identical curriculum and instructors across all three — pick whichever fits your family&apos;s calendar.</li>
               <li><strong>Cohort 1:</strong> 27 July – 7 August 2026.</li>
               <li><strong>Cohort 2:</strong> 10 August – 21 August 2026.</li>
               <li><strong>Cohort 3:</strong> 24 August – 4 September 2026.</li>
@@ -49,12 +49,13 @@ export default function TermsPage() {
               <li>Demo Day, including the live pitch panel and prize for the winning team.</li>
             </ul>
             <p className="mt-2">Not included: transport to and from the venue, take-home equipment beyond what&apos;s explicitly stated, the optional Robotics elective (+{nairaFromKobo(PRICING.robotics)}, which covers the Arduino kit and components your camper keeps), and the optional laptop rental add-on.</p>
+            <p className="mt-3"><strong>Online track ({nairaFromKobo(PRICING.online)}):</strong> a separate, remote-only programme covering three live courses — Vibe Coding, Content Creation, and 3D &amp; VR. It includes a welcome kit (IMMERSIA t-shirt + course materials) delivered anywhere in Nigeria for a flat {nairaFromKobo(PRICING.delivery)} fee, added at checkout. The online track does <strong>not</strong> include the on-site side attractions, laptop rental, the Robotics/Embedded Systems elective, or the Demo Day pitch and prize — those are exclusive to the in-person camp.</p>
           </Section>
 
           <Section title="4. Payment, holds and refunds">
             <ul className="list-disc pl-5 space-y-1.5">
               <li>Payment is processed by <strong>Paystack</strong>. A slot is only held once payment clears.</li>
-              <li>The boot camp fee is <strong>{nairaFromKobo(PRICING.regular)}</strong>. Any active early-bird window or promo-code discount is applied and shown at checkout before you pay.</li>
+              <li>The in-person boot camp fee is <strong>{nairaFromKobo(PRICING.regular)}</strong>; the online track is <strong>{nairaFromKobo(PRICING.online)}</strong> (plus a {nairaFromKobo(PRICING.delivery)} welcome-kit delivery). Any active early-bird window or promo-code discount is applied and shown at checkout before you pay.</li>
               <li><strong>Instalments:</strong> {nairaFromKobo(PRICING.deposit)} deposit on registration holds your slot; balance is due two weeks before your cohort starts.</li>
               <li><strong>Refunds:</strong> none. All payments are final once a slot is confirmed.</li>
             </ul>

@@ -6,8 +6,8 @@ import { nextSeq } from "@/models/Counter";
 import { registrationCreateSchema } from "@/lib/validations";
 import { initTransaction } from "@/lib/paystack";
 import { normalizePhone, shortRegistrationId, rateLimit, getClientIp } from "@/lib/utils";
-import { getClasses } from "@/lib/curriculum";
-import { PRICING, bootCampFeeKobo, EARLY_BIRD_CUTOFF_DEFAULT } from "@/lib/pricing";
+import { getClasses, onlineSlugs } from "@/lib/curriculum";
+import { PRICING, bootCampFeeKobo, resolveTier, EARLY_BIRD_CUTOFF_DEFAULT } from "@/lib/pricing";
 import { validatePromo } from "@/lib/promo";
 
 export const dynamic = "force-dynamic";
@@ -49,21 +49,30 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Camp is full. Please join the waitlist." }, { status: 409 });
     }
 
-    // Every camper attends every core class. Robotics is an opt-in paid elective,
-    // so it's only added to the enrollment when the parent ticked it.
-    const finalCourses = getClasses()
-      .filter((c) => !c.isElective || data.roboticsElective)
-      .map((c) => c.slug);
+    // --- course set + pricing are chosen by attendance mode (server-authoritative) ---
+    // Online is a trimmed, flat-priced track: a fixed set of core classes, no paid add-ons,
+    // plus a mandatory welcome-kit delivery fee. In-person keeps the full programme where
+    // every camper attends every core class and Robotics is an opt-in paid elective.
+    const isOnline = data.attendanceMode === "online";
+
+    const finalCourses = isOnline
+      ? onlineSlugs()
+      : getClasses()
+          .filter((c) => !c.isElective || data.roboticsElective)
+          .map((c) => c.slug);
 
     // --- pricing (server-authoritative; the client never dictates the amount) ---
-    const tier = new Date() < new Date(earlyBirdCutoff) ? "early_bird" : "regular";
+    const tier = resolveTier(data.attendanceMode, earlyBirdCutoff);
     const bootCampFee = bootCampFeeKobo(tier);
-    const laptopRentalFee = data.laptopRental ? PRICING.laptop : 0;
-    const roboticsFee = data.roboticsElective ? PRICING.robotics : 0;
+    // Add-ons are in-person only. The zod schema already rejects them for online; forcing
+    // them to zero here as well means a tampered payload can never be charged for them.
+    const laptopRentalFee = !isOnline && data.laptopRental ? PRICING.laptop : 0;
+    const roboticsFee = !isOnline && data.roboticsElective ? PRICING.robotics : 0;
+    const deliveryFee = isOnline ? PRICING.delivery : 0;
     const subtotal = bootCampFee + laptopRentalFee + roboticsFee;
 
     // --- promo code (optional) — validated + applied here, never trusted from the client.
-    // The discount applies to the boot camp fee only; add-ons are always charged in full.
+    // The discount applies to the boot camp fee only; add-ons and delivery are charged in full.
     let discountKobo = 0;
     let appliedPromoCode: string | undefined;
     if (data.promoCode) {
@@ -77,7 +86,9 @@ export async function POST(req: NextRequest) {
       discountKobo = promo.discount!.discountKobo;
       appliedPromoCode = promo.promo!.code;
     }
-    const total = subtotal - discountKobo;
+    // Delivery is a mandatory pass-through added on top of the (discounted) subtotal, so
+    // `total` — what Paystack charges and what confirm-payment verifies — includes it.
+    const total = subtotal - discountKobo + deliveryFee;
 
     // --- sequential registration ID + payment reference ---
     const seq = await nextSeq("registration");
@@ -104,7 +115,7 @@ export async function POST(req: NextRequest) {
       courses: finalCourses,
       laptopRental: data.laptopRental,
       roboticsElective: data.roboticsElective,
-      pricing: { tier, bootCampFee, laptopRentalFee, roboticsFee, subtotal, discountKobo, promoCode: appliedPromoCode, total },
+      pricing: { tier, bootCampFee, laptopRentalFee, roboticsFee, subtotal, discountKobo, deliveryFee, promoCode: appliedPromoCode, total },
       paymentStatus: "pending",
       admissionStatus: "pending",
       paymentReference,

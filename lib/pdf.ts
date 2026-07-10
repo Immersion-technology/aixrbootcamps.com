@@ -8,9 +8,11 @@ interface ReceiptArgs {
   courses: string[];
   laptopRental: boolean;
   roboticsElective: boolean;
+  attendanceMode?: "in_person" | "online";
   bootCampFeeKobo: number;
   laptopRentalKobo: number;
   roboticsFeeKobo: number;
+  deliveryFeeKobo?: number;
   discountKobo?: number;
   promoCode?: string;
   totalKobo: number;
@@ -37,20 +39,30 @@ export function buildReceiptPdf(args: ReceiptArgs): Promise<Buffer> {
     doc.text(`Participant: ${args.participantName}`);
     doc.moveDown(0.5);
 
+    const isOnline = args.attendanceMode === "online";
+
     doc.text("Courses:", { underline: true });
     args.courses.forEach((c) => doc.text("  - " + c));
     doc.moveDown(0.5);
 
-    doc.text(`Robotics elective: ${args.roboticsElective ? "Yes" : "No"}`);
-    doc.text(`Laptop rental: ${args.laptopRental ? "Yes" : "No"}`);
+    doc.text(`Attendance: ${isOnline ? "Online" : "In-person (Lagos)"}`);
+    if (isOnline) {
+      doc.text(`Welcome kit: delivered`);
+    } else {
+      doc.text(`Robotics elective: ${args.roboticsElective ? "Yes" : "No"}`);
+      doc.text(`Laptop rental: ${args.laptopRental ? "Yes" : "No"}`);
+    }
     doc.moveDown(1);
 
-    doc.text(`Boot camp fee:    ${formatNaira(args.bootCampFeeKobo)}`);
-    if (args.roboticsElective) doc.text(`Robotics elective: ${formatNaira(args.roboticsFeeKobo)}`);
-    if (args.laptopRental) doc.text(`Laptop rental:    ${formatNaira(args.laptopRentalKobo)}`);
+    doc.text(`${isOnline ? "Online programme:" : "Boot camp fee:   "} ${formatNaira(args.bootCampFeeKobo)}`);
+    if (!isOnline && args.roboticsElective) doc.text(`Robotics elective: ${formatNaira(args.roboticsFeeKobo)}`);
+    if (!isOnline && args.laptopRental) doc.text(`Laptop rental:    ${formatNaira(args.laptopRentalKobo)}`);
     if (args.discountKobo && args.discountKobo > 0) {
       const label = args.promoCode ? `Promo (${args.promoCode}):` : "Discount:";
       doc.text(`${label.padEnd(18)}-${formatNaira(args.discountKobo)}`);
+    }
+    if (isOnline && args.deliveryFeeKobo && args.deliveryFeeKobo > 0) {
+      doc.text(`Welcome-kit delivery: ${formatNaira(args.deliveryFeeKobo)}`);
     }
     doc.moveDown(0.3);
     doc.fontSize(14).text(`TOTAL PAID:       ${formatNaira(args.totalKobo)}`, { underline: true });

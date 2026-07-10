@@ -46,6 +46,26 @@ export const registrationCreateSchema = z.object({
   agreedToTerms: z.literal(true, {
     errorMap: () => ({ message: "You must agree to the rules of conduct" }),
   }),
+}).superRefine((data, ctx) => {
+  // The online track is a trimmed programme: no laptop rental and no robotics elective
+  // (both are in-person only). Guard here so a tampered payload can't buy them online —
+  // the client form already hides these when online is selected.
+  if (data.attendanceMode === "online") {
+    if (data.laptopRental) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["laptopRental"],
+        message: "Laptop rental is only available for in-person campers.",
+      });
+    }
+    if (data.roboticsElective) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["roboticsElective"],
+        message: "The Robotics elective is only available for in-person campers.",
+      });
+    }
+  }
 });
 
 export type RegistrationCreateInput = z.infer<typeof registrationCreateSchema>;

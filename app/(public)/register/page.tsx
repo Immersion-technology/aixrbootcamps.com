@@ -40,13 +40,19 @@ async function getRegisterData() {
   }
 }
 
-export default async function RegisterPage() {
+export default async function RegisterPage({
+  searchParams,
+}: {
+  searchParams: { mode?: string };
+}) {
   const { capacity, paid, earlyBirdCutoff } = await getRegisterData();
 
   if (paid >= capacity) {
     redirect("/register/closed");
   }
 
+  // Flyer links land on /register?mode=online — preselect the online track when they do.
+  const initialMode = searchParams?.mode === "online" ? "online" : "in_person";
   const isEarlyBird = isEarlyBirdNow(earlyBirdCutoff);
   // Match the hero: hold slotsLeft at full capacity until the DB-backed count is trusted.
   const slotsLeft = capacity;
@@ -74,10 +80,13 @@ export default async function RegisterPage() {
             isEarlyBird,
             earlyBirdPrice: PRICING.earlyBird,
             regularPrice: PRICING.regular,
+            onlinePrice: PRICING.online,
+            deliveryFee: PRICING.delivery,
             laptopPrice: PRICING.laptop,
             roboticsPrice: PRICING.robotics,
           }}
           slotsLeft={slotsLeft}
+          initialMode={initialMode}
         />
       </div>
     </section>

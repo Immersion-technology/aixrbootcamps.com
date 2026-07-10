@@ -60,6 +60,11 @@ export type CurriculumItem = {
   isElective?: boolean;
   /** Additional fee (in kobo) charged when a camper opts into this elective. */
   electiveFeeKobo?: number;
+  /**
+   * Offered on the in-person track ONLY — excluded from the trimmed online programme.
+   * Set on Entrepreneurship, AI Music and Robotics/Embedded. See `getOnlineClasses()`.
+   */
+  inPersonOnly?: boolean;
   facilitators: string[];
   hoursPerWeek: number;
   sessionsPerWeek: number;
@@ -123,6 +128,7 @@ export const CURRICULUM: CurriculumItem[] = [
     name: "Entrepreneurship & Pitching",
     type: "class",
     isCompulsory: true,
+    inPersonOnly: true,
     facilitators: [],
     hoursPerWeek: 4,
     sessionsPerWeek: 2,
@@ -192,6 +198,7 @@ export const CURRICULUM: CurriculumItem[] = [
     name: "Robotics & Embedded Systems",
     type: "class",
     isElective: true,
+    inPersonOnly: true,
     electiveFeeKobo: PRICING.robotics, // env-configurable; covers the Arduino board, servos/motors and consumables the camper keeps
     facilitators: [],
     hoursPerWeek: 4,
@@ -228,6 +235,7 @@ export const CURRICULUM: CurriculumItem[] = [
     slug: "ai-music",
     name: "AI Music Production",
     type: "class",
+    inPersonOnly: true,
     facilitators: [],
     hoursPerWeek: 2,
     sessionsPerWeek: 1,
@@ -405,6 +413,20 @@ export function getBySlug(slug: string): CurriculumItem | undefined {
 
 export function getClasses(): CurriculumItem[] {
   return CURRICULUM.filter((c) => c.type === "class");
+}
+
+/**
+ * Classes available on the ONLINE track: core classes only — no in-person-only courses
+ * (Entrepreneurship, AI Music, Robotics) and no paid electives. Single source of truth for
+ * the online course set, used by the register form and the authoritative charge route.
+ */
+export function getOnlineClasses(): CurriculumItem[] {
+  return getClasses().filter((c) => !c.inPersonOnly && !c.isElective);
+}
+
+/** The slugs an online registration is allowed to enrol in. */
+export function onlineSlugs(): string[] {
+  return getOnlineClasses().map((c) => c.slug);
 }
 
 export function getBreaks(): CurriculumItem[] {

@@ -20,23 +20,44 @@ function intEnv(name: string, fallback: number): number {
 }
 
 export const PRICING = {
-  /** Boot camp fee charged before the early-bird cutoff. */
+  /** Boot camp fee charged before the early-bird cutoff (in-person track). */
   earlyBird: intEnv("PRICE_EARLY_BIRD_KOBO", 15_000_000), // ₦150,000
-  /** Boot camp fee charged after the early-bird cutoff. */
+  /** Boot camp fee charged after the early-bird cutoff (in-person track). */
   regular: intEnv("PRICE_REGULAR_KOBO", 20_000_000), // ₦200,000
-  /** Optional laptop-rental add-on. */
+  /** Flat fee for the ONLINE track (trimmed programme, no early-bird calendar). */
+  online: intEnv("PRICE_ONLINE_KOBO", 5_000_000), // ₦50,000
+  /**
+   * Flat nationwide delivery fee for the online welcome kit (t-shirt + materials).
+   * Mandatory add-on for every online registration. PLACEHOLDER default — set the real
+   * amount via DELIVERY_FEE_KOBO in the environment.
+   */
+  delivery: intEnv("DELIVERY_FEE_KOBO", 500_000), // ₦5,000
+  /** Optional laptop-rental add-on (in-person only). */
   laptop: intEnv("PRICE_LAPTOP_RENTAL_KOBO", 2_000_000), // +₦20,000
-  /** Optional robotics elective add-on. */
+  /** Optional robotics elective add-on (in-person only). */
   robotics: intEnv("PRICE_ROBOTICS_ELECTIVE_KOBO", 2_500_000), // +₦25,000
   /** Instalment deposit quoted in the terms / FAQ (display only — checkout charges in full). */
   deposit: intEnv("PRICE_DEPOSIT_KOBO", 7_500_000), // ₦75,000
 } as const;
 
-export type PricingTier = "early_bird" | "regular";
+export type PricingTier = "early_bird" | "regular" | "online";
+export type AttendanceMode = "in_person" | "online";
 
 /** The boot camp fee (kobo) for a given pricing tier. */
 export function bootCampFeeKobo(tier: PricingTier): number {
+  if (tier === "online") return PRICING.online;
   return tier === "early_bird" ? PRICING.earlyBird : PRICING.regular;
+}
+
+/**
+ * The pricing tier in force for a registration. The ONLINE track is a distinct, flat-priced
+ * product that ignores the early-bird calendar; the in-person track follows the early-bird →
+ * regular cutoff. This is the single place attendance mode maps to a tier — the register page,
+ * the charge route and the promo-preview route all derive their fee from here.
+ */
+export function resolveTier(mode: AttendanceMode, cutoff: string, now: Date = new Date()): PricingTier {
+  if (mode === "online") return "online";
+  return isEarlyBird(cutoff, now) ? "early_bird" : "regular";
 }
 
 /**

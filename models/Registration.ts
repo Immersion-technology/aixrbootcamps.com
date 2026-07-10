@@ -2,7 +2,7 @@ import mongoose, { Schema, Model, Types } from "mongoose";
 
 export type PaymentStatus = "pending" | "paid" | "failed" | "refunded" | "abandoned";
 export type AdmissionStatus = "pending" | "admitted" | "rejected";
-export type PricingTier = "early_bird" | "regular";
+export type PricingTier = "early_bird" | "regular" | "online";
 
 export interface IStatusLog {
   action: string;
@@ -48,6 +48,11 @@ export interface IRegistration {
     subtotal?: number;
     /** Promo discount applied, in kobo (0 when no code). */
     discountKobo?: number;
+    /**
+     * Mandatory nationwide delivery fee for the online welcome kit, in kobo. 0 for
+     * in-person registrations. Added to `total` on top of the (discounted) subtotal.
+     */
+    deliveryFee?: number;
     /** The promo code used, if any (stored UPPERCASE). */
     promoCode?: string;
     /** Final charged amount, in kobo. Must equal what Paystack charges. */
@@ -104,7 +109,7 @@ const RegistrationSchema = new Schema<IRegistration>(
     laptopRental: { type: Boolean, default: false },
     roboticsElective: { type: Boolean, default: false },
     pricing: {
-      tier: { type: String, enum: ["early_bird", "regular"], required: true },
+      tier: { type: String, enum: ["early_bird", "regular", "online"], required: true },
       bootCampFee: { type: Number, required: true },
       laptopRentalFee: { type: Number, required: true, default: 0 },
       roboticsFee: { type: Number, required: true, default: 0 },
@@ -112,6 +117,7 @@ const RegistrationSchema = new Schema<IRegistration>(
       // by reconcileAndConfirm without failing validation; always set on new registrations.
       subtotal: { type: Number },
       discountKobo: { type: Number, default: 0 },
+      deliveryFee: { type: Number, default: 0 },
       promoCode: { type: String, trim: true, uppercase: true },
       total: { type: Number, required: true },
     },

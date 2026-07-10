@@ -3,13 +3,14 @@ import { z } from "zod";
 import { connectDB } from "@/lib/db";
 import { getSetting, SETTING_KEYS } from "@/models/Setting";
 import { validatePromo } from "@/lib/promo";
-import { PRICING, bootCampFeeKobo, EARLY_BIRD_CUTOFF_DEFAULT, isEarlyBird } from "@/lib/pricing";
+import { PRICING, bootCampFeeKobo, resolveTier, EARLY_BIRD_CUTOFF_DEFAULT } from "@/lib/pricing";
 import { rateLimit, getClientIp } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 const schema = z.object({
   code: z.string().trim().min(1),
+  attendanceMode: z.enum(["in_person", "online"]).optional().default("in_person"),
   laptopRental: z.boolean().optional().default(false),
   roboticsElective: z.boolean().optional().default(false),
 });
@@ -35,12 +36,14 @@ export async function POST(req: NextRequest) {
   try {
     await connectDB();
     const cutoff = await getSetting<string>(SETTING_KEYS.EARLY_BIRD_CUTOFF, EARLY_BIRD_CUTOFF_DEFAULT);
-    const tier = isEarlyBird(cutoff) ? "early_bird" : "regular";
+    const isOnline = parsed.data.attendanceMode === "online";
+    const tier = resolveTier(parsed.data.attendanceMode, cutoff);
     const bootCampFee = bootCampFeeKobo(tier);
+    // Online has no paid add-ons; the discount base is just the flat online fee.
     const subtotal =
       bootCampFee +
-      (parsed.data.laptopRental ? PRICING.laptop : 0) +
-      (parsed.data.roboticsElective ? PRICING.robotics : 0);
+      (!isOnline && parsed.data.laptopRental ? PRICING.laptop : 0) +
+      (!isOnline && parsed.data.roboticsElective ? PRICING.robotics : 0);
 
     // Discount applies to the boot camp fee only; add-ons are never discounted.
     const result = await validatePromo(parsed.data.code, {

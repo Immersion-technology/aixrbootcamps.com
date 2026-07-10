@@ -88,9 +88,10 @@ export default async function RegistrationDetail({ params }: { params: { id: str
 
         <Card title="Pricing" tone="violet">
           <Row k="Tier" v={reg.pricing.tier} />
-          <Row k="Boot camp fee" v={formatNaira(reg.pricing.bootCampFee)} />
+          <Row k={reg.pricing.tier === "online" ? "Online programme" : "Boot camp fee"} v={formatNaira(reg.pricing.bootCampFee)} />
           {reg.pricing.roboticsFee > 0 && <Row k="Robotics elective" v={formatNaira(reg.pricing.roboticsFee)} />}
-          <Row k="Laptop rental" v={formatNaira(reg.pricing.laptopRentalFee)} />
+          {reg.pricing.laptopRentalFee > 0 && <Row k="Laptop rental" v={formatNaira(reg.pricing.laptopRentalFee)} />}
+          {(reg.pricing.deliveryFee ?? 0) > 0 && <Row k="Welcome-kit delivery" v={formatNaira(reg.pricing.deliveryFee)} />}
           {reg.pricing.discountKobo > 0 && (
             <>
               <Row k="Subtotal" v={formatNaira(reg.pricing.subtotal ?? reg.pricing.total + reg.pricing.discountKobo)} />

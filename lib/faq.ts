@@ -22,7 +22,7 @@ export const FAQS: FaqItem[] = [
   {
     topic: "Logistics",
     q: "Can my child attend online?",
-    a: "Yes. Every cohort runs in-person in Lagos and live online — pick your mode when you register. Same classes, same schedule, same Demo Day, same price.",
+    a: `Yes — we run a dedicated online track for ${nairaFromKobo(PRICING.online)}. It covers three live courses taught remotely (Vibe Coding, Content Creation, and 3D & VR), plus a welcome kit — t-shirt and materials — delivered anywhere in Nigeria for a flat ${nairaFromKobo(PRICING.delivery)}. The online track does not include the Demo Day pitch, the prize, or the Robotics elective — those are in-person only. Pick your track when you register.`,
   },
   {
     topic: "Logistics",
@@ -62,7 +62,7 @@ export const FAQS: FaqItem[] = [
   {
     topic: "Curriculum",
     q: "What does my child take home?",
-    a: "A digital portfolio (AI project, VR world, robot demo, pitch video), a certificate, and photos from throughout camp.",
+    a: "A digital portfolio (AI app, VR world, content pieces), a certificate, and camp photos. In-person campers also take home their Demo Day pitch video and — with the Robotics elective — a gadget and kit they keep; online campers get a welcome kit delivered to them.",
   },
   {
     topic: "Money",

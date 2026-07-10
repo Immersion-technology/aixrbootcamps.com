@@ -523,11 +523,20 @@ export default async function Landing() {
               )}{" "}
               It covers the 5 core courses, daily side attractions, materials and Demo Day — Robotics is an optional +{naira(PRICING.robotics)} elective. Daily attractions are subject to token usage.
             </p>
+            <div className="mb-6 rounded-2xl border-2 border-aqua-brand/30 bg-aqua-brand/[.06] px-4 py-3 text-left max-w-[480px] mx-auto md:mx-0">
+              <div className="text-[10.5px] font-bold tracking-[.2em] text-aqua-deep uppercase mb-1">New · Online track</div>
+              <p className="text-[13px] text-neutral-700 leading-relaxed">
+                Can&apos;t make Lagos? Join <strong>live online for {naira(PRICING.online)}</strong> — three courses (Vibe Coding, Content Creation, 3D &amp; VR) with a welcome kit delivered nationwide (+{naira(PRICING.delivery)}). The Demo Day pitch, prize and Robotics are in-person only.
+              </p>
+            </div>
             <div className="flex flex-wrap gap-3 items-center justify-center md:justify-start">
               <Link href="/register" className="btn-grass">
                 Reserve a Slot <span aria-hidden>→</span>
               </Link>
-              <Link href="/contact" className="btn-light">
+              <Link href="/register?mode=online" className="btn-light">
+                Join Online · {naira(PRICING.online)}
+              </Link>
+              <Link href="/contact" className="text-[13px] font-semibold text-neutral-600 hover:text-ink underline underline-offset-4">
                 Talk to a Human
               </Link>
             </div>

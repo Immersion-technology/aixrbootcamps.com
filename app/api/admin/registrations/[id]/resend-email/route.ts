@@ -30,6 +30,8 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
     bootCampFeeKobo: reg.pricing.bootCampFee,
     laptopRentalKobo: reg.pricing.laptopRentalFee,
     roboticsFeeKobo: reg.pricing.roboticsFee,
+    deliveryFeeKobo: reg.pricing.deliveryFee ?? 0,
+    attendanceMode: reg.attendanceMode ?? "in_person",
     totalKobo: reg.pricing.total,
     paidAt: reg.paidAt ?? new Date(),
   });

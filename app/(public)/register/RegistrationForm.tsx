@@ -11,6 +11,8 @@ interface Pricing {
   isEarlyBird: boolean;
   earlyBirdPrice: number;
   regularPrice: number;
+  onlinePrice: number;
+  deliveryFee: number;
   laptopPrice: number;
   roboticsPrice: number;
 }
@@ -18,6 +20,8 @@ interface Pricing {
 interface Props {
   pricing: Pricing;
   slotsLeft: number;
+  /** Preselected attendance track — set from the `?mode=online` deep-link (flyer). */
+  initialMode?: "in_person" | "online";
 }
 
 const STEPS = ["Camper", "Guardian", "Programme", "Pay"] as const;
@@ -27,6 +31,8 @@ const STEPS = ["Camper", "Guardian", "Programme", "Pay"] as const;
 const CLASSES: CurriculumItem[] = CURRICULUM.filter((c) => c.type === "class");
 const ALWAYS_ATTENDED: CurriculumItem[] = CLASSES.filter((c) => !c.isElective);
 const ELECTIVES: CurriculumItem[] = CLASSES.filter((c) => c.isElective);
+// The online track is trimmed: only core classes that aren't in-person-only, and no electives.
+const ONLINE_ATTENDED: CurriculumItem[] = ALWAYS_ATTENDED.filter((c) => !c.inPersonOnly);
 
 interface AppliedPromo {
   code: string;
@@ -34,7 +40,7 @@ interface AppliedPromo {
   newTotalKobo: number;
 }
 
-export default function RegistrationForm({ pricing }: Props) {
+export default function RegistrationForm({ pricing, initialMode = "in_person" }: Props) {
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -62,7 +68,7 @@ export default function RegistrationForm({ pricing }: Props) {
       },
       emergencyContact: { fullName: "", phone: "", relationship: "" },
       medicalNotes: "",
-      attendanceMode: "in_person" as const,
+      attendanceMode: initialMode,
       laptopRental: false,
       roboticsElective: false,
       agreedToTerms: false as unknown as true,
@@ -87,24 +93,45 @@ export default function RegistrationForm({ pricing }: Props) {
     setStep((s) => Math.max(s - 1, 0));
   }
 
-  const bootCampFee = pricing.isEarlyBird ? pricing.earlyBirdPrice : pricing.regularPrice;
-  const laptopFee = values.laptopRental ? pricing.laptopPrice : 0;
-  const roboticsFee = values.roboticsElective ? pricing.roboticsPrice : 0;
-  const total = bootCampFee + laptopFee + roboticsFee;
+  // The online track is a flat-priced, trimmed programme: fixed online fee + a mandatory
+  // welcome-kit delivery fee, and no paid add-ons. In-person keeps early-bird/regular + add-ons.
+  const isOnline = values.attendanceMode === "online";
+  const attendedCourses = isOnline ? ONLINE_ATTENDED : ALWAYS_ATTENDED;
+  const electives = isOnline ? [] : ELECTIVES;
+
+  const bootCampFee = isOnline
+    ? pricing.onlinePrice
+    : pricing.isEarlyBird
+      ? pricing.earlyBirdPrice
+      : pricing.regularPrice;
+  const laptopFee = !isOnline && values.laptopRental ? pricing.laptopPrice : 0;
+  const roboticsFee = !isOnline && values.roboticsElective ? pricing.roboticsPrice : 0;
+  const deliveryFee = isOnline ? pricing.deliveryFee : 0;
+  const subtotal = bootCampFee + laptopFee + roboticsFee;
   const discountKobo = applied ? applied.discountKobo : 0;
-  const payableTotal = Math.max(0, total - discountKobo);
+  // Delivery is added on top of the (discounted) subtotal — it is never discounted.
+  const payableTotal = Math.max(0, subtotal - discountKobo) + deliveryFee;
   const naira = (k: number) => `₦${(k / 100).toLocaleString("en-NG")}`;
 
-  // A promo's discount depends on the order subtotal, so if the add-ons change after a code
-  // was applied we drop it and ask the camper to re-apply — keeping the shown total honest.
+  // The online track can't buy add-ons — if the camper switches to online, clear any that
+  // were ticked while on the in-person track so the payload stays valid (the API rejects them).
+  useEffect(() => {
+    if (isOnline) {
+      if (values.laptopRental) setValue("laptopRental", false);
+      if (values.roboticsElective) setValue("roboticsElective", false);
+    }
+  }, [isOnline, values.laptopRental, values.roboticsElective, setValue]);
+
+  // A promo's discount depends on the boot-camp fee, so if the track or add-ons change after a
+  // code was applied we drop it and ask the camper to re-apply — keeping the shown total honest.
   useEffect(() => {
     if (appliedRef.current) {
       appliedRef.current = false;
       setApplied(null);
       setPromoError(null);
-      setPromoNote("Your add-ons changed — re-apply your promo code.");
+      setPromoNote("Your order changed — re-apply your promo code.");
     }
-  }, [values.laptopRental, values.roboticsElective]);
+  }, [values.laptopRental, values.roboticsElective, values.attendanceMode]);
 
   async function applyPromo() {
     const code = promoInput.trim().toUpperCase();
@@ -118,6 +145,7 @@ export default function RegistrationForm({ pricing }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           code,
+          attendanceMode: values.attendanceMode,
           laptopRental: values.laptopRental,
           roboticsElective: values.roboticsElective,
         }),
@@ -193,9 +221,60 @@ export default function RegistrationForm({ pricing }: Props) {
         })}
       </ol>
 
-      {/* ============= STEP 1: CAMPER ============= */}
+      {/* ============= STEP 1: TRACK + CAMPER ============= */}
       {step === 0 && (
-        <div className="frosted-glass rounded-3xl p-6 md:p-9 space-y-5 anim-fade-up">
+        <div className="space-y-5 anim-fade-up">
+          {/* Track chooser — pick online vs in-person FIRST; prices, courses and add-ons adapt. */}
+          <div className="frosted-glass rounded-3xl p-6 md:p-7">
+            <div className="text-[10.5px] font-bold tracking-[.22em] text-aqua-deep uppercase mb-1">
+              First, choose your track
+            </div>
+            <p className="text-[12.5px] text-neutral-600 mb-4">Prices, courses and add-ons update to match.</p>
+            <div className="grid sm:grid-cols-2 gap-3">
+              {[
+                {
+                  value: "in_person",
+                  title: "In-person · Lagos",
+                  desc: "Full programme at our supervised Lagos venue — every course, the Demo Day pitch & prize, optional Robotics.",
+                  price: pricing.isEarlyBird ? pricing.earlyBirdPrice : pricing.regularPrice,
+                  priceNote: pricing.isEarlyBird ? "early-bird" : "regular",
+                },
+                {
+                  value: "online",
+                  title: "Online · anywhere",
+                  desc: "Three live courses from home (Vibe Coding, Content Creation, 3D/VR). Welcome kit delivered to your door.",
+                  price: pricing.onlinePrice,
+                  priceNote: "+ delivery",
+                },
+              ].map((opt) => {
+                const active = values.attendanceMode === opt.value;
+                return (
+                  <label
+                    key={opt.value}
+                    className={cn(
+                      "ticket-card frosted-glass rounded-2xl p-4 flex flex-col gap-2 cursor-pointer border-2 transition",
+                      active ? "border-aqua-brand" : "border-aqua-brand/20",
+                    )}
+                  >
+                    <div className="flex items-start gap-3">
+                      <input type="radio" value={opt.value} {...register("attendanceMode")} className="accent-aqua-brand mt-1" />
+                      <div className="flex-1">
+                        <div className="text-[14px] font-semibold text-ink">{opt.title}</div>
+                        <div className="text-[12px] text-neutral-600 mt-0.5 leading-snug">{opt.desc}</div>
+                      </div>
+                    </div>
+                    <div className="pl-7 font-accent font-extrabold text-[18px] text-ink">
+                      {naira(opt.price)}{" "}
+                      <span className="text-[11px] font-sans font-semibold text-neutral-500">{opt.priceNote}</span>
+                    </div>
+                  </label>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Camper details */}
+          <div className="frosted-glass rounded-3xl p-6 md:p-9 space-y-5">
           <Header eyebrow="Step 1 of 4" title="Tell us about the camper" />
 
           <Field label="Full name" error={formState.errors.participant?.fullName?.message}>
@@ -228,7 +307,13 @@ export default function RegistrationForm({ pricing }: Props) {
             <select className="input" {...register("participant.tshirtSize")}>
               {["XS", "S", "M", "L", "XL"].map((s) => <option key={s}>{s}</option>)}
             </select>
+            {isOnline && (
+              <p className="text-[11.5px] text-neutral-500 mt-1.5">
+                We ship this size in your online welcome kit.
+              </p>
+            )}
           </Field>
+          </div>
         </div>
       )}
 
@@ -264,8 +349,21 @@ export default function RegistrationForm({ pricing }: Props) {
             <input type="email" className="input" {...register("parent.email")} />
           </Field>
 
-          <Field label="Home address" error={formState.errors.parent?.address?.message}>
-            <textarea rows={2} className="input" {...register("parent.address")} />
+          <Field
+            label={isOnline ? "Delivery address" : "Home address"}
+            error={formState.errors.parent?.address?.message}
+          >
+            <textarea
+              rows={2}
+              className="input"
+              placeholder={isOnline ? "Where we ship the welcome kit" : undefined}
+              {...register("parent.address")}
+            />
+            {isOnline && (
+              <p className="text-[11.5px] text-neutral-500 mt-1.5">
+                Your online welcome kit ships here — please give a full, reachable address.
+              </p>
+            )}
           </Field>
 
           <div className="pt-3 border-t border-black/5">
@@ -294,52 +392,40 @@ export default function RegistrationForm({ pricing }: Props) {
         <div className="space-y-5 anim-fade-up">
           <Header eyebrow="Step 3 of 4" title="Your camper&rsquo;s programme" />
 
-          {/* Attendance mode — in-person in Lagos or live online */}
-          <div className="frosted-glass rounded-3xl p-6 md:p-7">
-            <div className="text-[10.5px] font-bold tracking-[.22em] text-aqua-deep uppercase mb-3">
-              How will your camper attend?
+          {/* Chosen track (set in step 1) — read-only reminder + jump back to change it. */}
+          <div className="frosted-glass rounded-3xl p-5 md:p-6 flex items-center justify-between gap-3 flex-wrap">
+            <div>
+              <div className="text-[10.5px] font-bold tracking-[.22em] text-aqua-deep uppercase mb-1">Your track</div>
+              <div className="text-[14px] font-semibold text-ink">
+                {isOnline ? "Online · anywhere" : "In-person · Lagos"}
+              </div>
+              <div className="text-[12px] text-neutral-600 mt-0.5">
+                {isOnline
+                  ? "Live sessions from home, plus a welcome kit delivered to you."
+                  : "On-site at our supervised Lagos venue, including Demo Day."}
+              </div>
             </div>
-            <div className="grid sm:grid-cols-2 gap-3">
-              {[
-                { value: "in_person", title: "In-person · Lagos", desc: "Join us on-site at our supervised Lagos venue." },
-                { value: "online", title: "Online · anywhere", desc: "Join every live session remotely from home." },
-              ].map((opt) => {
-                const active = values.attendanceMode === opt.value;
-                return (
-                  <label
-                    key={opt.value}
-                    className={cn(
-                      "ticket-card frosted-glass rounded-2xl p-4 flex items-start gap-3 cursor-pointer border-2 transition",
-                      active ? "border-aqua-brand" : "border-aqua-brand/20",
-                    )}
-                  >
-                    <input
-                      type="radio"
-                      value={opt.value}
-                      {...register("attendanceMode")}
-                      className="accent-aqua-brand mt-1"
-                    />
-                    <div className="flex-1">
-                      <div className="text-[14px] font-semibold text-ink">{opt.title}</div>
-                      <div className="text-[12px] text-neutral-600 mt-0.5 leading-snug">{opt.desc}</div>
-                    </div>
-                  </label>
-                );
-              })}
-            </div>
-            <p className="text-[11.5px] text-neutral-500 mt-3">Same classes, same schedule, same Demo Day — at no extra cost.</p>
+            <button
+              type="button"
+              onClick={() => setStep(0)}
+              className="text-[12px] font-semibold text-aqua-deep hover:text-ink underline underline-offset-2"
+            >
+              Change
+            </button>
           </div>
 
-          {/* Enrolled-in summary */}
+          {/* Enrolled-in summary (course set follows the chosen track) */}
           <div className="frosted-glass rounded-3xl p-6 md:p-7">
             <div className="flex items-baseline justify-between gap-3 mb-4 flex-wrap">
               <div className="text-[10.5px] font-bold tracking-[.22em] text-aqua-deep uppercase">
-                Enrolled in all {ALWAYS_ATTENDED.length} courses below
+                {isOnline
+                  ? `Your ${attendedCourses.length} online courses`
+                  : `Enrolled in all ${attendedCourses.length} courses below`}
               </div>
-              <span className="text-[11px] text-neutral-500">+ 3 daily active breaks</span>
+              {!isOnline && <span className="text-[11px] text-neutral-500">+ 3 daily active breaks</span>}
             </div>
             <ul className="space-y-2.5">
-              {ALWAYS_ATTENDED.map((c) => (
+              {attendedCourses.map((c) => (
                 <li key={c.slug} className="flex items-start gap-3">
                   <span className="shrink-0 mt-1.5 w-1.5 h-1.5 rounded-full bg-aqua-brand" />
                   <div>
@@ -360,18 +446,35 @@ export default function RegistrationForm({ pricing }: Props) {
             </ul>
           </div>
 
-          {/* Active breaks (info only, not pickable) */}
-          <div className="frosted-glass-dark rounded-3xl p-6 md:p-7">
-            <div className="text-[10.5px] font-bold tracking-[.22em] text-white/70 uppercase mb-3">
-              ☕ Daily side attractions · 30 min · one token a day
+          {/* Active breaks — on-site only, so in-person track only. */}
+          {!isOnline && (
+            <div className="frosted-glass-dark rounded-3xl p-6 md:p-7">
+              <div className="text-[10.5px] font-bold tracking-[.22em] text-white/70 uppercase mb-3">
+                ☕ Daily side attractions · 30 min · one token a day
+              </div>
+              <p className="text-[13px] text-white/85 leading-relaxed">
+                Pro Gaming, Table Tennis and Go Karting are available every single day from 1:00–1:30 PM. Your camper picks one with a token each day. All included.
+              </p>
             </div>
-            <p className="text-[13px] text-white/85 leading-relaxed">
-              Pro Gaming, Table Tennis and Go Karting are available every single day from 1:00–1:30 PM. Your camper picks one with a token each day. All included.
-            </p>
-          </div>
+          )}
 
-          {/* Electives — opt-in paid courses, not part of the base fee */}
-          {ELECTIVES.map((c) => (
+          {/* Welcome-kit delivery — mandatory on the online track. */}
+          {isOnline && (
+            <div className="ticket-card frosted-glass rounded-2xl p-4 flex items-start gap-3 border-2 border-aqua-brand/30">
+              <span className="text-[20px] leading-none mt-0.5" aria-hidden>📦</span>
+              <div className="flex-1">
+                <div className="text-[10px] font-bold tracking-[.18em] text-aqua-deep mb-0.5">INCLUDED · DELIVERED</div>
+                <div className="text-[14px] font-semibold text-ink">Welcome kit — t-shirt &amp; materials shipped to you</div>
+                <div className="text-[12px] text-neutral-600 mt-0.5 leading-snug">
+                  Flat nationwide delivery, added to your total below.
+                </div>
+              </div>
+              <div className="font-accent font-extrabold text-[18px] text-ink shrink-0">+{naira(pricing.deliveryFee)}</div>
+            </div>
+          )}
+
+          {/* Electives — opt-in paid courses (in-person only; empty on the online track). */}
+          {electives.map((c) => (
             <label key={c.slug} className="ticket-card frosted-glass rounded-2xl p-4 flex items-start gap-3 cursor-pointer border-2 border-aqua-brand/30">
               <input type="checkbox" {...register("roboticsElective")} className="accent-aqua-brand mt-1" />
               <div className="flex-1">
@@ -383,15 +486,17 @@ export default function RegistrationForm({ pricing }: Props) {
             </label>
           ))}
 
-          {/* Laptop rental, ticket-style highlight */}
-          <label className="ticket-card frosted-glass-dark rounded-2xl p-4 flex items-center gap-3 cursor-pointer">
-            <input type="checkbox" {...register("laptopRental")} className="accent-aqua-brand mt-0.5" />
-            <div className="flex-1">
-              <div className="text-[10px] font-bold tracking-[.18em] text-white/70 mb-0.5">OPTIONAL ADD-ON</div>
-              <div className="text-[13.5px] font-semibold">Rent a laptop for the two weeks of your cohort</div>
-            </div>
-            <div className="font-accent font-extrabold text-[18px]">+{naira(pricing.laptopPrice)}</div>
-          </label>
+          {/* Laptop rental — in-person only. */}
+          {!isOnline && (
+            <label className="ticket-card frosted-glass-dark rounded-2xl p-4 flex items-center gap-3 cursor-pointer">
+              <input type="checkbox" {...register("laptopRental")} className="accent-aqua-brand mt-0.5" />
+              <div className="flex-1">
+                <div className="text-[10px] font-bold tracking-[.18em] text-white/70 mb-0.5">OPTIONAL ADD-ON</div>
+                <div className="text-[13.5px] font-semibold">Rent a laptop for the two weeks of your cohort</div>
+              </div>
+              <div className="font-accent font-extrabold text-[18px]">+{naira(pricing.laptopPrice)}</div>
+            </label>
+          )}
         </div>
       )}
 
@@ -413,13 +518,20 @@ export default function RegistrationForm({ pricing }: Props) {
             ["Email", values.parent?.email],
           ]} onEdit={() => setStep(1)} />
 
-          <ReviewCard title="Programme" data={[
-            ["Attendance", values.attendanceMode === "online" ? "Online" : "In-person (Lagos)"],
-            ["Core courses", `${ALWAYS_ATTENDED.length} (all attended)`],
-            ["Active breaks", "Pro Gaming · Table Tennis · Go Karting"],
-            ["Robotics elective", values.roboticsElective ? `Yes (+${naira(pricing.roboticsPrice)})` : "No"],
-            ["Laptop rental", values.laptopRental ? `Yes (+${naira(pricing.laptopPrice)})` : "No"],
-          ]} onEdit={() => setStep(2)} />
+          <ReviewCard title="Programme" data={(isOnline
+            ? [
+                ["Attendance", "Online (anywhere)"],
+                ["Courses", `${attendedCourses.length} live online courses`],
+                ["Welcome kit", `Delivered (+${naira(pricing.deliveryFee)})`],
+              ]
+            : [
+                ["Attendance", "In-person (Lagos)"],
+                ["Core courses", `${attendedCourses.length} (all attended)`],
+                ["Active breaks", "Pro Gaming · Table Tennis · Go Karting"],
+                ["Robotics elective", values.roboticsElective ? `Yes (+${naira(pricing.roboticsPrice)})` : "No"],
+                ["Laptop rental", values.laptopRental ? `Yes (+${naira(pricing.laptopPrice)})` : "No"],
+              ]) as [string, string][]}
+            onEdit={() => setStep(2)} />
 
           {/* Total + pay */}
           <div className="frosted-glass-dark rounded-3xl p-6 md:p-8">
@@ -427,7 +539,9 @@ export default function RegistrationForm({ pricing }: Props) {
             <table className="w-full text-[13.5px] mb-5">
               <tbody className="text-white/80">
                 <tr>
-                  <td className="py-1.5">Boot camp ({pricing.isEarlyBird ? "early bird" : "regular"})</td>
+                  <td className="py-1.5">
+                    {isOnline ? "Online programme" : `Boot camp (${pricing.isEarlyBird ? "early bird" : "regular"})`}
+                  </td>
                   <td className="text-right py-1.5 font-mono">{naira(bootCampFee)}</td>
                 </tr>
                 {values.roboticsElective && (
@@ -446,6 +560,12 @@ export default function RegistrationForm({ pricing }: Props) {
                   <tr className="text-grass-brand">
                     <td className="py-1.5">Promo ({applied.code})</td>
                     <td className="text-right py-1.5 font-mono">−{naira(discountKobo)}</td>
+                  </tr>
+                )}
+                {isOnline && deliveryFee > 0 && (
+                  <tr>
+                    <td className="py-1.5">Welcome-kit delivery</td>
+                    <td className="text-right py-1.5 font-mono">{naira(deliveryFee)}</td>
                   </tr>
                 )}
                 <tr className="border-t border-white/15">

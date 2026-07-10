@@ -27,6 +27,8 @@ export async function GET() {
       earlyBirdCutoff,
       earlyBirdPrice: PRICING.earlyBird,
       regularPrice: PRICING.regular,
+      onlinePrice: PRICING.online,
+      deliveryFee: PRICING.delivery,
       laptopPrice: PRICING.laptop,
       roboticsPrice: PRICING.robotics,
       campStart,
