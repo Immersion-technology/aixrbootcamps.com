@@ -1,22 +1,34 @@
 import { connectDB } from "@/lib/db";
-import { Setting, SETTING_KEYS } from "@/models/Setting";
+import { getSetting, SETTING_KEYS } from "@/models/Setting";
+import { EARLY_BIRD_CUTOFF_DEFAULT } from "@/lib/pricing";
+import { CAMP_START, CAMP_END } from "@/lib/site";
 import SettingsForm from "./SettingsForm";
 
 export const dynamic = "force-dynamic";
 
+const DEFAULT_ALERT_EMAIL = process.env.ADMIN_ALERT_EMAIL ?? "registrations@immersia.ng";
+
 export default async function SettingsPage() {
   await connectDB();
-  const all = await Setting.find({}).lean();
-  const map: Record<string, unknown> = {};
-  for (const s of all) map[s.key] = s.value;
 
-  // Prices are configured via env (lib/pricing.ts); only operational settings live here.
+  // Read each operational setting with the SAME canonical default the rest of the app
+  // uses (public config route, pricing, site), so the admin always sees the value that's
+  // actually in force — never a blank field just because a key hasn't been persisted yet.
+  // Prices are configured via env (lib/pricing.ts) and are not editable here.
+  const [earlyBirdCutoff, capacity, campStart, campEnd, alertEmail] = await Promise.all([
+    getSetting<string>(SETTING_KEYS.EARLY_BIRD_CUTOFF, EARLY_BIRD_CUTOFF_DEFAULT),
+    getSetting<number>(SETTING_KEYS.CAPACITY, 50),
+    getSetting<string>(SETTING_KEYS.CAMP_START_DATE, CAMP_START),
+    getSetting<string>(SETTING_KEYS.CAMP_END_DATE, CAMP_END),
+    getSetting<string>(SETTING_KEYS.ADMIN_ALERT_EMAIL, DEFAULT_ALERT_EMAIL),
+  ]);
+
   const initial = {
-    [SETTING_KEYS.EARLY_BIRD_CUTOFF]: (map[SETTING_KEYS.EARLY_BIRD_CUTOFF] as string) ?? "",
-    [SETTING_KEYS.CAPACITY]: (map[SETTING_KEYS.CAPACITY] as number) ?? 50,
-    [SETTING_KEYS.CAMP_START_DATE]: (map[SETTING_KEYS.CAMP_START_DATE] as string) ?? "",
-    [SETTING_KEYS.CAMP_END_DATE]: (map[SETTING_KEYS.CAMP_END_DATE] as string) ?? "",
-    [SETTING_KEYS.ADMIN_ALERT_EMAIL]: (map[SETTING_KEYS.ADMIN_ALERT_EMAIL] as string) ?? "",
+    [SETTING_KEYS.EARLY_BIRD_CUTOFF]: earlyBirdCutoff,
+    [SETTING_KEYS.CAPACITY]: capacity,
+    [SETTING_KEYS.CAMP_START_DATE]: campStart,
+    [SETTING_KEYS.CAMP_END_DATE]: campEnd,
+    [SETTING_KEYS.ADMIN_ALERT_EMAIL]: alertEmail,
   };
 
   return (
