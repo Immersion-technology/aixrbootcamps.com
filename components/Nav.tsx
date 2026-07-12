@@ -6,12 +6,13 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
 const LINKS = [
-  { href: "/",           label: "Home" },
-  { href: "/#courses",   label: "Courses" },
-  { href: "/#timetable", label: "Schedule" },
-  { href: "/teachers",   label: "Teachers" },
-  { href: "/faq",        label: "FAQ" },
-  { href: "/contact",    label: "Contact" },
+  { href: "/",             label: "Home" },
+  { href: "/#programmes",  label: "Programmes" },
+  { href: "/#courses",     label: "Courses" },
+  { href: "/#timetable",   label: "Schedule" },
+  { href: "/teachers",     label: "Teachers" },
+  { href: "/faq",          label: "FAQ" },
+  { href: "/contact",      label: "Contact" },
 ];
 
 export default function Nav() {
@@ -83,6 +84,7 @@ export default function Nav() {
             </Link>
 
             <ul className="justify-self-center flex items-center gap-6 lg:gap-8 text-[14px] text-neutral-700 font-medium">
+              <li><Link href="/#programmes" className="hover:text-ink transition">Programmes</Link></li>
               <li><Link href="/#courses"   className="hover:text-ink transition">Courses</Link></li>
               <li><Link href="/#timetable" className="hover:text-ink transition">Schedule</Link></li>
               <li><Link href="/teachers"   className="hover:text-ink transition">Teachers</Link></li>

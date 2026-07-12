@@ -42,7 +42,7 @@ export function renderOgCard(): ImageResponse {
             AI &amp; XR Summer Tech Bootcamp
           </div>
           <div style={{ fontSize: 34, fontWeight: 600, color: "rgba(255,255,255,0.82)" }}>
-            Kids 10–17 ship an AI app, build a VR world &amp; pitch a startup.
+            Kids 10–17 ship an AI app &amp; build a VR world. In-person in Lagos or live online.
           </div>
         </div>
 

@@ -145,6 +145,11 @@ export default function CourseDetail({ params }: { params: { slug: string } }) {
                   ✦ ELECTIVE · +{nairaK(course.electiveFeeKobo ?? 0)}
                 </span>
               )}
+              {course.inPersonOnly && (
+                <span className="frosted-glass rounded-full px-3 py-1.5 text-[10.5px] font-bold tracking-[.18em]">
+                  🏫 IN-PERSON ONLY
+                </span>
+              )}
               {!isClass && (
                 <span className="frosted-glass rounded-full px-3 py-1.5 text-[10.5px] font-bold tracking-[.18em]">
                   ☕ DAILY · FREE CHOICE
@@ -156,6 +161,13 @@ export default function CourseDetail({ params }: { params: { slug: string } }) {
               <p className="mt-4 text-[13px] text-neutral-600 leading-relaxed max-w-[520px] anim-fade-up delay-3">
                 This is an optional elective. The base camp fee covers the core programme; add it at registration for an extra{" "}
                 <strong className="text-ink">{nairaK(course.electiveFeeKobo ?? 0)}</strong>, which covers the components your camper builds with and takes home.
+              </p>
+            )}
+
+            {course.inPersonOnly && (
+              <p className="mt-4 text-[13px] text-neutral-600 leading-relaxed max-w-[520px] anim-fade-up delay-3">
+                This course runs on the <strong className="text-ink">in-person Lagos programme</strong> only — it isn&apos;t part of the online track.{" "}
+                <Link href="/#programmes" className="underline underline-offset-2 hover:text-ink">Compare programmes →</Link>
               </p>
             )}
           </div>

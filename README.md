@@ -20,7 +20,7 @@ Default admin login (override in `.env.local`):
 ```
 app/
   (public)/                       public routes: landing, register, courses, teachers, faq, contact
-    page.tsx                      landing (hero, courses, timetable, testimonials, FAQ)
+    page.tsx                      landing (hero, programmes, courses, timetable, FAQ)
     register/                     multi-step form + promo codes + Paystack flow
       page.tsx
       RegistrationForm.tsx

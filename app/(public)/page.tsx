@@ -14,7 +14,6 @@ import {
 import ScrollReveal from "@/components/ScrollReveal";
 import FaqAccordion from "@/components/FaqAccordion";
 import JsonLd from "@/components/JsonLd";
-import { TESTIMONIALS, type Testimonial } from "@/lib/testimonials";
 import { connectDB } from "@/lib/db";
 import { Registration } from "@/models/Registration";
 import { getSetting, SETTING_KEYS } from "@/models/Setting";
@@ -245,11 +244,78 @@ export default async function Landing() {
             </div>
 
             <Link
+              href="/register?mode=online"
+              className="anim-fade-up delay-5 text-[12.5px] mt-4 font-semibold text-aqua-deep hover:text-ink underline underline-offset-4 decoration-2 self-center lg:self-end"
+            >
+              or join online for {naira(PRICING.online)} →
+            </Link>
+            <Link
               href="/contact"
-              className="anim-fade-up delay-5 text-[12.5px] mt-4 text-neutral-600 hover:text-ink underline underline-offset-4 decoration-2 self-center lg:self-end"
+              className="anim-fade-up delay-5 text-[12.5px] mt-1.5 text-neutral-600 hover:text-ink underline underline-offset-4 decoration-2 self-center lg:self-end"
             >
               or talk to a human →
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ CHOOSE YOUR PROGRAMME ============ */}
+      <section id="programmes" className="relative overflow-hidden py-16 sm:py-20 bg-white border-y border-black/[.05]">
+        <div className="max-w-[1180px] mx-auto px-5 sm:px-7">
+          <div className="text-center mb-10">
+            <div className="text-[10.5px] font-bold tracking-[.22em] text-violet-brand uppercase mb-2">Two ways to join</div>
+            <h2 className="font-bubble text-[clamp(32px,5vw,58px)] leading-[1.02] text-ink">CHOOSE YOUR PROGRAMME</h2>
+            <p className="text-[14px] text-neutral-600 mt-3 max-w-[560px] mx-auto">
+              Same IMMERSIA teaching, two ways to attend. Come to our Lagos venue for the full camp, or join the core courses live online from anywhere in Nigeria.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-5 lg:gap-6 items-stretch">
+            {/* IN-PERSON */}
+            <div className="relative flex flex-col rounded-3xl border-2 border-ink/10 bg-paper p-7 sm:p-8">
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-[11px] font-bold tracking-[.2em] text-aqua-deep uppercase">In-person · Lagos</div>
+                <span className="sticker-pill">Full camp</span>
+              </div>
+              <div className="flex items-baseline gap-2 mt-1">
+                <span className="font-bubble text-[40px] leading-none text-ink">{naira(earlyBird ? earlyBirdPrice : regularPrice)}</span>
+                {earlyBird && <span className="text-[16px] line-through text-ink/40">{naira(regularPrice)}</span>}
+              </div>
+              <div className="text-[11px] font-semibold text-neutral-500 uppercase tracking-wide mt-1 mb-5">
+                {earlyBird ? `Early-bird · ends ${cutoffLabel}` : "Boot camp fee"}
+              </div>
+              <ul className="space-y-2.5 text-[13.5px] text-neutral-700 mb-7">
+                <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> All 6 courses on-site, Mon–Fri</li>
+                <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> Demo Day — live pitch to a jury, with a prize</li>
+                <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> Daily side attractions (gaming, table tennis, karting)</li>
+                <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> Robotics &amp; Embedded elective (+{naira(PRICING.robotics)})</li>
+                <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> Optional laptop rental (+{naira(PRICING.laptop)})</li>
+              </ul>
+              <Link href="/register" className="btn-grass mt-auto block w-full text-center">Reserve a slot →</Link>
+            </div>
+
+            {/* ONLINE */}
+            <div className="relative flex flex-col rounded-3xl border-2 border-aqua-brand/40 bg-aqua-brand/[.05] p-7 sm:p-8">
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-[11px] font-bold tracking-[.2em] text-aqua-deep uppercase">Online · anywhere</div>
+                <span className="sticker-pill sticker-pill--cyan">New</span>
+              </div>
+              <div className="flex items-baseline gap-2 mt-1">
+                <span className="font-bubble text-[40px] leading-none text-ink">{naira(PRICING.online)}</span>
+                <span className="text-[13px] font-semibold text-neutral-500">+ {naira(PRICING.delivery)} delivery</span>
+              </div>
+              <div className="text-[11px] font-semibold text-neutral-500 uppercase tracking-wide mt-1 mb-5">
+                Flat fee · join live from home
+              </div>
+              <ul className="space-y-2.5 text-[13.5px] text-neutral-700 mb-7">
+                <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> 3 live courses: Vibe Coding, Content Creation, 3D &amp; VR</li>
+                <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> Welcome kit (t-shirt + materials) delivered nationwide</li>
+                <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> Every session live — join from anywhere</li>
+                <li className="flex gap-2.5 text-neutral-400"><span className="font-bold shrink-0">–</span> No Demo Day pitch or prize</li>
+                <li className="flex gap-2.5 text-neutral-400"><span className="font-bold shrink-0">–</span> No Robotics / Embedded Systems</li>
+              </ul>
+              <Link href="/register?mode=online" className="btn-dark mt-auto block w-full text-center">Join online →</Link>
+            </div>
           </div>
         </div>
       </section>
@@ -427,34 +493,6 @@ export default async function Landing() {
         </div>
       </section>
 
-      {/* ============ TESTIMONIALS ============ */}
-      <section className="relative py-20 sm:py-24 bg-white border-y border-black/[.05]">
-        <div className="stagger-group max-w-[1180px] mx-auto px-5 sm:px-7">
-          <div className="text-center mb-10 sm:mb-14">
-            <span
-              className="stagger-rise inline-flex items-center gap-2 frosted-glass rounded-full px-3.5 py-1.5 text-[10.5px] font-bold tracking-[.22em] mb-5"
-              style={{ "--i": 0 } as React.CSSProperties}
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-grass-brand inline-block anim-pulse" />
-              LOVED BY FAMILIES
-            </span>
-            <h2
-              className="stagger-rise font-bubble leading-[1] tracking-tight text-[clamp(34px,5vw,60px)] text-ink"
-              style={{ "--i": 1 } as React.CSSProperties}
-            >
-              WHAT PARENTS &amp;<br />
-              <span className="wordmark wordmark--green">CAMPERS SAY.</span>
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
-            {TESTIMONIALS.map((t, i) => (
-              <TestimonialCard key={i} i={i} t={t} />
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ============ PARENT FAQ ============ */}
       <section className="relative py-20 sm:py-24">
         <div className="stagger-group max-w-[860px] mx-auto px-5 sm:px-7">
@@ -523,18 +561,12 @@ export default async function Landing() {
               )}{" "}
               It covers the 5 core courses, daily side attractions, materials and Demo Day — Robotics is an optional +{naira(PRICING.robotics)} elective. Daily attractions are subject to token usage.
             </p>
-            <div className="mb-6 rounded-2xl border-2 border-aqua-brand/30 bg-aqua-brand/[.06] px-4 py-3 text-left max-w-[480px] mx-auto md:mx-0">
-              <div className="text-[10.5px] font-bold tracking-[.2em] text-aqua-deep uppercase mb-1">New · Online track</div>
-              <p className="text-[13px] text-neutral-700 leading-relaxed">
-                Can&apos;t make Lagos? Join <strong>live online for {naira(PRICING.online)}</strong> — three courses (Vibe Coding, Content Creation, 3D &amp; VR) with a welcome kit delivered nationwide (+{naira(PRICING.delivery)}). The Demo Day pitch, prize and Robotics are in-person only.
-              </p>
-            </div>
             <div className="flex flex-wrap gap-3 items-center justify-center md:justify-start">
               <Link href="/register" className="btn-grass">
                 Reserve a Slot <span aria-hidden>→</span>
               </Link>
-              <Link href="/register?mode=online" className="btn-light">
-                Join Online · {naira(PRICING.online)}
+              <Link href="/#programmes" className="btn-light">
+                Compare online · {naira(PRICING.online)}
               </Link>
               <Link href="/contact" className="text-[13px] font-semibold text-neutral-600 hover:text-ink underline underline-offset-4">
                 Talk to a Human
@@ -726,41 +758,6 @@ function DayCard({
         ))}
       </ul>
     </div>
-  );
-}
-
-function TestimonialCard({ i, t }: { i: number; t: Testimonial }) {
-  const avatarTone: Record<Testimonial["tone"], string> = {
-    cyan: "bg-aqua-brand text-ink",
-    green: "bg-grass-brand text-ink",
-    violet: "bg-violet-brand text-white",
-    pink: "bg-pink-deep text-white",
-    amber: "bg-gold-brand text-ink",
-  };
-  return (
-    <figure
-      className="stagger-rise bg-cream border border-black/[.06] rounded-3xl p-6 sm:p-8 flex flex-col shadow-[0_8px_24px_-14px_rgba(0,0,0,0.14)]"
-      style={{ "--i": i } as React.CSSProperties}
-    >
-      <div className="font-bubble text-[40px] leading-none text-grass-brand mb-2" aria-hidden>
-        &ldquo;
-      </div>
-      <blockquote className="text-[15px] sm:text-[16px] leading-relaxed text-ink/85 flex-1">
-        {t.quote}
-      </blockquote>
-      <figcaption className="mt-5 flex items-center gap-3">
-        <span
-          className={`w-11 h-11 rounded-full grid place-items-center font-bubble text-[15px] shrink-0 ${avatarTone[t.tone]}`}
-          aria-hidden
-        >
-          {t.initials}
-        </span>
-        <span>
-          <span className="block font-display font-bold text-[14px] text-ink leading-tight">{t.name}</span>
-          <span className="block text-[12px] text-neutral-500">{t.role}</span>
-        </span>
-      </figcaption>
-    </figure>
   );
 }
 

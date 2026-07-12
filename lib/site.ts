@@ -14,9 +14,9 @@ export const SITE_NAME = "IMMERSIA";
 export const SITE_TITLE = "AI & XR Summer Tech Bootcamp 2026";
 
 export const SITE_DESC =
-  "Nigeria's only summer tech camp where kids 10–17 ship a deployed AI app, build a VR world, " +
-  "produce an AI-assisted track and pitch a startup to a jury. 27 July – 4 September 2026. " +
-  "Join in-person in Lagos or live online.";
+  "Nigeria's only summer tech camp where kids 10–17 ship a deployed AI app and build a VR world. " +
+  "Join in-person in Lagos — with a live Demo Day pitch to a jury — 27 July – 4 September 2026, " +
+  "or take the online track from ₦50,000.";
 
 export const SITE_KEYWORDS = [
   "summer tech camp Nigeria",

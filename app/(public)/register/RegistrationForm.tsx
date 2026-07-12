@@ -224,53 +224,31 @@ export default function RegistrationForm({ pricing, initialMode = "in_person" }:
       {/* ============= STEP 1: TRACK + CAMPER ============= */}
       {step === 0 && (
         <div className="space-y-5 anim-fade-up">
-          {/* Track chooser — pick online vs in-person FIRST; prices, courses and add-ons adapt. */}
-          <div className="frosted-glass rounded-3xl p-6 md:p-7">
-            <div className="text-[10.5px] font-bold tracking-[.22em] text-aqua-deep uppercase mb-1">
-              First, choose your track
+          {/* Which programme — chosen on the landing page; shown here read-only. attendanceMode
+              rides in a hidden field (no in-form toggle), so the whole form follows that choice. */}
+          <input type="hidden" {...register("attendanceMode")} />
+          <div
+            className={cn(
+              "rounded-3xl border-2 p-5 flex items-center justify-between gap-4 flex-wrap",
+              isOnline ? "border-aqua-brand/40 bg-aqua-brand/[.05]" : "border-ink/10 bg-paper",
+            )}
+          >
+            <div>
+              <div className="text-[10.5px] font-bold tracking-[.2em] text-aqua-deep uppercase mb-0.5">You&rsquo;re registering for</div>
+              <div className="text-[15px] font-semibold text-ink">
+                {isOnline ? "Online programme" : "In-person programme · Lagos"}
+                <span className="ml-2 font-accent font-extrabold">
+                  {naira(bootCampFee)}
+                  {isOnline ? ` + ${naira(pricing.deliveryFee)} delivery` : ""}
+                </span>
+              </div>
             </div>
-            <p className="text-[12.5px] text-neutral-600 mb-4">Prices, courses and add-ons update to match.</p>
-            <div className="grid sm:grid-cols-2 gap-3">
-              {[
-                {
-                  value: "in_person",
-                  title: "In-person · Lagos",
-                  desc: "Full programme at our supervised Lagos venue — every course, the Demo Day pitch & prize, optional Robotics.",
-                  price: pricing.isEarlyBird ? pricing.earlyBirdPrice : pricing.regularPrice,
-                  priceNote: pricing.isEarlyBird ? "early-bird" : "regular",
-                },
-                {
-                  value: "online",
-                  title: "Online · anywhere",
-                  desc: "Three live courses from home (Vibe Coding, Content Creation, 3D/VR). Welcome kit delivered to your door.",
-                  price: pricing.onlinePrice,
-                  priceNote: "+ delivery",
-                },
-              ].map((opt) => {
-                const active = values.attendanceMode === opt.value;
-                return (
-                  <label
-                    key={opt.value}
-                    className={cn(
-                      "ticket-card frosted-glass rounded-2xl p-4 flex flex-col gap-2 cursor-pointer border-2 transition",
-                      active ? "border-aqua-brand" : "border-aqua-brand/20",
-                    )}
-                  >
-                    <div className="flex items-start gap-3">
-                      <input type="radio" value={opt.value} {...register("attendanceMode")} className="accent-aqua-brand mt-1" />
-                      <div className="flex-1">
-                        <div className="text-[14px] font-semibold text-ink">{opt.title}</div>
-                        <div className="text-[12px] text-neutral-600 mt-0.5 leading-snug">{opt.desc}</div>
-                      </div>
-                    </div>
-                    <div className="pl-7 font-accent font-extrabold text-[18px] text-ink">
-                      {naira(opt.price)}{" "}
-                      <span className="text-[11px] font-sans font-semibold text-neutral-500">{opt.priceNote}</span>
-                    </div>
-                  </label>
-                );
-              })}
-            </div>
+            <a
+              href="/#programmes"
+              className="text-[12px] font-semibold text-neutral-600 hover:text-ink underline underline-offset-4 shrink-0"
+            >
+              See both programmes →
+            </a>
           </div>
 
           {/* Camper details */}
@@ -405,13 +383,12 @@ export default function RegistrationForm({ pricing, initialMode = "in_person" }:
                   : "On-site at our supervised Lagos venue, including Demo Day."}
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => setStep(0)}
-              className="text-[12px] font-semibold text-aqua-deep hover:text-ink underline underline-offset-2"
+            <a
+              href="/#programmes"
+              className="text-[12px] font-semibold text-aqua-deep hover:text-ink underline underline-offset-2 shrink-0"
             >
-              Change
-            </button>
+              See both programmes →
+            </a>
           </div>
 
           {/* Enrolled-in summary (course set follows the chosen track) */}

@@ -8,7 +8,7 @@ import RegistrationForm from "./RegistrationForm";
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata() {
-  // Reflect the price a visitor actually pays right now (early-bird vs regular).
+  // Reflect the in-person price a visitor actually pays right now (early-bird vs regular).
   let cutoff = EARLY_BIRD_CUTOFF_DEFAULT;
   try {
     await connectDB();
@@ -19,14 +19,14 @@ export async function generateMetadata() {
   const price = isEarlyBirdNow(cutoff) ? PRICING.earlyBird : PRICING.regular;
   return {
     title: "Register · Reserve your camper's slot",
-    description: `Secure a place at the IMMERSIA AI & XR Summer Tech Bootcamp 2026. Four short steps, about three minutes. Boot camp fee ${nairaFromKobo(price)}.`,
+    description: `Secure a place at the IMMERSIA AI & XR Summer Tech Bootcamp 2026. In-person from ${nairaFromKobo(price)} or online for ${nairaFromKobo(PRICING.online)}.`,
     alternates: { canonical: "/register" },
   };
 }
 
 async function getRegisterData() {
-  // Prices come from lib/pricing.ts (env-configurable). Capacity + cutoff are admin-editable
-  // via DB Settings, falling back to the single shared defaults.
+  // Prices come from lib/pricing.ts (env-configurable). Capacity + cutoff come from DB
+  // Settings, falling back to the single shared defaults.
   try {
     await connectDB();
     const [capacity, paid, earlyBirdCutoff] = await Promise.all([
@@ -51,9 +51,9 @@ export default async function RegisterPage({
     redirect("/register/closed");
   }
 
-  // Flyer links land on /register?mode=online — preselect the online track when they do.
-  const initialMode = searchParams?.mode === "online" ? "online" : "in_person";
   const isEarlyBird = isEarlyBirdNow(earlyBirdCutoff);
+  // Flyer / landing "Join online" links land on /register?mode=online — preselect online.
+  const initialMode = searchParams?.mode === "online" ? "online" : "in_person";
   // Match the hero: hold slotsLeft at full capacity until the DB-backed count is trusted.
   const slotsLeft = capacity;
 
