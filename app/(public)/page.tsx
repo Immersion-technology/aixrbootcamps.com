@@ -18,6 +18,7 @@ import { connectDB } from "@/lib/db";
 import { Registration } from "@/models/Registration";
 import { getSetting, SETTING_KEYS } from "@/models/Setting";
 import { PRICING, EARLY_BIRD_CUTOFF_DEFAULT, isEarlyBird as isEarlyBirdNow } from "@/lib/pricing";
+import { COHORTS, CAMP_SCHEDULE } from "@/lib/cohorts";
 import {
   SITE_URL,
   SITE_NAME,
@@ -287,7 +288,7 @@ export default async function Landing() {
               <ul className="space-y-2.5 text-[13.5px] text-neutral-700 mb-7">
                 <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> All 6 courses on-site, Mon–Fri</li>
                 <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> Demo Day — live pitch to a jury, with a prize</li>
-                <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> Daily side attractions (gaming, table tennis, karting)</li>
+                <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> 4 daily side attractions — Go-Kart, Table Tennis, FIFA '26 &amp; VR games</li>
                 <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> Robotics &amp; Embedded elective (+{naira(PRICING.robotics)})</li>
                 <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> Optional laptop rental (+{naira(PRICING.laptop)})</li>
               </ul>
@@ -320,12 +321,42 @@ export default async function Landing() {
         </div>
       </section>
 
+      {/* ============ COHORTS ============ */}
+      <section id="cohorts" className="relative overflow-hidden py-16 sm:py-20">
+        <div className="max-w-[1180px] mx-auto px-5 sm:px-7">
+          <div className="text-center mb-9">
+            <div className="text-[10.5px] font-bold tracking-[.22em] text-violet-brand uppercase mb-2">Pick your 2-week window</div>
+            <h2 className="font-bubble text-[clamp(30px,4.6vw,54px)] leading-[1.02] text-ink">CHOOSE YOUR COHORT</h2>
+            <p className="text-[14px] text-neutral-600 mt-3 max-w-[560px] mx-auto">
+              Camp runs as three back-to-back 2-week cohorts. Your camper attends <strong>one</strong> — {CAMP_SCHEDULE}. Pick the window that fits your calendar at registration.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-3 gap-4 lg:gap-5">
+            {COHORTS.map((c, i) => (
+              <div
+                key={c.id}
+                className="relative flex flex-col rounded-3xl border-2 border-aqua-brand/25 bg-paper p-6 text-center"
+              >
+                <div className="font-bubble text-[22px] leading-none text-aqua-deep mb-2">0{c.id}</div>
+                <div className="text-[11px] font-bold tracking-[.2em] text-neutral-500 uppercase mb-1">{c.label}</div>
+                <div className="font-display font-extrabold text-[22px] text-ink leading-tight">{c.range}</div>
+                <div className="text-[12.5px] text-neutral-600 mt-1">2026</div>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-[12.5px] text-neutral-500 mt-6">
+            Same schedule every cohort · <strong className="text-ink">{CAMP_SCHEDULE}</strong>
+          </p>
+        </div>
+      </section>
+
       {/* ============ COURSES GRID ============ */}
       <section id="courses" className="relative overflow-hidden pt-6 pb-24">
         <div className="max-w-[1180px] mx-auto px-5 sm:px-7">
           <div className="mb-10 flex flex-col items-center text-center md:flex-row md:items-end md:justify-between md:text-left gap-4">
             <h2 className="font-bubble text-[clamp(30px,4vw,52px)] leading-[1.02] tracking-tight max-w-[680px] text-ink">
-              Six immersive courses<br />plus three side attractions.
+              Six immersive courses<br />plus four side attractions.
             </h2>
             <p className="text-[13px] text-neutral-600 max-w-[300px]">Tap any card for the full curriculum, tools and sample project.</p>
           </div>
@@ -344,14 +375,16 @@ export default async function Landing() {
               graceful fallback. The strip uses horizontal-scroll-snap on mobile so
               one card sits fully visible with the next peeking. */}
           <div className="mt-16">
-            <div className="flex flex-col items-center text-center sm:flex-row sm:items-baseline sm:text-left flex-wrap gap-3 mb-5">
+            <div className="flex flex-col items-center text-center sm:flex-row sm:items-baseline sm:text-left flex-wrap gap-x-3 gap-y-1.5 mb-5">
               <span className="font-bubble text-[28px] sm:text-[36px] leading-none text-ink">SIDE ATTRACTIONS</span>
-              <span className="text-[12.5px] text-neutral-600">30 min daily · each camper picks one with a token</span>
+              <span className="sticker-pill sticker-pill--cyan">In-person Lagos only</span>
+              <span className="text-[12.5px] text-neutral-600 basis-full sm:basis-auto">30 min daily · each camper picks one with a token</span>
             </div>
-            <div className="stagger-group grid grid-cols-1 sm:grid-cols-3 gap-5 -mx-5 sm:mx-0 px-5 sm:px-0 overflow-x-auto sm:overflow-visible snap-x snap-mandatory sm:snap-none flex sm:grid">
-              <SideAttraction i={0} slug="table-tennis"     Icon={TableTennisBatIcon} sticker="cobalt"  title="TABLE TENNIS" desc="A fast reset during the afternoon break." />
-              <SideAttraction i={1} slug="go-karting"       Icon={RacingFlagIcon}     sticker="emerald" title="GO KARTING"   desc="Supervised circuits with full safety gear." />
-              <SideAttraction i={2} slug="pro-gaming"       Icon={GameController01Icon} sticker="pink"  title="PRO GAMING"          desc="Coached competitive gaming on real rigs." />
+            <div className="stagger-group grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 -mx-5 sm:mx-0 px-5 sm:px-0 overflow-x-auto sm:overflow-visible snap-x snap-mandatory sm:snap-none flex sm:grid">
+              <SideAttraction i={0} slug="go-karting"       Icon={RacingFlagIcon}       sticker="emerald" title="GO-KART RACING"   desc="Supervised circuits with full safety gear." />
+              <SideAttraction i={1} slug="table-tennis"     Icon={TableTennisBatIcon}   sticker="cobalt"  title="TABLE TENNIS"     desc="A fast reset during the afternoon break." />
+              <SideAttraction i={2} slug="pro-gaming"       Icon={GameController01Icon} sticker="pink"    title="FIFA '26"         desc="FIFA '26 tournaments on real gaming rigs." />
+              <SideAttraction i={3} slug="vr-games"         Icon={VrGlassesIcon}        sticker="violet"  title="VR GAMES"         desc="Immersive VR play on real headsets." />
             </div>
           </div>
         </div>
@@ -440,10 +473,10 @@ export default async function Landing() {
             <LegendItem tone="violet" label="Content Creation" />
             <LegendItem tone="orange" label="Robotics / Singing & AI Music · Paired Elective" />
             <LegendItem tone="pink"   label="3D Character & VR World" />
-            <LegendItem tone="gray"   label="Break Activity · Table Tennis · Go Karting · Pro Gaming · token-based" />
+            <LegendItem tone="gray"   label="Side Attraction · Go-Kart · Table Tennis · FIFA '26 · VR Games · token-based" />
           </div>
           <p className="mt-6 text-[12px] text-neutral-500 leading-relaxed max-w-[820px]">
-            ① All 5 classes run 2 sessions × 2 hrs = 4 hrs / week = 8 hrs per cohort. ② Entrepreneurship is COMPULSORY for every camper (Mon late-morning + Thu early-morning). ③ Robotics & Embedded and Singing & AI Music are a paired elective. Pick one track. ④ All three break activities (Table Tennis, Go Karting, Pro Gaming) are available daily 1:00 – 1:30 PM via the in-app token system.
+            ① All 5 classes run 2 sessions × 2 hrs = 4 hrs / week = 8 hrs per cohort. ② Entrepreneurship is COMPULSORY for every camper (Mon late-morning + Thu early-morning). ③ Robotics & Embedded and Singing & AI Music are a paired elective. Pick one track. ④ All four side attractions (Go-Kart Racing, Table Tennis, FIFA '26, VR Games) run daily 1:00 – 1:30 PM in Lagos via the in-app token system.
           </p>
         </div>
       </section>

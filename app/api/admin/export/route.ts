@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/db";
 import { Registration } from "@/models/Registration";
 import { getAdminFromCookie } from "@/lib/auth";
 import { calcAge, formatNaira } from "@/lib/utils";
+import { cohortLabel } from "@/lib/cohorts";
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +44,7 @@ export async function GET(req: NextRequest) {
     "Medical notes": r.medicalNotes ?? "",
     "Courses": (r.courses ?? []).join("; "),
     "Attendance mode": r.attendanceMode === "online" ? "Online" : "In-person",
+    "Cohort": r.cohort ? cohortLabel(r.cohort) : "",
     "Robotics elective": r.roboticsElective ? "Yes" : "No",
     "Laptop rental": r.laptopRental ? "Yes" : "No",
     "Pricing tier": r.pricing.tier,

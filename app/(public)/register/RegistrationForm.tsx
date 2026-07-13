@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { registrationCreateSchema, type RegistrationCreateInput } from "@/lib/validations";
 import { cn } from "@/lib/utils";
 import { CURRICULUM, type CurriculumItem } from "@/lib/curriculum";
+import { COHORTS, CAMP_SCHEDULE, cohortLabel } from "@/lib/cohorts";
 
 interface Pricing {
   isEarlyBird: boolean;
@@ -69,6 +70,7 @@ export default function RegistrationForm({ pricing, initialMode = "in_person" }:
       emergencyContact: { fullName: "", phone: "", relationship: "" },
       medicalNotes: "",
       attendanceMode: initialMode,
+      cohort: undefined,
       laptopRental: false,
       roboticsElective: false,
       agreedToTerms: false as unknown as true,
@@ -82,7 +84,8 @@ export default function RegistrationForm({ pricing, initialMode = "in_person" }:
     const fieldsForStep = (() => {
       if (step === 0) return ["participant"];
       if (step === 1) return ["parent", "emergencyContact"];
-      // step 2 (Programme) has no user-pickable fields, nothing to validate.
+      // step 2 (Programme) — the camper must pick a 2-week cohort before continuing.
+      if (step === 2) return ["cohort"];
       return [];
     })();
     const ok = await trigger(fieldsForStep as any, { shouldFocus: true });
@@ -391,6 +394,42 @@ export default function RegistrationForm({ pricing, initialMode = "in_person" }:
             </a>
           </div>
 
+          {/* Cohort picker — every camper attends ONE 2-week cohort. Required. */}
+          <div className="frosted-glass rounded-3xl p-6 md:p-7">
+            <div className="text-[10.5px] font-bold tracking-[.22em] text-aqua-deep uppercase mb-1">
+              Choose your 2-week cohort
+            </div>
+            <p className="text-[12.5px] text-neutral-600 mb-4">{CAMP_SCHEDULE}. Your camper attends one cohort.</p>
+            <div className="grid sm:grid-cols-3 gap-3">
+              {COHORTS.map((c) => {
+                const active = Number(values.cohort) === c.id;
+                return (
+                  <label
+                    key={c.id}
+                    className={cn(
+                      "ticket-card frosted-glass rounded-2xl p-4 flex items-start gap-3 cursor-pointer border-2 transition",
+                      active ? "border-aqua-brand" : "border-aqua-brand/20",
+                    )}
+                  >
+                    <input
+                      type="radio"
+                      value={c.id}
+                      {...register("cohort", { valueAsNumber: true })}
+                      className="accent-aqua-brand mt-1"
+                    />
+                    <div className="flex-1">
+                      <div className="text-[13.5px] font-semibold text-ink">{c.label}</div>
+                      <div className="text-[12px] text-neutral-600 mt-0.5 leading-snug">{c.range} 2026</div>
+                    </div>
+                  </label>
+                );
+              })}
+            </div>
+            {formState.errors.cohort && (
+              <p className="text-[12px] text-pink-deep mt-2.5">⚠ {formState.errors.cohort.message as string}</p>
+            )}
+          </div>
+
           {/* Enrolled-in summary (course set follows the chosen track) */}
           <div className="frosted-glass rounded-3xl p-6 md:p-7">
             <div className="flex items-baseline justify-between gap-3 mb-4 flex-wrap">
@@ -399,7 +438,7 @@ export default function RegistrationForm({ pricing, initialMode = "in_person" }:
                   ? `Your ${attendedCourses.length} online courses`
                   : `Enrolled in all ${attendedCourses.length} courses below`}
               </div>
-              {!isOnline && <span className="text-[11px] text-neutral-500">+ 3 daily active breaks</span>}
+              {!isOnline && <span className="text-[11px] text-neutral-500">+ 4 daily side attractions</span>}
             </div>
             <ul className="space-y-2.5">
               {attendedCourses.map((c) => (
@@ -430,7 +469,7 @@ export default function RegistrationForm({ pricing, initialMode = "in_person" }:
                 ☕ Daily side attractions · 30 min · one token a day
               </div>
               <p className="text-[13px] text-white/85 leading-relaxed">
-                Pro Gaming, Table Tennis and Go Karting are available every single day from 1:00–1:30 PM. Your camper picks one with a token each day. All included.
+                Go-Kart Racing, Table Tennis, FIFA &rsquo;26 and VR Games are available every single day from 1:00–1:30 PM. Your camper picks one with a token each day. All included.
               </p>
             </div>
           )}
@@ -498,13 +537,15 @@ export default function RegistrationForm({ pricing, initialMode = "in_person" }:
           <ReviewCard title="Programme" data={(isOnline
             ? [
                 ["Attendance", "Online (anywhere)"],
+                ["Cohort", cohortLabel(values.cohort)],
                 ["Courses", `${attendedCourses.length} live online courses`],
                 ["Welcome kit", `Delivered (+${naira(pricing.deliveryFee)})`],
               ]
             : [
                 ["Attendance", "In-person (Lagos)"],
+                ["Cohort", cohortLabel(values.cohort)],
                 ["Core courses", `${attendedCourses.length} (all attended)`],
-                ["Active breaks", "Pro Gaming · Table Tennis · Go Karting"],
+                ["Side attractions", "Go-Kart · Table Tennis · FIFA '26 · VR Games"],
                 ["Robotics elective", values.roboticsElective ? `Yes (+${naira(pricing.roboticsPrice)})` : "No"],
                 ["Laptop rental", values.laptopRental ? `Yes (+${naira(pricing.laptopPrice)})` : "No"],
               ]) as [string, string][]}

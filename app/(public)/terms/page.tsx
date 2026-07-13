@@ -42,7 +42,7 @@ export default function TermsPage() {
 
           <Section title="3. What the fee covers">
             <ul className="list-disc pl-5 space-y-1.5">
-              <li>All five core courses plus the three side attractions, for the full two weeks of your cohort. (Robotics is an optional paid elective — see below.)</li>
+              <li>All five core courses plus the four side attractions (Go-Kart Racing, Table Tennis, FIFA &rsquo;26, VR Games), for the full two weeks of your cohort. (Robotics is an optional paid elective — see below.)</li>
               <li>Note: lunch, snacks and drinks are not provided. Campers bring their own food and water bottle.</li>
               <li>IMMERSIA t-shirt + all course materials and consumables.</li>
               <li>Use of camp laptops, headsets, robotics kits and gaming rigs.</li>

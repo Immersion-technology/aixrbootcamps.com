@@ -36,6 +36,8 @@ export interface IRegistration {
   };
   medicalNotes?: string;
   attendanceMode: "in_person" | "online";
+  /** The 2-week cohort the camper attends (1, 2 or 3). See lib/cohorts.ts. */
+  cohort?: 1 | 2 | 3;
   courses: string[];
   laptopRental: boolean;
   roboticsElective: boolean;
@@ -105,6 +107,9 @@ const RegistrationSchema = new Schema<IRegistration>(
     },
     medicalNotes: { type: String, trim: true },
     attendanceMode: { type: String, enum: ["in_person", "online"], default: "in_person", index: true },
+    // Optional at the schema level so pre-cohort legacy registrations can still be re-saved by
+    // reconcileAndConfirm; always set on new registrations (the create API requires it).
+    cohort: { type: Number, enum: [1, 2, 3], index: true },
     courses: { type: [String], required: true },
     laptopRental: { type: Boolean, default: false },
     roboticsElective: { type: Boolean, default: false },

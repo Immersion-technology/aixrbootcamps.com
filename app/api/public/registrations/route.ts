@@ -112,6 +112,7 @@ export async function POST(req: NextRequest) {
       },
       medicalNotes: data.medicalNotes,
       attendanceMode: data.attendanceMode,
+      cohort: data.cohort,
       courses: finalCourses,
       laptopRental: data.laptopRental,
       roboticsElective: data.roboticsElective,

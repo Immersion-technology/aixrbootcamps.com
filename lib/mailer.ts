@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { cohortLabel, cohortById } from "./cohorts";
 
 function extractEmailAddress(value?: string): string {
   if (!value) return "";
@@ -142,6 +143,7 @@ export function parentConfirmationHtml(args: {
   laptopRental: boolean;
   roboticsElective: boolean;
   attendanceMode: "in_person" | "online";
+  cohort?: number;
   deliveryFeeKobo?: number;
   discountKobo?: number;
   promoCode?: string;
@@ -184,7 +186,8 @@ export function parentConfirmationHtml(args: {
       </div>
 
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 16px;font-size:14px;">
-        <tr><td style="padding:6px 0;color:#777;">Camp starts</td><td style="text-align:right;font-weight:600;">${esc(args.campStart)}</td></tr>
+        <tr><td style="padding:6px 0;color:#777;">Your cohort starts</td><td style="text-align:right;font-weight:600;">${esc(cohortById(args.cohort)?.start ?? args.campStart)}</td></tr>
+        ${args.cohort ? `<tr><td style="padding:6px 0;color:#777;">Cohort</td><td style="text-align:right;font-weight:600;">${esc(cohortLabel(args.cohort))}</td></tr>` : ""}
         <tr><td style="padding:6px 0;color:#777;">Attendance</td><td style="text-align:right;font-weight:600;">${attendanceLabel}</td></tr>
         ${
           isOnline

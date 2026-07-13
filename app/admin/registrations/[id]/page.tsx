@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/db";
 import { Registration } from "@/models/Registration";
 import { Payment } from "@/models/Payment";
 import { calcAge, formatNaira } from "@/lib/utils";
+import { cohortLabel } from "@/lib/cohorts";
 import DetailActions from "./DetailActions";
 
 export const dynamic = "force-dynamic";
@@ -50,6 +51,7 @@ export default async function RegistrationDetail({ params }: { params: { id: str
           <Row k="Class" v={reg.participant.classGrade || "–"} />
           <Row k="T-shirt" v={reg.participant.tshirtSize} />
           <Row k="Attendance" v={reg.attendanceMode === "online" ? "Online" : "In-person (Lagos)"} />
+          <Row k="Cohort" v={reg.cohort ? cohortLabel(reg.cohort) : "–"} />
         </Card>
 
         <Card title="Parent / Guardian">

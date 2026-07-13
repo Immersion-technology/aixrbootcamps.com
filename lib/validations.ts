@@ -38,6 +38,11 @@ export const registrationCreateSchema = z.object({
   emergencyContact: emergencySchema,
   medicalNotes: z.string().trim().optional().default(""),
   attendanceMode: z.enum(["in_person", "online"]).default("in_person"),
+  // Which 2-week cohort the camper attends (see lib/cohorts.ts). Coerced because the form
+  // sends the radio value as a string; required so every new registration picks a cohort.
+  cohort: z.coerce
+    .number({ invalid_type_error: "Choose your 2-week cohort" })
+    .refine((n) => n === 1 || n === 2 || n === 3, "Choose your 2-week cohort"),
   laptopRental: z.boolean(),
   roboticsElective: z.boolean().optional().default(false),
   // Optional promo code — the discount is validated + applied server-side; the client

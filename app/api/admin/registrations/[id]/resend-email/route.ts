@@ -32,6 +32,7 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
     roboticsFeeKobo: reg.pricing.roboticsFee,
     deliveryFeeKobo: reg.pricing.deliveryFee ?? 0,
     attendanceMode: reg.attendanceMode ?? "in_person",
+    cohort: reg.cohort,
     totalKobo: reg.pricing.total,
     paidAt: reg.paidAt ?? new Date(),
   });
@@ -47,6 +48,7 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
       laptopRental: reg.laptopRental,
       roboticsElective: reg.roboticsElective,
       attendanceMode: reg.attendanceMode ?? "in_person",
+      cohort: reg.cohort,
       totalKobo: reg.pricing.total,
       campStart,
     }),

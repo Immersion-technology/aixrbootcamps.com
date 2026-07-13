@@ -1,5 +1,6 @@
 import PDFDocument from "pdfkit";
 import { formatNaira } from "./utils";
+import { cohortLabel } from "./cohorts";
 
 interface ReceiptArgs {
   registrationId: string;
@@ -9,6 +10,7 @@ interface ReceiptArgs {
   laptopRental: boolean;
   roboticsElective: boolean;
   attendanceMode?: "in_person" | "online";
+  cohort?: number;
   bootCampFeeKobo: number;
   laptopRentalKobo: number;
   roboticsFeeKobo: number;
@@ -46,6 +48,7 @@ export function buildReceiptPdf(args: ReceiptArgs): Promise<Buffer> {
     doc.moveDown(0.5);
 
     doc.text(`Attendance: ${isOnline ? "Online" : "In-person (Lagos)"}`);
+    if (args.cohort) doc.text(`Cohort: ${cohortLabel(args.cohort)}`);
     if (isOnline) {
       doc.text(`Welcome kit: delivered`);
     } else {

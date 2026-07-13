@@ -303,7 +303,7 @@ export const CURRICULUM: CurriculumItem[] = [
   // ============================ ACTIVE BREAKS ============================
   {
     slug: "pro-gaming",
-    name: "Pro Gaming / E-Sports",
+    name: "FIFA '26 Competition",
     type: "active-break",
     facilitators: [],
     hoursPerWeek: 2.5,
@@ -318,8 +318,8 @@ export const CURRICULUM: CurriculumItem[] = [
     icon: "GameController01Icon",
     tone: "blue",
     cardColor: "pink",
-    shortDesc: "Coached competitive gaming on real rigs. Daily, one token.",
-    tagline: "Train like an e-sports pro: strategy, reaction time, and the business behind the screen.",
+    shortDesc: "FIFA '26 tournaments and coached competitive gaming on real rigs. Daily, one token.",
+    tagline: "Run it back on FIFA '26 and train like an e-sports pro: strategy, reaction time, and the business behind the screen.",
     whatYoullLearn: [
       "Pro warm-up routines used by competitive players",
       "Team communication and shot-calling basics",
@@ -402,6 +402,40 @@ export const CURRICULUM: CurriculumItem[] = [
     tools: ["Junior karts", "Helmets", "Full safety gear"],
     sampleProject:
       "End-of-camp kart championship: timed laps, podium, certificates.",
+  },
+  {
+    slug: "vr-games",
+    name: "Virtual Reality Games",
+    type: "active-break",
+    facilitators: [],
+    hoursPerWeek: 2.5,
+    sessionsPerWeek: 5,
+    scheduleSlots: [
+      { day: "Mon", start: "13:00", end: "13:30" },
+      { day: "Tue", start: "13:00", end: "13:30" },
+      { day: "Wed", start: "13:00", end: "13:30" },
+      { day: "Thu", start: "13:00", end: "13:30" },
+      { day: "Fri", start: "13:00", end: "13:30" },
+    ],
+    icon: "VrGlassesIcon",
+    tone: "violet",
+    cardColor: "violet",
+    shortDesc: "Jump into fully-immersive VR games on real headsets. Daily, one token.",
+    tagline: "Step inside the game — supervised, immersive VR play as a 30-minute afternoon reset.",
+    whatYoullLearn: [
+      "How room-scale VR tracking actually works",
+      "Playing safely: guardian boundaries and screen-time habits",
+      "Co-op and party VR titles with the rest of the cohort",
+      "What separates a fun VR experience from a great one",
+    ],
+    outcomes: [
+      "Confident, comfortable use of a VR headset",
+      "A feel for the tech behind the VR world you build in class",
+      "New favourite games to talk about all summer",
+    ],
+    tools: ["Meta Quest headsets", "Controllers", "Guardian play space"],
+    sampleProject:
+      "Team VR challenge on the last Friday — beat the co-op course as a cohort, fastest squad wins.",
   },
 ];
 
