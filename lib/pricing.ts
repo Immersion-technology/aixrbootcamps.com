@@ -27,14 +27,13 @@ export const PRICING = {
   /** Flat fee for the ONLINE track (trimmed programme, no early-bird calendar). */
   online: intEnv("PRICE_ONLINE_KOBO", 5_000_000), // ₦50,000
   /**
-   * Flat nationwide delivery fee for the online welcome kit (t-shirt + materials).
-   * Mandatory add-on for every online registration. PLACEHOLDER default — set the real
-   * amount via DELIVERY_FEE_KOBO in the environment.
+   * Optional Embedded Systems elective for ONLINE campers. This price is all-in: it covers
+   * the hardware kit AND nationwide delivery to the camper (there is no separate delivery fee).
    */
-  delivery: intEnv("DELIVERY_FEE_KOBO", 500_000), // ₦5,000
+  onlineEmbedded: intEnv("PRICE_ONLINE_EMBEDDED_KOBO", 3_500_000), // +₦35,000
   /** Optional laptop-rental add-on (in-person only). */
   laptop: intEnv("PRICE_LAPTOP_RENTAL_KOBO", 2_000_000), // +₦20,000
-  /** Optional robotics elective add-on (in-person only). */
+  /** Optional Robotics & Embedded Systems elective add-on (in-person; kit collected on-site). */
   robotics: intEnv("PRICE_ROBOTICS_ELECTIVE_KOBO", 2_500_000), // +₦25,000
   /** Instalment deposit quoted in the terms / FAQ (display only — checkout charges in full). */
   deposit: intEnv("PRICE_DEPOSIT_KOBO", 7_500_000), // ₦75,000

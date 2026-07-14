@@ -50,7 +50,6 @@ export async function GET(req: NextRequest) {
     "Pricing tier": r.pricing.tier,
     "Promo code": r.pricing.promoCode ?? "",
     "Discount (NGN)": r.pricing.discountKobo ? formatNaira(r.pricing.discountKobo) : "",
-    "Delivery fee (NGN)": r.pricing.deliveryFee ? formatNaira(r.pricing.deliveryFee) : "",
     "Total (NGN)": formatNaira(r.pricing.total),
     "Total (kobo)": r.pricing.total,
     "Payment status": r.paymentStatus,

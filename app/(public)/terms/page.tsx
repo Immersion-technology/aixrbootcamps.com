@@ -49,13 +49,13 @@ export default function TermsPage() {
               <li>Demo Day, including the live pitch panel and prize for the winning team.</li>
             </ul>
             <p className="mt-2">Not included: transport to and from the venue, take-home equipment beyond what&apos;s explicitly stated, the optional Robotics elective (+{nairaFromKobo(PRICING.robotics)}, which covers the Arduino kit and components your camper keeps), and the optional laptop rental add-on.</p>
-            <p className="mt-3"><strong>Online track ({nairaFromKobo(PRICING.online)}):</strong> a separate, remote-only programme covering three live courses — Vibe Coding, Content Creation, and 3D &amp; VR. It includes a welcome kit (IMMERSIA t-shirt + course materials) delivered anywhere in Nigeria for a flat {nairaFromKobo(PRICING.delivery)} fee, added at checkout. The online track does <strong>not</strong> include the on-site side attractions, laptop rental, the Robotics/Embedded Systems elective, or the Demo Day pitch and prize — those are exclusive to the in-person camp.</p>
+            <p className="mt-3"><strong>Online track ({nairaFromKobo(PRICING.online)}, fully remote):</strong> a separate programme covering three live courses taught online — Vibe Coding, Content Creation, and 3D &amp; VR. Online campers may add an optional <strong>Embedded Systems elective for {nairaFromKobo(PRICING.onlineEmbedded)}</strong>; that price is all-in and includes the hardware kit delivered anywhere in Nigeria (there is no separate delivery fee). The online track does <strong>not</strong> include the on-site side attractions, laptop rental, or the Demo Day pitch and prize — those are exclusive to the in-person camp.</p>
           </Section>
 
           <Section title="4. Payment, holds and refunds">
             <ul className="list-disc pl-5 space-y-1.5">
               <li>Payment is processed by <strong>Paystack</strong>. A slot is only held once payment clears.</li>
-              <li>The in-person boot camp fee is <strong>{nairaFromKobo(PRICING.regular)}</strong>; the online track is <strong>{nairaFromKobo(PRICING.online)}</strong> (plus a {nairaFromKobo(PRICING.delivery)} welcome-kit delivery). Any active early-bird window or promo-code discount is applied and shown at checkout before you pay.</li>
+              <li>The in-person boot camp fee is <strong>{nairaFromKobo(PRICING.regular)}</strong>; the online track is a flat <strong>{nairaFromKobo(PRICING.online)}</strong> (optional Embedded Systems elective +{nairaFromKobo(PRICING.onlineEmbedded)}, kit delivery included). Any promo-code discount is applied and shown at checkout before you pay.</li>
               <li><strong>Instalments:</strong> {nairaFromKobo(PRICING.deposit)} deposit on registration holds your slot; balance is due two weeks before your cohort starts.</li>
               <li><strong>Refunds:</strong> none. All payments are final once a slot is confirmed.</li>
             </ul>

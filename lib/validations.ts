@@ -52,24 +52,15 @@ export const registrationCreateSchema = z.object({
     errorMap: () => ({ message: "You must agree to the rules of conduct" }),
   }),
 }).superRefine((data, ctx) => {
-  // The online track is a trimmed programme: no laptop rental and no robotics elective
-  // (both are in-person only). Guard here so a tampered payload can't buy them online —
-  // the client form already hides these when online is selected.
-  if (data.attendanceMode === "online") {
-    if (data.laptopRental) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["laptopRental"],
-        message: "Laptop rental is only available for in-person campers.",
-      });
-    }
-    if (data.roboticsElective) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["roboticsElective"],
-        message: "The Robotics elective is only available for in-person campers.",
-      });
-    }
+  // Laptop rental is in-person only. The Embedded Systems elective (data.roboticsElective) IS
+  // now available online — priced higher there because the kit is shipped. Guard laptop here
+  // so a tampered payload can't buy it online; the client form already hides it when online.
+  if (data.attendanceMode === "online" && data.laptopRental) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["laptopRental"],
+      message: "Laptop rental is only available for in-person campers.",
+    });
   }
 });
 

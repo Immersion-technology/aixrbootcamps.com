@@ -39,11 +39,14 @@ export async function POST(req: NextRequest) {
     const isOnline = parsed.data.attendanceMode === "online";
     const tier = resolveTier(parsed.data.attendanceMode, cutoff);
     const bootCampFee = bootCampFeeKobo(tier);
-    // Online has no paid add-ons; the discount base is just the flat online fee.
+    // The elective is priced by track (online is higher — kit shipped); laptop is in-person only.
+    const electiveFee = parsed.data.roboticsElective
+      ? isOnline ? PRICING.onlineEmbedded : PRICING.robotics
+      : 0;
     const subtotal =
       bootCampFee +
       (!isOnline && parsed.data.laptopRental ? PRICING.laptop : 0) +
-      (!isOnline && parsed.data.roboticsElective ? PRICING.robotics : 0);
+      electiveFee;
 
     // Discount applies to the boot camp fee only; add-ons are never discounted.
     const result = await validatePromo(parsed.data.code, {

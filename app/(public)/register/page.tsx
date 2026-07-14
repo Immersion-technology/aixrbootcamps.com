@@ -81,7 +81,7 @@ export default async function RegisterPage({
             earlyBirdPrice: PRICING.earlyBird,
             regularPrice: PRICING.regular,
             onlinePrice: PRICING.online,
-            deliveryFee: PRICING.delivery,
+            onlineEmbeddedPrice: PRICING.onlineEmbedded,
             laptopPrice: PRICING.laptop,
             roboticsPrice: PRICING.robotics,
           }}

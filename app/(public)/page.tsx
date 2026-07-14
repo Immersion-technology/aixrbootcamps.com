@@ -303,17 +303,17 @@ export default async function Landing() {
               </div>
               <div className="flex items-baseline gap-2 mt-1">
                 <span className="font-bubble text-[40px] leading-none text-ink">{naira(PRICING.online)}</span>
-                <span className="text-[13px] font-semibold text-neutral-500">+ {naira(PRICING.delivery)} delivery</span>
+                <span className="text-[13px] font-semibold text-neutral-500">flat</span>
               </div>
               <div className="text-[11px] font-semibold text-neutral-500 uppercase tracking-wide mt-1 mb-5">
-                Flat fee · join live from home
+                Fully remote · join live from home
               </div>
               <ul className="space-y-2.5 text-[13.5px] text-neutral-700 mb-7">
                 <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> 3 live courses: Vibe Coding, Content Creation, 3D &amp; VR</li>
-                <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> Welcome kit (t-shirt + materials) delivered nationwide</li>
-                <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> Every session live — join from anywhere</li>
+                <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> Every session live — join from anywhere in Nigeria</li>
+                <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> Optional Embedded Systems elective +{naira(PRICING.onlineEmbedded)} — kit delivered</li>
                 <li className="flex gap-2.5 text-neutral-400"><span className="font-bold shrink-0">–</span> No Demo Day pitch or prize</li>
-                <li className="flex gap-2.5 text-neutral-400"><span className="font-bold shrink-0">–</span> No Robotics / Embedded Systems</li>
+                <li className="flex gap-2.5 text-neutral-400"><span className="font-bold shrink-0">–</span> No side attractions (in-person only)</li>
               </ul>
               <Link href="/register?mode=online" className="btn-dark mt-auto block w-full text-center">Join online →</Link>
             </div>

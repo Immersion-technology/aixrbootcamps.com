@@ -13,7 +13,8 @@ interface Pricing {
   earlyBirdPrice: number;
   regularPrice: number;
   onlinePrice: number;
-  deliveryFee: number;
+  /** Online Embedded Systems elective (kit + delivery, all-in). */
+  onlineEmbeddedPrice: number;
   laptopPrice: number;
   roboticsPrice: number;
 }
@@ -96,11 +97,15 @@ export default function RegistrationForm({ pricing, initialMode = "in_person" }:
     setStep((s) => Math.max(s - 1, 0));
   }
 
-  // The online track is a flat-priced, trimmed programme: fixed online fee + a mandatory
-  // welcome-kit delivery fee, and no paid add-ons. In-person keeps early-bird/regular + add-ons.
+  // Online is a flat-priced, fully-remote track (₦50k) with ONE optional add-on: the Embedded
+  // Systems elective (priced higher because the kit ships). In-person keeps the full add-ons.
   const isOnline = values.attendanceMode === "online";
   const attendedCourses = isOnline ? ONLINE_ATTENDED : ALWAYS_ATTENDED;
-  const electives = isOnline ? [] : ELECTIVES;
+  // The Embedded/Robotics elective is offered on BOTH tracks; laptop rental is in-person only.
+  const electives = ELECTIVES;
+  // Fee + label for the elective depend on the track.
+  const electivePrice = isOnline ? pricing.onlineEmbeddedPrice : pricing.roboticsPrice;
+  const electiveLabel = isOnline ? "Embedded Systems" : "Robotics & Embedded Systems";
 
   const bootCampFee = isOnline
     ? pricing.onlinePrice
@@ -108,22 +113,17 @@ export default function RegistrationForm({ pricing, initialMode = "in_person" }:
       ? pricing.earlyBirdPrice
       : pricing.regularPrice;
   const laptopFee = !isOnline && values.laptopRental ? pricing.laptopPrice : 0;
-  const roboticsFee = !isOnline && values.roboticsElective ? pricing.roboticsPrice : 0;
-  const deliveryFee = isOnline ? pricing.deliveryFee : 0;
+  const roboticsFee = values.roboticsElective ? electivePrice : 0;
   const subtotal = bootCampFee + laptopFee + roboticsFee;
   const discountKobo = applied ? applied.discountKobo : 0;
-  // Delivery is added on top of the (discounted) subtotal — it is never discounted.
-  const payableTotal = Math.max(0, subtotal - discountKobo) + deliveryFee;
+  const payableTotal = Math.max(0, subtotal - discountKobo);
   const naira = (k: number) => `₦${(k / 100).toLocaleString("en-NG")}`;
 
-  // The online track can't buy add-ons — if the camper switches to online, clear any that
-  // were ticked while on the in-person track so the payload stays valid (the API rejects them).
+  // Laptop rental is in-person only — if the camper switches to online, clear it so the payload
+  // stays valid (the API rejects it online). The Embedded elective is kept: it's valid online.
   useEffect(() => {
-    if (isOnline) {
-      if (values.laptopRental) setValue("laptopRental", false);
-      if (values.roboticsElective) setValue("roboticsElective", false);
-    }
-  }, [isOnline, values.laptopRental, values.roboticsElective, setValue]);
+    if (isOnline && values.laptopRental) setValue("laptopRental", false);
+  }, [isOnline, values.laptopRental, setValue]);
 
   // A promo's discount depends on the boot-camp fee, so if the track or add-ons change after a
   // code was applied we drop it and ask the camper to re-apply — keeping the shown total honest.
@@ -240,10 +240,7 @@ export default function RegistrationForm({ pricing, initialMode = "in_person" }:
               <div className="text-[10.5px] font-bold tracking-[.2em] text-aqua-deep uppercase mb-0.5">You&rsquo;re registering for</div>
               <div className="text-[15px] font-semibold text-ink">
                 {isOnline ? "Online programme" : "In-person programme · Lagos"}
-                <span className="ml-2 font-accent font-extrabold">
-                  {naira(bootCampFee)}
-                  {isOnline ? ` + ${naira(pricing.deliveryFee)} delivery` : ""}
-                </span>
+                <span className="ml-2 font-accent font-extrabold">{naira(bootCampFee)}</span>
               </div>
             </div>
             <a
@@ -330,19 +327,11 @@ export default function RegistrationForm({ pricing, initialMode = "in_person" }:
             <input type="email" className="input" {...register("parent.email")} />
           </Field>
 
-          <Field
-            label={isOnline ? "Delivery address" : "Home address"}
-            error={formState.errors.parent?.address?.message}
-          >
-            <textarea
-              rows={2}
-              className="input"
-              placeholder={isOnline ? "Where we ship the welcome kit" : undefined}
-              {...register("parent.address")}
-            />
+          <Field label="Home address" error={formState.errors.parent?.address?.message}>
+            <textarea rows={2} className="input" {...register("parent.address")} />
             {isOnline && (
               <p className="text-[11.5px] text-neutral-500 mt-1.5">
-                Your online welcome kit ships here — please give a full, reachable address.
+                If you add the Embedded Systems elective, we ship the kit to this address.
               </p>
             )}
           </Field>
@@ -474,31 +463,21 @@ export default function RegistrationForm({ pricing, initialMode = "in_person" }:
             </div>
           )}
 
-          {/* Welcome-kit delivery — mandatory on the online track. */}
-          {isOnline && (
-            <div className="ticket-card frosted-glass rounded-2xl p-4 flex items-start gap-3 border-2 border-aqua-brand/30">
-              <span className="text-[20px] leading-none mt-0.5" aria-hidden>📦</span>
-              <div className="flex-1">
-                <div className="text-[10px] font-bold tracking-[.18em] text-aqua-deep mb-0.5">INCLUDED · DELIVERED</div>
-                <div className="text-[14px] font-semibold text-ink">Welcome kit — t-shirt &amp; materials shipped to you</div>
-                <div className="text-[12px] text-neutral-600 mt-0.5 leading-snug">
-                  Flat nationwide delivery, added to your total below.
-                </div>
-              </div>
-              <div className="font-accent font-extrabold text-[18px] text-ink shrink-0">+{naira(pricing.deliveryFee)}</div>
-            </div>
-          )}
-
-          {/* Electives — opt-in paid courses (in-person only; empty on the online track). */}
+          {/* Elective — Embedded Systems, offered on both tracks. Online ships the kit (priced
+              higher, delivery included); in-person builds it on-site. */}
           {electives.map((c) => (
             <label key={c.slug} className="ticket-card frosted-glass rounded-2xl p-4 flex items-start gap-3 cursor-pointer border-2 border-aqua-brand/30">
               <input type="checkbox" {...register("roboticsElective")} className="accent-aqua-brand mt-1" />
               <div className="flex-1">
                 <div className="text-[10px] font-bold tracking-[.18em] text-aqua-deep mb-0.5">✦ OPTIONAL ELECTIVE</div>
-                <div className="text-[14px] font-semibold text-ink">{c.name}</div>
-                <div className="text-[12px] text-neutral-600 mt-0.5 leading-snug">{c.shortDesc}</div>
+                <div className="text-[14px] font-semibold text-ink">{electiveLabel}</div>
+                <div className="text-[12px] text-neutral-600 mt-0.5 leading-snug">
+                  {isOnline
+                    ? "Build your own gadget at home — the hardware kit ships to you, delivery included."
+                    : c.shortDesc}
+                </div>
               </div>
-              <div className="font-accent font-extrabold text-[18px] text-ink shrink-0">+{naira(pricing.roboticsPrice)}</div>
+              <div className="font-accent font-extrabold text-[18px] text-ink shrink-0">+{naira(electivePrice)}</div>
             </label>
           ))}
 
@@ -539,14 +518,14 @@ export default function RegistrationForm({ pricing, initialMode = "in_person" }:
                 ["Attendance", "Online (anywhere)"],
                 ["Cohort", cohortLabel(values.cohort)],
                 ["Courses", `${attendedCourses.length} live online courses`],
-                ["Welcome kit", `Delivered (+${naira(pricing.deliveryFee)})`],
+                ["Embedded Systems", values.roboticsElective ? `Yes (+${naira(electivePrice)}, kit shipped)` : "No"],
               ]
             : [
                 ["Attendance", "In-person (Lagos)"],
                 ["Cohort", cohortLabel(values.cohort)],
                 ["Core courses", `${attendedCourses.length} (all attended)`],
                 ["Side attractions", "Go-Kart · Table Tennis · FIFA '26 · VR Games"],
-                ["Robotics elective", values.roboticsElective ? `Yes (+${naira(pricing.roboticsPrice)})` : "No"],
+                ["Robotics elective", values.roboticsElective ? `Yes (+${naira(electivePrice)})` : "No"],
                 ["Laptop rental", values.laptopRental ? `Yes (+${naira(pricing.laptopPrice)})` : "No"],
               ]) as [string, string][]}
             onEdit={() => setStep(2)} />
@@ -564,7 +543,7 @@ export default function RegistrationForm({ pricing, initialMode = "in_person" }:
                 </tr>
                 {values.roboticsElective && (
                   <tr>
-                    <td className="py-1.5">Robotics elective</td>
+                    <td className="py-1.5">{electiveLabel}{isOnline ? " (kit + delivery)" : ""}</td>
                     <td className="text-right py-1.5 font-mono">{naira(roboticsFee)}</td>
                   </tr>
                 )}
@@ -578,12 +557,6 @@ export default function RegistrationForm({ pricing, initialMode = "in_person" }:
                   <tr className="text-grass-brand">
                     <td className="py-1.5">Promo ({applied.code})</td>
                     <td className="text-right py-1.5 font-mono">−{naira(discountKobo)}</td>
-                  </tr>
-                )}
-                {isOnline && deliveryFee > 0 && (
-                  <tr>
-                    <td className="py-1.5">Welcome-kit delivery</td>
-                    <td className="text-right py-1.5 font-mono">{naira(deliveryFee)}</td>
                   </tr>
                 )}
                 <tr className="border-t border-white/15">

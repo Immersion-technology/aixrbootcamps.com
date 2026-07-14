@@ -198,8 +198,7 @@ export const CURRICULUM: CurriculumItem[] = [
     name: "Robotics & Embedded Systems",
     type: "class",
     isElective: true,
-    inPersonOnly: true,
-    electiveFeeKobo: PRICING.robotics, // env-configurable; covers the Arduino board, servos/motors and consumables the camper keeps
+    electiveFeeKobo: PRICING.robotics, // in-person elective fee; online is priced separately (kit shipped) — see PRICING.onlineEmbedded
     facilitators: [],
     hoursPerWeek: 4,
     sessionsPerWeek: 2,

@@ -50,7 +50,7 @@ export function buildReceiptPdf(args: ReceiptArgs): Promise<Buffer> {
     doc.text(`Attendance: ${isOnline ? "Online" : "In-person (Lagos)"}`);
     if (args.cohort) doc.text(`Cohort: ${cohortLabel(args.cohort)}`);
     if (isOnline) {
-      doc.text(`Welcome kit: delivered`);
+      doc.text(`Embedded Systems elective: ${args.roboticsElective ? "Yes (kit shipped)" : "No"}`);
     } else {
       doc.text(`Robotics elective: ${args.roboticsElective ? "Yes" : "No"}`);
       doc.text(`Laptop rental: ${args.laptopRental ? "Yes" : "No"}`);
@@ -58,14 +58,14 @@ export function buildReceiptPdf(args: ReceiptArgs): Promise<Buffer> {
     doc.moveDown(1);
 
     doc.text(`${isOnline ? "Online programme:" : "Boot camp fee:   "} ${formatNaira(args.bootCampFeeKobo)}`);
-    if (!isOnline && args.roboticsElective) doc.text(`Robotics elective: ${formatNaira(args.roboticsFeeKobo)}`);
+    if (args.roboticsElective) {
+      const label = isOnline ? "Embedded Systems (kit + delivery):" : "Robotics elective:";
+      doc.text(`${label} ${formatNaira(args.roboticsFeeKobo)}`);
+    }
     if (!isOnline && args.laptopRental) doc.text(`Laptop rental:    ${formatNaira(args.laptopRentalKobo)}`);
     if (args.discountKobo && args.discountKobo > 0) {
       const label = args.promoCode ? `Promo (${args.promoCode}):` : "Discount:";
       doc.text(`${label.padEnd(18)}-${formatNaira(args.discountKobo)}`);
-    }
-    if (isOnline && args.deliveryFeeKobo && args.deliveryFeeKobo > 0) {
-      doc.text(`Welcome-kit delivery: ${formatNaira(args.deliveryFeeKobo)}`);
     }
     doc.moveDown(0.3);
     doc.fontSize(14).text(`TOTAL PAID:       ${formatNaira(args.totalKobo)}`, { underline: true });

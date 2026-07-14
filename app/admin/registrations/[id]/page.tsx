@@ -83,17 +83,16 @@ export default async function RegistrationDetail({ params }: { params: { id: str
             ))}
           </ul>
           <div className="mt-4 pt-3 border-t border-black/5 text-[13px] space-y-1">
-            <div>Robotics elective: <strong>{reg.roboticsElective ? "Yes" : "No"}</strong></div>
-            <div>Laptop rental: <strong>{reg.laptopRental ? "Yes" : "No"}</strong></div>
+            <div>{reg.attendanceMode === "online" ? "Embedded Systems elective" : "Robotics elective"}: <strong>{reg.roboticsElective ? "Yes" : "No"}</strong></div>
+            {reg.attendanceMode !== "online" && <div>Laptop rental: <strong>{reg.laptopRental ? "Yes" : "No"}</strong></div>}
           </div>
         </Card>
 
         <Card title="Pricing" tone="violet">
           <Row k="Tier" v={reg.pricing.tier} />
           <Row k={reg.pricing.tier === "online" ? "Online programme" : "Boot camp fee"} v={formatNaira(reg.pricing.bootCampFee)} />
-          {reg.pricing.roboticsFee > 0 && <Row k="Robotics elective" v={formatNaira(reg.pricing.roboticsFee)} />}
+          {reg.pricing.roboticsFee > 0 && <Row k={reg.attendanceMode === "online" ? "Embedded Systems (kit + delivery)" : "Robotics elective"} v={formatNaira(reg.pricing.roboticsFee)} />}
           {reg.pricing.laptopRentalFee > 0 && <Row k="Laptop rental" v={formatNaira(reg.pricing.laptopRentalFee)} />}
-          {(reg.pricing.deliveryFee ?? 0) > 0 && <Row k="Welcome-kit delivery" v={formatNaira(reg.pricing.deliveryFee)} />}
           {reg.pricing.discountKobo > 0 && (
             <>
               <Row k="Subtotal" v={formatNaira(reg.pricing.subtotal ?? reg.pricing.total + reg.pricing.discountKobo)} />

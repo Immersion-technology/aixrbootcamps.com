@@ -22,7 +22,7 @@ export const FAQS: FaqItem[] = [
   {
     topic: "Logistics",
     q: "Can my child attend online?",
-    a: `Yes — we run a dedicated online track for ${nairaFromKobo(PRICING.online)}. It covers three live courses taught remotely (Vibe Coding, Content Creation, and 3D & VR), plus a welcome kit — t-shirt and materials — delivered anywhere in Nigeria for a flat ${nairaFromKobo(PRICING.delivery)}. The online track does not include the Demo Day pitch, the prize, or the Robotics elective — those are in-person only. Choose the online programme from the "Choose your programme" section on our homepage.`,
+    a: `Yes — we run a dedicated online track for a flat ${nairaFromKobo(PRICING.online)}, fully remote. It covers three live courses taught online (Vibe Coding, Content Creation, and 3D & VR). You can also add the optional Embedded Systems elective for ${nairaFromKobo(PRICING.onlineEmbedded)} — that price is all-in and includes the hardware kit delivered to you anywhere in Nigeria. The online track does not include the Demo Day pitch, the prize, or the on-site side attractions — those are in-person only. Choose the online programme from the "Choose your programme" section on our homepage.`,
   },
   {
     topic: "Logistics",

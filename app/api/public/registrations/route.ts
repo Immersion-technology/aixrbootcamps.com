@@ -50,29 +50,31 @@ export async function POST(req: NextRequest) {
     }
 
     // --- course set + pricing are chosen by attendance mode (server-authoritative) ---
-    // Online is a trimmed, flat-priced track: a fixed set of core classes, no paid add-ons,
-    // plus a mandatory welcome-kit delivery fee. In-person keeps the full programme where
-    // every camper attends every core class and Robotics is an opt-in paid elective.
+    // Online is a flat-priced, fully-remote track: a fixed set of core classes, plus an OPTIONAL
+    // Embedded Systems elective (the kit is shipped, so it costs more online than in-person and
+    // there is no separate delivery fee). In-person keeps the full programme where every camper
+    // attends every core class and the Robotics/Embedded elective is an opt-in paid add-on.
     const isOnline = data.attendanceMode === "online";
+    const wantsElective = !!data.roboticsElective;
 
+    // The Embedded/Robotics elective adds the robotics class to the enrolment on either track.
     const finalCourses = isOnline
-      ? onlineSlugs()
+      ? [...onlineSlugs(), ...(wantsElective ? ["robotics"] : [])]
       : getClasses()
-          .filter((c) => !c.isElective || data.roboticsElective)
+          .filter((c) => !c.isElective || wantsElective)
           .map((c) => c.slug);
 
     // --- pricing (server-authoritative; the client never dictates the amount) ---
     const tier = resolveTier(data.attendanceMode, earlyBirdCutoff);
     const bootCampFee = bootCampFeeKobo(tier);
-    // Add-ons are in-person only. The zod schema already rejects them for online; forcing
-    // them to zero here as well means a tampered payload can never be charged for them.
+    // Laptop rental is in-person only (zod also rejects it online). The elective is priced by
+    // track: online is higher because its price is all-in (hardware kit + nationwide delivery).
     const laptopRentalFee = !isOnline && data.laptopRental ? PRICING.laptop : 0;
-    const roboticsFee = !isOnline && data.roboticsElective ? PRICING.robotics : 0;
-    const deliveryFee = isOnline ? PRICING.delivery : 0;
+    const roboticsFee = wantsElective ? (isOnline ? PRICING.onlineEmbedded : PRICING.robotics) : 0;
     const subtotal = bootCampFee + laptopRentalFee + roboticsFee;
 
     // --- promo code (optional) — validated + applied here, never trusted from the client.
-    // The discount applies to the boot camp fee only; add-ons and delivery are charged in full.
+    // The discount applies to the boot camp fee only; add-ons are always charged in full.
     let discountKobo = 0;
     let appliedPromoCode: string | undefined;
     if (data.promoCode) {
@@ -86,9 +88,7 @@ export async function POST(req: NextRequest) {
       discountKobo = promo.discount!.discountKobo;
       appliedPromoCode = promo.promo!.code;
     }
-    // Delivery is a mandatory pass-through added on top of the (discounted) subtotal, so
-    // `total` — what Paystack charges and what confirm-payment verifies — includes it.
-    const total = subtotal - discountKobo + deliveryFee;
+    const total = subtotal - discountKobo;
 
     // --- sequential registration ID + payment reference ---
     const seq = await nextSeq("registration");
@@ -116,7 +116,7 @@ export async function POST(req: NextRequest) {
       courses: finalCourses,
       laptopRental: data.laptopRental,
       roboticsElective: data.roboticsElective,
-      pricing: { tier, bootCampFee, laptopRentalFee, roboticsFee, subtotal, discountKobo, deliveryFee, promoCode: appliedPromoCode, total },
+      pricing: { tier, bootCampFee, laptopRentalFee, roboticsFee, subtotal, discountKobo, promoCode: appliedPromoCode, total },
       paymentStatus: "pending",
       admissionStatus: "pending",
       paymentReference,
