@@ -11,7 +11,7 @@ export default function PrivacyPage() {
       <div className="max-w-[760px] mx-auto px-5 sm:px-7">
         <div className="inline-flex items-center gap-2 frosted-glass rounded-full px-3.5 py-1.5 text-[10.5px] font-bold tracking-[.22em] mb-5 anim-fade-up">
           <span className="w-1.5 h-1.5 rounded-full bg-aqua-brand inline-block anim-pulse" />
-          LEGAL · LAST UPDATED MAY 2026
+          LEGAL · LAST UPDATED JULY 2026
         </div>
 
         <h1 className="font-bubble leading-[1] tracking-tight text-[clamp(38px,5.6vw,64px)] mb-3 anim-fade-up delay-1 text-ink">
@@ -35,7 +35,7 @@ export default function PrivacyPage() {
               <li><strong>Emergency contact:</strong> name, phone, relationship.</li>
               <li><strong>Medical notes:</strong> only what you choose to disclose (allergies, conditions we should know about).</li>
               <li><strong>Payment metadata:</strong> Paystack reference + status. We do <em>not</em> store card numbers or bank details, those live with Paystack.</li>
-              <li><strong>Site analytics:</strong> anonymous page-view data and request IPs used briefly for rate-limiting abuse.</li>
+              <li><strong>Site analytics:</strong> page-view data grouped by an anonymous device cookie (not your identity), plus device type, approximate location, and IP address used for abuse prevention and traffic reporting.</li>
             </ul>
           </Section>
 
@@ -66,7 +66,7 @@ export default function PrivacyPage() {
 
           <Section title="5. How long we keep it">
             <p>
-              Registration records and payment metadata are kept for <strong>two years</strong> after the cohort ends, then permanently deleted. Anonymous analytics are kept for up to 12 months. Medical notes are deleted within 30 days of camp ending unless required for an ongoing incident report.
+              Registration records and payment metadata are kept for <strong>two years</strong> after the cohort ends, then permanently deleted. Site analytics (cookie-grouped, not identity-linked) are kept for up to 12 months. Medical notes are deleted within 30 days of camp ending unless required for an ongoing incident report.
             </p>
           </Section>
 

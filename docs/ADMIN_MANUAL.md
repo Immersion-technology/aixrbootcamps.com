@@ -174,11 +174,19 @@ instead of paying. This screen lists them with contact details so you can reach 
 ## 11. Analytics
 
 **Analytics** is your website traffic dashboard:
-- Total visits (all-time, last 7 days, today).
-- A 14-day trend.
+- Total page views and unique visitors (all-time, last 7 days, today).
+- A 14-day trend showing views vs. unique visitors.
 - Your most-visited pages.
+- Breakdowns by device, browser, country, and traffic source (last 7 days).
+- A recent-visitors table: entry page, approximate location, device, masked IP, pages viewed, and last-seen time.
 
-Useful for seeing whether a campaign or post drove traffic.
+Visitors are identified by an anonymous cookie set on their device — not by name, email, or account.
+This lets you see repeat vs. new visitors and how many pages someone looked at in one visit, without
+tying traffic data to a real identity. IP addresses are shown partially masked and are only used for
+abuse detection and rough geography, matching what's described in the site's Privacy Policy.
+
+Useful for seeing whether a campaign or post drove traffic, and whether visitors are exploring the
+site or bouncing after one page.
 
 ---
 

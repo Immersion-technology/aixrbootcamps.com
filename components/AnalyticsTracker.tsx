@@ -1,10 +1,11 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
 export default function AnalyticsTracker() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     fetch("/api/analytics/track", {
@@ -13,9 +14,13 @@ export default function AnalyticsTracker() {
       body: JSON.stringify({
         path: pathname,
         referrer: document.referrer,
+        utmSource: searchParams.get("utm_source") ?? "",
+        utmMedium: searchParams.get("utm_medium") ?? "",
+        utmCampaign: searchParams.get("utm_campaign") ?? "",
       }),
     }).catch(() => {});
-  }, [pathname]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname, searchParams]);
 
   return null;
 }
