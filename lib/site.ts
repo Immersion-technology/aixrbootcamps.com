@@ -45,7 +45,6 @@ export const CONTACT_COUNTRY = "NG";
 
 // Pricing in naira, for Offer structured data only. Derived from the kobo source of
 // truth in lib/pricing.ts (env-configurable) so SEO and checkout never disagree.
-export const PRICE_EARLY_BIRD = PRICING.earlyBird / 100;
 export const PRICE_REGULAR = PRICING.regular / 100;
 
 /** Build an absolute URL from a site-relative path. */

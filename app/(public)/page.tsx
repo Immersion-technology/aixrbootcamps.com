@@ -17,7 +17,7 @@ import JsonLd from "@/components/JsonLd";
 import { connectDB } from "@/lib/db";
 import { Registration } from "@/models/Registration";
 import { getSetting, SETTING_KEYS } from "@/models/Setting";
-import { PRICING, EARLY_BIRD_CUTOFF_DEFAULT, isEarlyBird as isEarlyBirdNow } from "@/lib/pricing";
+import { PRICING } from "@/lib/pricing";
 import { COHORTS, CAMP_SCHEDULE } from "@/lib/cohorts";
 import {
   SITE_URL,
@@ -27,7 +27,6 @@ import {
   CAMP_END,
   CONTACT_CITY,
   CONTACT_COUNTRY,
-  PRICE_EARLY_BIRD,
   PRICE_REGULAR,
   absoluteUrl,
 } from "@/lib/site";
@@ -75,7 +74,7 @@ const EVENT_JSONLD = {
   organizer: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
   offers: {
     "@type": "Offer",
-    price: PRICE_EARLY_BIRD,
+    price: PRICE_REGULAR,
     priceCurrency: "NGN",
     availability: "https://schema.org/InStock",
     url: absoluteUrl("/register"),
@@ -85,25 +84,23 @@ const EVENT_JSONLD = {
 
 type IconCmp = typeof RoboticIcon;
 
-// ISR: regenerate the static HTML at most once a minute. Capacity / paid-count and the
-// early-bird cutoff rarely change between renders, so the DB roundtrip can sit behind an
-// edge cache rather than hitting MongoDB on every visit.
+// ISR: regenerate the static HTML at most once a minute. Capacity / paid-count rarely
+// change between renders, so the DB roundtrip can sit behind an edge cache rather than
+// hitting MongoDB on every visit.
 export const revalidate = 60;
 
 async function getPublicConfig() {
-  // Prices are env-configured in lib/pricing.ts; only capacity + cutoff come from the DB.
+  // Prices are env-configured in lib/pricing.ts; only capacity + paid-count come from the DB.
   try {
     await connectDB();
-    const [capacity, paid, earlyBirdCutoff] = await Promise.all([
+    const [capacity, paid] = await Promise.all([
       getSetting<number>(SETTING_KEYS.CAPACITY, 50),
       Registration.countDocuments({ paymentStatus: "paid" }),
-      getSetting<string>(SETTING_KEYS.EARLY_BIRD_CUTOFF, EARLY_BIRD_CUTOFF_DEFAULT),
     ]);
     return {
       slotsTotal: capacity,
       slotsPaid: paid,
       slotsLeft: Math.max(0, capacity - paid),
-      earlyBirdCutoff,
       isClosed: paid >= capacity,
     };
   } catch {
@@ -111,7 +108,6 @@ async function getPublicConfig() {
       slotsTotal: 50,
       slotsPaid: 0,
       slotsLeft: 50,
-      earlyBirdCutoff: EARLY_BIRD_CUTOFF_DEFAULT,
       isClosed: false,
     };
   }
@@ -119,19 +115,11 @@ async function getPublicConfig() {
 
 export default async function Landing() {
   const cfg = await getPublicConfig();
-  const earlyBird = isEarlyBirdNow(cfg.earlyBirdCutoff);
-  const earlyBirdPrice = PRICING.earlyBird;
   const regularPrice = PRICING.regular;
   const naira = (k: number) => `₦${(k / 100).toLocaleString("en-NG")}`;
-  // Human date derived from the cutoff so the promo copy can never go stale (e.g. "27 Jul").
-  const cutoffLabel = new Date(cfg.earlyBirdCutoff).toLocaleDateString("en-NG", {
-    day: "numeric",
-    month: "short",
-  });
-  // SEO Offer price reflects the price a visitor actually pays right now (env-driven).
   const eventJsonLd = {
     ...EVENT_JSONLD,
-    offers: { ...EVENT_JSONLD.offers, price: earlyBird ? PRICE_EARLY_BIRD : PRICE_REGULAR },
+    offers: { ...EVENT_JSONLD.offers, price: PRICE_REGULAR },
   };
 
   return (
@@ -212,26 +200,20 @@ export default async function Landing() {
                 </div>
               </div>
 
-              {/* Ticket coupon CTA. The eyebrow + price adapt to whether early-bird is still
-                  live (derived from the cutoff), so it never advertises an expired promo.
-                  block + lg:w-full so on desktop it stretches across the full right column. */}
+              {/* Ticket coupon CTA. block + lg:w-full so on desktop it stretches across the
+                  full right column. */}
               <Link
                 href="/register"
                 className="group block lg:w-full"
-                aria-label={
-                  earlyBird
-                    ? `Reserve a slot. Early bird ${naira(earlyBirdPrice)}, ends ${cutoffLabel}`
-                    : `Reserve a slot. Boot camp fee ${naira(regularPrice)}`
-                }
+                aria-label={`Reserve a slot. Boot camp fee ${naira(regularPrice)}`}
               >
                 <div className="card-ticket card-ticket--amber flex items-stretch gap-4 sm:gap-5 group-hover:-translate-y-1 transition-transform h-full">
                   <div className="flex-1 pr-2 flex flex-col justify-center">
                     <div className="text-[10px] sm:text-[10.5px] font-bold tracking-[.22em] uppercase text-ink/80">
-                      {earlyBird ? `Early bird · ends ${cutoffLabel}` : "Boot camp fee"}
+                      Boot camp fee
                     </div>
                   <div className="flex items-baseline gap-2 mt-1">
-                      <span className="font-bubble text-[28px] sm:text-[34px] leading-none text-ink">{naira(earlyBird ? earlyBirdPrice : regularPrice)}</span>
-                      {earlyBird && <span className="text-[14px] sm:text-[18px] line-through text-ink/45">{naira(regularPrice)}</span>}
+                      <span className="font-bubble text-[28px] sm:text-[34px] leading-none text-ink">{naira(regularPrice)}</span>
                     </div>
                     <div className="text-[10.5px] font-bold tracking-[.16em] uppercase text-ink/60 mt-1">{cfg.slotsTotal} slots only</div>
                   </div>
@@ -279,11 +261,10 @@ export default async function Landing() {
                 <span className="sticker-pill">Full camp</span>
               </div>
               <div className="flex items-baseline gap-2 mt-1">
-                <span className="font-bubble text-[40px] leading-none text-ink">{naira(earlyBird ? earlyBirdPrice : regularPrice)}</span>
-                {earlyBird && <span className="text-[16px] line-through text-ink/40">{naira(regularPrice)}</span>}
+                <span className="font-bubble text-[40px] leading-none text-ink">{naira(regularPrice)}</span>
               </div>
               <div className="text-[11px] font-semibold text-neutral-500 uppercase tracking-wide mt-1 mb-5">
-                {earlyBird ? `Early-bird · ends ${cutoffLabel}` : "Boot camp fee"}
+                Boot camp fee
               </div>
               <ul className="space-y-2.5 text-[13.5px] text-neutral-700 mb-7">
                 <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> All 6 courses on-site, Mon–Fri</li>
@@ -587,11 +568,7 @@ export default async function Landing() {
             </h2>
             <p className="max-w-[480px] my-6 text-neutral-700 text-[14.5px] leading-relaxed mx-auto md:mx-0">
               The 2026 cohorts run <strong>27 July – 4 September</strong> as three back-to-back 2-week sessions. Once we hit {cfg.slotsTotal} paid registrations the camp closes. Next AI &amp; XR isn&apos;t until summer 2027.{" "}
-              {earlyBird ? (
-                <><strong>Early-bird {naira(earlyBirdPrice)} ends {cutoffLabel}</strong> — after that it&apos;s {naira(regularPrice)}.</>
-              ) : (
-                <>The boot camp fee is <strong>{naira(regularPrice)}</strong>.</>
-              )}{" "}
+              The boot camp fee is <strong>{naira(regularPrice)}</strong>.{" "}
               It covers the 5 core courses, daily side attractions, materials and Demo Day — Robotics is an optional +{naira(PRICING.robotics)} elective. Daily attractions are subject to token usage.
             </p>
             <div className="flex flex-wrap gap-3 items-center justify-center md:justify-start">

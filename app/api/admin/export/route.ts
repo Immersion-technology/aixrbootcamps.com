@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import Papa from "papaparse";
 import { connectDB } from "@/lib/db";
 import { Registration } from "@/models/Registration";
 import { getAdminFromCookie } from "@/lib/auth";
 import { calcAge, formatNaira } from "@/lib/utils";
 import { cohortLabel } from "@/lib/cohorts";
+import { csvResponse } from "@/lib/csv";
 
 export const dynamic = "force-dynamic";
 
@@ -59,14 +59,5 @@ export async function GET(req: NextRequest) {
     "Registered at": new Date(r.createdAt).toISOString(),
   }));
 
-  const csv = Papa.unparse(csvRows);
-  const filename = `immersia-registrations-${new Date().toISOString().slice(0, 10)}.csv`;
-
-  return new NextResponse(csv, {
-    status: 200,
-    headers: {
-      "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="${filename}"`,
-    },
-  });
+  return csvResponse(csvRows, "immersia-registrations");
 }

@@ -45,8 +45,6 @@ async function main() {
   // --- Settings ---
   // Prices are configured via env (lib/pricing.ts), so only operational settings are seeded.
   const defaults: Array<[string, unknown]> = [
-    // Past date = early-bird closed. Set a FUTURE date here (or in admin Settings) to re-open it.
-    [SETTING_KEYS.EARLY_BIRD_CUTOFF, "2026-07-03T23:59:59.000Z"],
     [SETTING_KEYS.CAPACITY, 50],
     [SETTING_KEYS.CAMP_START_DATE, "2026-07-27"],
     [SETTING_KEYS.CAMP_END_DATE, "2026-09-04"], // Cohort 3 ends 4 Sep 2026

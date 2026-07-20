@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { connectDB } from "@/lib/db";
-import { getSetting, SETTING_KEYS } from "@/models/Setting";
 import { validatePromo } from "@/lib/promo";
-import { PRICING, bootCampFeeKobo, resolveTier, EARLY_BIRD_CUTOFF_DEFAULT } from "@/lib/pricing";
+import { PRICING, bootCampFeeKobo, resolveTier } from "@/lib/pricing";
 import { rateLimit, getClientIp } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -35,9 +34,8 @@ export async function POST(req: NextRequest) {
 
   try {
     await connectDB();
-    const cutoff = await getSetting<string>(SETTING_KEYS.EARLY_BIRD_CUTOFF, EARLY_BIRD_CUTOFF_DEFAULT);
     const isOnline = parsed.data.attendanceMode === "online";
-    const tier = resolveTier(parsed.data.attendanceMode, cutoff);
+    const tier = resolveTier(parsed.data.attendanceMode);
     const bootCampFee = bootCampFeeKobo(tier);
     // The elective is priced by track (online is higher — kit shipped); laptop is in-person only.
     const electiveFee = parsed.data.roboticsElective

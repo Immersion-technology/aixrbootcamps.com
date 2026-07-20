@@ -261,7 +261,7 @@ textarea:focus-visible,
 .sticker-pill--green { background: #fb5607; color: #0B1220; }
 .sticker-pill--paper { background: #FAF7F2; color: #0B1220; border: 1.5px solid #0f0f0f; }
 
-/* ticket-card with perforated edge: for the early-bird CTA */
+/* ticket-card with perforated edge: for the boot-camp-fee CTA */
 .ticket-card {
   position: relative;
 }

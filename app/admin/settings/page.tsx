@@ -1,6 +1,5 @@
 import { connectDB } from "@/lib/db";
 import { getSetting, SETTING_KEYS } from "@/models/Setting";
-import { EARLY_BIRD_CUTOFF_DEFAULT } from "@/lib/pricing";
 import { CAMP_START, CAMP_END } from "@/lib/site";
 import SettingsForm from "./SettingsForm";
 
@@ -15,8 +14,7 @@ export default async function SettingsPage() {
   // uses (public config route, pricing, site), so the admin always sees the value that's
   // actually in force — never a blank field just because a key hasn't been persisted yet.
   // Prices are configured via env (lib/pricing.ts) and are not editable here.
-  const [earlyBirdCutoff, capacity, campStart, campEnd, alertEmail] = await Promise.all([
-    getSetting<string>(SETTING_KEYS.EARLY_BIRD_CUTOFF, EARLY_BIRD_CUTOFF_DEFAULT),
+  const [capacity, campStart, campEnd, alertEmail] = await Promise.all([
     getSetting<number>(SETTING_KEYS.CAPACITY, 50),
     getSetting<string>(SETTING_KEYS.CAMP_START_DATE, CAMP_START),
     getSetting<string>(SETTING_KEYS.CAMP_END_DATE, CAMP_END),
@@ -24,7 +22,6 @@ export default async function SettingsPage() {
   ]);
 
   const initial = {
-    [SETTING_KEYS.EARLY_BIRD_CUTOFF]: earlyBirdCutoff,
     [SETTING_KEYS.CAPACITY]: capacity,
     [SETTING_KEYS.CAMP_START_DATE]: campStart,
     [SETTING_KEYS.CAMP_END_DATE]: campEnd,

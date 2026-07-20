@@ -7,23 +7,20 @@ export default function ExportPage() {
           Export
         </h1>
         <p className="text-[13.5px] text-neutral-600 mt-3 max-w-[520px]">
-          Download every registration as a CSV. Apply filters by appending query params (e.g. <code className="frosted-glass rounded px-1.5 py-0.5 text-[11.5px] font-mono">?payment=paid</code>).
+          Download any report as a CSV. Registrations support filters via query params (e.g. <code className="frosted-glass rounded px-1.5 py-0.5 text-[11.5px] font-mono">?payment=paid</code>).
         </p>
       </div>
 
       <div className="frosted-glass rounded-3xl p-5 sm:p-7 space-y-6">
-        {/* Primary download */}
         <div>
-          <div className="text-[10.5px] font-bold tracking-[.22em] text-violet-brand uppercase mb-3">Everything</div>
+          <div className="text-[10.5px] font-bold tracking-[.22em] text-violet-brand uppercase mb-3">Registrations</div>
           <a href="/api/admin/export?format=csv" className="btn-dark inline-flex">
             Download all as CSV <span>→</span>
           </a>
-          <p className="text-[11.5px] text-neutral-500 mt-2.5">Opens cleanly in Excel, Google Sheets, Numbers.</p>
-        </div>
-
-        <div className="border-t border-black/5 pt-6">
-          <div className="text-[10.5px] font-bold tracking-[.22em] text-violet-brand uppercase mb-3">Filtered exports</div>
-          <div className="flex flex-wrap gap-2.5">
+          <p className="text-[11.5px] text-neutral-500 mt-2.5">
+            Camper + parent details, courses, pricing, payment/admission status. Opens cleanly in Excel, Google Sheets, Numbers.
+          </p>
+          <div className="flex flex-wrap gap-2.5 mt-4">
             <Chip href="/api/admin/export?format=csv&payment=paid">Paid only</Chip>
             <Chip href="/api/admin/export?format=csv&payment=pending">Pending payment</Chip>
             <Chip href="/api/admin/export?format=csv&admission=admitted">Admitted only</Chip>
@@ -33,7 +30,50 @@ export default function ExportPage() {
         </div>
 
         <div className="border-t border-black/5 pt-6">
-          <div className="text-[10.5px] font-bold tracking-[.22em] text-violet-brand uppercase mb-2">What&apos;s included</div>
+          <div className="text-[10.5px] font-bold tracking-[.22em] text-violet-brand uppercase mb-3">Payments</div>
+          <a href="/api/admin/export/payments" className="btn-dark inline-flex">
+            Download payments as CSV <span>→</span>
+          </a>
+          <p className="text-[11.5px] text-neutral-500 mt-2.5">
+            Every Paystack transaction attempt — reference, channel, status, amount, timestamp.
+          </p>
+          <div className="flex flex-wrap gap-2.5 mt-4">
+            <Chip href="/api/admin/export/payments?status=success">Successful</Chip>
+            <Chip href="/api/admin/export/payments?status=failed">Failed</Chip>
+            <Chip href="/api/admin/export/payments?status=abandoned">Abandoned</Chip>
+          </div>
+        </div>
+
+        <div className="border-t border-black/5 pt-6">
+          <div className="text-[10.5px] font-bold tracking-[.22em] text-violet-brand uppercase mb-3">Waitlist</div>
+          <a href="/api/admin/export/waitlist" className="btn-dark inline-flex">
+            Download waitlist as CSV <span>→</span>
+          </a>
+          <p className="text-[11.5px] text-neutral-500 mt-2.5">Everyone who signed up while the camp was full.</p>
+        </div>
+
+        <div className="border-t border-black/5 pt-6">
+          <div className="text-[10.5px] font-bold tracking-[.22em] text-violet-brand uppercase mb-3">Site traffic</div>
+          <a href="/api/admin/export/analytics" className="btn-dark inline-flex">
+            Download pageviews as CSV <span>→</span>
+          </a>
+          <p className="text-[11.5px] text-neutral-500 mt-2.5">
+            Raw pageview events (last 30 days, capped at 20,000 rows) — path, visitor, device, geo, UTM.
+          </p>
+        </div>
+
+        <div className="border-t border-black/5 pt-6">
+          <div className="text-[10.5px] font-bold tracking-[.22em] text-violet-brand uppercase mb-3">Stats snapshot</div>
+          <a href="/api/admin/export/stats" className="btn-dark inline-flex">
+            Download KPI snapshot as CSV <span>→</span>
+          </a>
+          <p className="text-[11.5px] text-neutral-500 mt-2.5">
+            One-row summary: totals, revenue, capacity, waitlist size — a dated snapshot for board/sponsor updates.
+          </p>
+        </div>
+
+        <div className="border-t border-black/5 pt-6">
+          <div className="text-[10.5px] font-bold tracking-[.22em] text-violet-brand uppercase mb-2">What&apos;s included in Registrations</div>
           <p className="text-[12.5px] text-neutral-700 leading-relaxed">
             Camper full name, DOB, age, gender, school, t-shirt size · parent name, email, both phone numbers, address, relationship · emergency contact · medical notes · selected courses · laptop rental flag · pricing tier + amount · payment + admission status · paid timestamp · Payment reference · created timestamp.
           </p>

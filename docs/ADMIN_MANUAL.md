@@ -81,7 +81,7 @@ On a registration's detail page you can:
 
 ## 5. Promo codes
 
-Open **Promos** to run discounts (early-bird pushes, referral codes, partner deals, etc.).
+Open **Promos** to run discounts (referral codes, partner deals, limited-time pushes, etc.).
 
 ### Create a code
 Fill the "Create a promo code" form:
@@ -113,31 +113,20 @@ The table shows every code with its discount, **uses (used / max)**, expiry, and
 
 ---
 
-## 6. Prices &amp; the early-bird deadline
+## 6. Prices
 
-### Prices
-Boot-camp prices (regular fee, early-bird fee, laptop rental, robotics elective, instalment deposit)
+Boot-camp prices (regular fee, laptop rental, robotics elective, instalment deposit)
 are set by the **developer through the site's configuration**, not in this dashboard. This keeps one
 single source of truth for what parents are shown and charged. To change a price, ask your developer —
 it's a quick config change + redeploy, and it updates **everywhere** on the site at once.
 
 > For running **limited-time discounts yourself**, use **Promo codes** (Section 5) — no developer needed.
 
-### Early-bird
-Early-bird is controlled by a **cutoff date**:
-- Before the cutoff → parents see the **early-bird price** and a promo banner.
-- On/after the cutoff → the banner disappears and everyone sees the **regular price**.
-
-You can move the cutoff under **Settings → Cohort dates → Early-bird cutoff**.
-- Set a **future** date to run/extend early-bird.
-- Set a **past** date to end early-bird immediately (regular pricing everywhere).
-
 ---
 
 ## 7. Settings
 
 **Settings** holds the operational knobs:
-- **Early-bird cutoff** (see above).
 - **Camp start / end dates.**
 - **Total slot capacity** — once paid registrations reach this, the site shows "camp full" and
   sends new sign-ups to the waitlist.

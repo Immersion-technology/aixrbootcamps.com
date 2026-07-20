@@ -7,24 +7,6 @@ interface Props {
   initial: Record<string, string | number>;
 }
 
-/**
- * A stored early-bird cutoff is a UTC ISO instant; a `datetime-local` input wants a
- * naive local-wall-clock "YYYY-MM-DDTHH:mm". Convert both ways so the value round-trips
- * without drifting by the timezone offset, and never throw on an empty/invalid input.
- */
-function isoToLocalInput(iso: unknown): string {
-  if (typeof iso !== "string" || !iso) return "";
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return "";
-  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-}
-
-function localInputToISO(local: string): string | null {
-  if (!local) return null;
-  const d = new Date(local); // interpreted as local time
-  return isNaN(d.getTime()) ? null : d.toISOString();
-}
-
 export default function SettingsForm({ initial }: Props) {
   const [vals, setVals] = useState(initial);
   const [savingKey, setSavingKey] = useState<string | null>(null);
@@ -59,8 +41,7 @@ export default function SettingsForm({ initial }: Props) {
       <Section title="Pricing" eyebrow="Set via env">
         <p className="text-[13px] text-neutral-600 leading-relaxed">
           Boot-camp prices are configured through environment variables
-          (<code className="text-[12px] bg-black/[.05] rounded px-1.5 py-0.5">PRICE_EARLY_BIRD_KOBO</code>,
-          <code className="text-[12px] bg-black/[.05] rounded px-1.5 py-0.5 ml-1">PRICE_REGULAR_KOBO</code>,
+          (<code className="text-[12px] bg-black/[.05] rounded px-1.5 py-0.5">PRICE_REGULAR_KOBO</code>,
           <code className="text-[12px] bg-black/[.05] rounded px-1.5 py-0.5 ml-1">PRICE_LAPTOP_RENTAL_KOBO</code>,
           <code className="text-[12px] bg-black/[.05] rounded px-1.5 py-0.5 ml-1">PRICE_ROBOTICS_ELECTIVE_KOBO</code>)
           so there's a single source of truth for what campers are shown and charged. Update them in your
@@ -71,24 +52,7 @@ export default function SettingsForm({ initial }: Props) {
 
       {/* COHORT DATES */}
       <Section title="Cohort dates" eyebrow="When camp runs">
-        <Field label="Early-bird cutoff (datetime)">
-          <input
-            type="datetime-local"
-            className="input"
-            value={isoToLocalInput(vals[SETTING_KEYS.EARLY_BIRD_CUTOFF])}
-            onChange={(e) => {
-              // Store the UTC ISO in state; leave it untouched (don't throw) while the
-              // field is empty or mid-edit. Save happens on blur only if we have a value.
-              const iso = localInputToISO(e.target.value);
-              set(SETTING_KEYS.EARLY_BIRD_CUTOFF, iso ?? "");
-            }}
-            onBlur={(e) => {
-              const iso = localInputToISO(e.target.value);
-              if (iso) save(SETTING_KEYS.EARLY_BIRD_CUTOFF, iso);
-            }}
-          />
-        </Field>
-        <div className="grid md:grid-cols-2 gap-4 mt-4">
+        <div className="grid md:grid-cols-2 gap-4">
           <Field label="Camp start date">
             <input type="date" className="input"
               value={vals[SETTING_KEYS.CAMP_START_DATE] as string}

@@ -21,10 +21,8 @@ function intEnv(name: string, fallback: number): number {
 
 export const PRICING = {
   /** Boot camp fee for the in-person track. */
-  earlyBird: intEnv("PRICE_EARLY_BIRD_KOBO", 15_000_000), // ₦150,000
-  /** Boot camp fee for the in-person track. */
-  regular: intEnv("PRICE_REGULAR_KOBO", 15_000_000), // ₦150,000
-  /** Flat fee for the ONLINE track (trimmed programme, no early-bird calendar). */
+  regular: intEnv("PRICE_REGULAR_KOBO", 10_000_000), // ₦100,000
+  /** Flat fee for the ONLINE track (trimmed programme). */
   online: intEnv("PRICE_ONLINE_KOBO", 5_000_000), // ₦50,000
   /**
    * Optional Embedded Systems elective for ONLINE campers. This price is all-in: it covers
@@ -39,39 +37,22 @@ export const PRICING = {
   deposit: intEnv("PRICE_DEPOSIT_KOBO", 7_500_000), // ₦75,000
 } as const;
 
-export type PricingTier = "early_bird" | "regular" | "online";
+export type PricingTier = "regular" | "online";
 export type AttendanceMode = "in_person" | "online";
 
 /** The boot camp fee (kobo) for a given pricing tier. */
 export function bootCampFeeKobo(tier: PricingTier): number {
-  if (tier === "online") return PRICING.online;
-  return tier === "early_bird" ? PRICING.earlyBird : PRICING.regular;
+  return tier === "online" ? PRICING.online : PRICING.regular;
 }
 
 /**
  * The pricing tier in force for a registration. The ONLINE track is a distinct, flat-priced
- * product; the in-person track is now a flat regular price. This is the single place attendance
+ * product; the in-person track is a flat regular price. This is the single place attendance
  * mode maps to a tier — the register page, the charge route and the promo-preview route all
  * derive their fee from here.
  */
-export function resolveTier(mode: AttendanceMode, cutoff: string, now: Date = new Date()): PricingTier {
-  if (mode === "online") return "online";
-  return "regular";
-}
-
-/**
- * Early-bird cutoff (ISO 8601). The early-bird window has CLOSED, so the default sits in
- * the past — every visitor sees regular pricing and the early-bird banner stays hidden.
- * To re-open early-bird, set EARLY_BIRD_CUTOFF (or the admin "Cohort dates" setting, which
- * overrides this at runtime) to a FUTURE date. Single fallback used everywhere the DB value
- * is missing (previously duplicated with inconsistent dates).
- */
-export const EARLY_BIRD_CUTOFF_DEFAULT =
-  process.env.EARLY_BIRD_CUTOFF ?? "2026-07-03T23:59:59.000Z";
-
-/** Whether early-bird pricing is still live at `now` for the given cutoff. */
-export function isEarlyBird(cutoff: string, now: Date = new Date()): boolean {
-  return now < new Date(cutoff);
+export function resolveTier(mode: AttendanceMode): PricingTier {
+  return mode === "online" ? "online" : "regular";
 }
 
 /**
@@ -123,7 +104,7 @@ export function applyPromo(
   return { discountKobo, totalKobo: orderSubtotalKobo - discountKobo };
 }
 
-/** Format a kobo amount as a Naira display string (e.g. 15000000 → "₦150,000"). */
+/** Format a kobo amount as a Naira display string (e.g. 10000000 → "₦100,000"). */
 export function nairaFromKobo(kobo: number): string {
   return `₦${(kobo / 100).toLocaleString("en-NG")}`;
 }

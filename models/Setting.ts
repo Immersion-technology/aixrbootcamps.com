@@ -37,7 +37,6 @@ export async function setSetting(key: string, value: unknown, updatedBy?: Types.
 // Canonical setting keys used across the app.
 // NOTE: bootcamp prices are NOT here — they're configured via env (see lib/pricing.ts).
 export const SETTING_KEYS = {
-  EARLY_BIRD_CUTOFF: "earlyBirdCutoff",
   CAPACITY: "capacity",
   CAMP_START_DATE: "campStartDate",
   CAMP_END_DATE: "campEndDate",

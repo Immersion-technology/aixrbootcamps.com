@@ -16,9 +16,14 @@ export default async function WaitlistPage() {
             Waitlist
           </h1>
         </div>
-        <span className="frosted-glass-violet rounded-full px-3.5 py-1.5 text-[10.5px] font-bold tracking-[.18em] uppercase">
-          {rows.length} on the list
-        </span>
+        <div className="flex items-center gap-2.5">
+          <span className="frosted-glass-violet rounded-full px-3.5 py-1.5 text-[10.5px] font-bold tracking-[.18em] uppercase">
+            {rows.length} on the list
+          </span>
+          <a href="/api/admin/export/waitlist" className="btn-dark !text-[12px] !px-5 !py-2">
+            Export CSV <span>→</span>
+          </a>
+        </div>
       </div>
 
       <div className="bg-white rounded-2xl border border-black/[.06] overflow-hidden">

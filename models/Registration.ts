@@ -114,6 +114,8 @@ const RegistrationSchema = new Schema<IRegistration>(
     laptopRental: { type: Boolean, default: false },
     roboticsElective: { type: Boolean, default: false },
     pricing: {
+      // "early_bird" is retained for legacy documents from before early-bird pricing was
+      // retired — new registrations only ever write "regular" or "online".
       tier: { type: String, enum: ["early_bird", "regular", "online"], required: true },
       bootCampFee: { type: Number, required: true },
       laptopRentalFee: { type: Number, required: true, default: 0 },

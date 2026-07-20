@@ -267,16 +267,21 @@ export default async function AnalyticsPage() {
   return (
     <div className="p-6 sm:p-10 max-w-[1100px]">
       {/* header */}
-      <div className="mb-8">
-        <div className="text-[10.5px] font-bold tracking-[.22em] text-violet-brand uppercase mb-2">
-          Site traffic
+      <div className="flex items-start justify-between flex-wrap gap-4 mb-8">
+        <div>
+          <div className="text-[10.5px] font-bold tracking-[.22em] text-violet-brand uppercase mb-2">
+            Site traffic
+          </div>
+          <h1 className="font-display font-extrabold text-[28px] sm:text-[34px] leading-tight text-ink uppercase">
+            Analytics
+          </h1>
+          <p className="text-[12.5px] text-neutral-500 mt-1.5">
+            Visitors are identified by an anonymous device cookie, not by personal identity. IP addresses shown are masked.
+          </p>
         </div>
-        <h1 className="font-display font-extrabold text-[28px] sm:text-[34px] leading-tight text-ink uppercase">
-          Analytics
-        </h1>
-        <p className="text-[12.5px] text-neutral-500 mt-1.5">
-          Visitors are identified by an anonymous device cookie, not by personal identity. IP addresses shown are masked.
-        </p>
+        <a href="/api/admin/export/analytics" className="btn-dark !text-[12px] !px-5 !py-2 shrink-0">
+          Export CSV <span>→</span>
+        </a>
       </div>
 
       {/* stat tiles: page views */}

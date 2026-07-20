@@ -7,7 +7,7 @@ import { registrationCreateSchema } from "@/lib/validations";
 import { initTransaction } from "@/lib/paystack";
 import { normalizePhone, shortRegistrationId, rateLimit, getClientIp } from "@/lib/utils";
 import { getClasses, onlineSlugs } from "@/lib/curriculum";
-import { PRICING, bootCampFeeKobo, resolveTier, EARLY_BIRD_CUTOFF_DEFAULT } from "@/lib/pricing";
+import { PRICING, bootCampFeeKobo, resolveTier } from "@/lib/pricing";
 import { validatePromo } from "@/lib/promo";
 
 export const dynamic = "force-dynamic";
@@ -39,10 +39,9 @@ export async function POST(req: NextRequest) {
 
     // --- capacity check ---
     // Prices come from lib/pricing.ts (env-configurable, single source of truth).
-    const [capacity, paidCount, earlyBirdCutoff] = await Promise.all([
+    const [capacity, paidCount] = await Promise.all([
       getSetting<number>(SETTING_KEYS.CAPACITY, 50),
       Registration.countDocuments({ paymentStatus: "paid" }),
-      getSetting<string>(SETTING_KEYS.EARLY_BIRD_CUTOFF, EARLY_BIRD_CUTOFF_DEFAULT),
     ]);
 
     if (paidCount >= capacity) {
@@ -65,7 +64,7 @@ export async function POST(req: NextRequest) {
           .map((c) => c.slug);
 
     // --- pricing (server-authoritative; the client never dictates the amount) ---
-    const tier = resolveTier(data.attendanceMode, earlyBirdCutoff);
+    const tier = resolveTier(data.attendanceMode);
     const bootCampFee = bootCampFeeKobo(tier);
     // Laptop rental is in-person only (zod also rejects it online). The elective is priced by
     // track: online is higher because its price is all-in (hardware kit + nationwide delivery).

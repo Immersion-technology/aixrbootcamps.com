@@ -9,8 +9,6 @@ import { CURRICULUM, type CurriculumItem } from "@/lib/curriculum";
 import { COHORTS, CAMP_SCHEDULE, cohortLabel } from "@/lib/cohorts";
 
 interface Pricing {
-  isEarlyBird: boolean;
-  earlyBirdPrice: number;
   regularPrice: number;
   onlinePrice: number;
   /** Online Embedded Systems elective (kit + delivery, all-in). */
@@ -107,11 +105,7 @@ export default function RegistrationForm({ pricing, initialMode = "in_person" }:
   const electivePrice = isOnline ? pricing.onlineEmbeddedPrice : pricing.roboticsPrice;
   const electiveLabel = isOnline ? "Embedded Systems" : "Robotics & Embedded Systems";
 
-  const bootCampFee = isOnline
-    ? pricing.onlinePrice
-    : pricing.isEarlyBird
-      ? pricing.earlyBirdPrice
-      : pricing.regularPrice;
+  const bootCampFee = isOnline ? pricing.onlinePrice : pricing.regularPrice;
   const laptopFee = !isOnline && values.laptopRental ? pricing.laptopPrice : 0;
   const roboticsFee = values.roboticsElective ? electivePrice : 0;
   const subtotal = bootCampFee + laptopFee + roboticsFee;
@@ -537,7 +531,7 @@ export default function RegistrationForm({ pricing, initialMode = "in_person" }:
               <tbody className="text-white/80">
                 <tr>
                   <td className="py-1.5">
-                    {isOnline ? "Online programme" : `Boot camp (${pricing.isEarlyBird ? "early bird" : "regular"})`}
+                    {isOnline ? "Online programme" : "Boot camp fee"}
                   </td>
                   <td className="text-right py-1.5 font-mono">{naira(bootCampFee)}</td>
                 </tr>

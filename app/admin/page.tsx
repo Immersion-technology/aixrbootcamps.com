@@ -34,9 +34,14 @@ export default async function AdminDashboard() {
             Dashboard
           </h1>
         </div>
-        <Link href="/admin/registrations" className="btn-dark !text-[12px] !px-5 !py-2">
-          View all registrations <span>→</span>
-        </Link>
+        <div className="flex items-center gap-2.5">
+          <a href="/api/admin/export/stats" className="frosted-glass rounded-full px-4 py-2 text-[11.5px] font-bold tracking-wider uppercase hover:bg-violet-brand hover:text-white transition">
+            Export snapshot
+          </a>
+          <Link href="/admin/registrations" className="btn-dark !text-[12px] !px-5 !py-2">
+            View all registrations <span>→</span>
+          </Link>
+        </div>
       </div>
 
       {/* stat cards */}

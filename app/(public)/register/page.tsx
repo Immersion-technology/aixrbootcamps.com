@@ -2,41 +2,30 @@ import { connectDB } from "@/lib/db";
 import { Registration } from "@/models/Registration";
 import { getSetting, SETTING_KEYS } from "@/models/Setting";
 import { redirect } from "next/navigation";
-import { PRICING, EARLY_BIRD_CUTOFF_DEFAULT, isEarlyBird as isEarlyBirdNow, nairaFromKobo } from "@/lib/pricing";
+import { PRICING, nairaFromKobo } from "@/lib/pricing";
 import RegistrationForm from "./RegistrationForm";
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata() {
-  // Reflect the in-person price a visitor actually pays right now (early-bird vs regular).
-  let cutoff = EARLY_BIRD_CUTOFF_DEFAULT;
-  try {
-    await connectDB();
-    cutoff = await getSetting<string>(SETTING_KEYS.EARLY_BIRD_CUTOFF, EARLY_BIRD_CUTOFF_DEFAULT);
-  } catch {
-    /* fall back to the default cutoff */
-  }
-  const price = isEarlyBirdNow(cutoff) ? PRICING.earlyBird : PRICING.regular;
+export function generateMetadata() {
   return {
     title: "Register · Reserve your camper's slot",
-    description: `Secure a place at the IMMERSIA AI & XR Summer Tech Bootcamp 2026. In-person from ${nairaFromKobo(price)} or online for ${nairaFromKobo(PRICING.online)}.`,
+    description: `Secure a place at the IMMERSIA AI & XR Summer Tech Bootcamp 2026. In-person for ${nairaFromKobo(PRICING.regular)} or online for ${nairaFromKobo(PRICING.online)}.`,
     alternates: { canonical: "/register" },
   };
 }
 
 async function getRegisterData() {
-  // Prices come from lib/pricing.ts (env-configurable). Capacity + cutoff come from DB
-  // Settings, falling back to the single shared defaults.
+  // Prices come from lib/pricing.ts (env-configurable). Capacity comes from DB Settings.
   try {
     await connectDB();
-    const [capacity, paid, earlyBirdCutoff] = await Promise.all([
+    const [capacity, paid] = await Promise.all([
       getSetting<number>(SETTING_KEYS.CAPACITY, 50),
       Registration.countDocuments({ paymentStatus: "paid" }),
-      getSetting<string>(SETTING_KEYS.EARLY_BIRD_CUTOFF, EARLY_BIRD_CUTOFF_DEFAULT),
     ]);
-    return { capacity, paid, earlyBirdCutoff };
+    return { capacity, paid };
   } catch {
-    return { capacity: 50, paid: 0, earlyBirdCutoff: EARLY_BIRD_CUTOFF_DEFAULT };
+    return { capacity: 50, paid: 0 };
   }
 }
 
@@ -45,13 +34,12 @@ export default async function RegisterPage({
 }: {
   searchParams: { mode?: string };
 }) {
-  const { capacity, paid, earlyBirdCutoff } = await getRegisterData();
+  const { capacity, paid } = await getRegisterData();
 
   if (paid >= capacity) {
     redirect("/register/closed");
   }
 
-  const isEarlyBird = isEarlyBirdNow(earlyBirdCutoff);
   // Flyer / landing "Join online" links land on /register?mode=online — preselect online.
   const initialMode = searchParams?.mode === "online" ? "online" : "in_person";
   // Match the hero: hold slotsLeft at full capacity until the DB-backed count is trusted.
@@ -77,8 +65,6 @@ export default async function RegisterPage({
 
         <RegistrationForm
           pricing={{
-            isEarlyBird,
-            earlyBirdPrice: PRICING.earlyBird,
             regularPrice: PRICING.regular,
             onlinePrice: PRICING.online,
             onlineEmbeddedPrice: PRICING.onlineEmbedded,
