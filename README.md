@@ -73,6 +73,77 @@ Any promo discount is baked into `pricing.total` **server-side before** both `Re
    - **Success-page redirect**: the `/register/success` server component verifies the reference the instant the camper returns, so payment is confirmed even if the webhook is delayed.
 5. Confirmation updates payment status, writes a `Payment` doc (storing Paystack's `reference` for refunds/audit), provisions the parent portal account, and sends the confirmation email (PDF receipt attached) + admin alert.
 
+## Email campaigns (`/admin/email`)
+
+Admins compose broadcasts from content **blocks** (heading, paragraph, button, image, list, callout,
+divider), pick an **audience**, preview, test-send, then send or schedule. Everything lives under
+`lib/email/`:
+
+| File | Role |
+| --- | --- |
+| `shell.ts` | The one branded email wrapper — shared with `lib/mailer.ts` so the two can't drift |
+| `blocks.ts` | Block schemas + the renderer. Author text is escaped, then a tiny inline grammar (`**bold**`, `*italic*`, `[label](url)`) is re-introduced — **XSS-proof by construction, no sanitizer** |
+| `merge.ts` | `{{firstName}}`-style fields. Values are escaped and substituted *after* the markup pass, so a camper's name can never become markup or a link |
+| `segments.ts` | Audience queries over existing collections, **deduped by email** (a parent with two campers gets one email, `{{childNames}}` covers both) |
+| `transport.ts` | Delivery seam: `smtp` (default) or `console` (dry run). Also classifies failures transient vs permanent |
+| `queue.ts` | The outbox worker — claim, throttle, retry, daily cap, finalise |
+| `unsubscribe.ts` | Stateless HMAC tokens for RFC 8058 one-click unsubscribe |
+
+**The rule that matters most:** campaigns always respect the suppression list; transactional mail
+never does. A parent who unsubscribes from camp updates still gets their receipt and login links —
+those are contractual, not marketing, so `lib/mailer.ts` has no knowledge of suppressions by design.
+
+### How sending works
+
+A campaign's recipients are materialised into an `EmailMessage` outbox (one row per recipient), then
+drained in small batches. This shape exists because Vercel functions are short-lived and Gmail
+throttles:
+
+- **One worker per message.** A single atomic `findOneAndUpdate` flips `queued → sending` and stamps
+  a lease, so overlapping drains share work instead of double-sending. An expired lease is reclaimed
+  by the same query, so a worker dying mid-send is self-healing.
+- **Idempotent enqueue** via a unique `(campaignId, email)` index — a double-clicked Send can't
+  duplicate the list.
+- **Retries**: transient failures back off exponentially (3 attempts); permanent ones stop, and
+  "no such mailbox" bounces auto-suppress.
+- **Immutable once sent** — content is frozen when a campaign leaves draft. Duplicate it to re-send.
+- **Driven by** the composer (loops the drain while you watch), with `/api/cron/email-drain` as a
+  daily backstop for scheduled sends and anything the cap paused.
+
+### Sending limits — read this before your first broadcast
+
+`SMTP_FROM` is currently a **@gmail.com address on Gmail SMTP**. That means a hard ceiling of ~500
+recipients/day, no DMARC alignment to `immersia.ng`, no bounce or complaint feedback, and a real risk
+of the account being throttled or suspended for bulk sending.
+
+`MAIL_DAILY_CAMPAIGN_CAP` (default **300**) enforces the ceiling in code and deliberately reserves
+~200 of Gmail's daily allowance for transactional mail. When a campaign hits the cap it pauses and
+says so, rather than failing silently, and resumes on the next drain.
+
+**Before broadcasting to more than ~200 people, move to a real ESP** (Resend / Brevo / ZeptoMail) on
+the `immersia.ng` domain with SPF, DKIM and DMARC. That's a `MAIL_TRANSPORT` value plus one adapter
+in `transport.ts` — the queue, retries, suppression and unsubscribe handling are unchanged. An ESP
+also gives you bounce/complaint webhooks; wire those to `suppress()` in `models/EmailSuppression.ts`.
+
+### Compliance
+
+Every campaign carries `List-Unsubscribe` + `List-Unsubscribe-Post` (RFC 8058) and a footer
+unsubscribe link the renderer appends — it is not a block an operator can delete. Gmail/Yahoo bulk
+rules require one-click unsubscribe and a spam-complaint rate under 0.3%. Unsubscribing is honoured
+instantly and needs no login. Open tracking is **off by default**, per-campaign, and disclosed in the
+privacy policy.
+
+### Testing without sending
+
+```bash
+npm run email:check         # renderer + XSS/URL-safety regression checks (offline)
+npm run email:queue-check   # concurrency, idempotency, suppression, cap (forces the console transport)
+npm run email:drain         # drain the queue from the CLI
+```
+
+Set `MAIL_TRANSPORT=console` in `.env.local` to rehearse a whole campaign against real data — each
+email is written to `.mail-outbox/` and nothing is sent.
+
 ## Email deliverability
 
 Set up SPF, DKIM, and DMARC on the `immersia.ng` domain before launch. Without these, confirmation emails will land in Gmail's spam folder for most parents. The SMTP provider's docs (Brevo, ZeptoMail, etc.) give the exact DNS records to add.

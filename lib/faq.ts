@@ -22,7 +22,7 @@ export const FAQS: FaqItem[] = [
   {
     topic: "Logistics",
     q: "Can my child attend online?",
-    a: `Yes — we run a dedicated online track for a flat ${nairaFromKobo(PRICING.online)}, fully remote. It covers three live courses taught online (Vibe Coding, Content Creation, and 3D & VR). You can also add the optional Embedded Systems elective for ${nairaFromKobo(PRICING.onlineEmbedded)} — that price is all-in and includes the hardware kit delivered to you anywhere in Nigeria. The online track does not include the Demo Day pitch, the prize, or the on-site side attractions — those are in-person only. Choose the online programme from the "Choose your programme" section on our homepage.`,
+    a: "Not for the remaining 2026 cohort — camp is in-person only at our Lagos venue. Being on-site is what makes the Demo Day pitch, the robotics build and the daily side attractions work. If an online option returns for 2027, we'll announce it by email first.",
   },
   {
     topic: "Logistics",
@@ -62,7 +62,7 @@ export const FAQS: FaqItem[] = [
   {
     topic: "Curriculum",
     q: "What does my child take home?",
-    a: "A digital portfolio (AI app, VR world, content pieces), a certificate, and camp photos. In-person campers also take home their Demo Day pitch video and — with the Robotics elective — a gadget and kit they keep; online campers get a welcome kit delivered to them.",
+    a: "A digital portfolio (AI app, VR world, content pieces), a certificate, camp photos, and their Demo Day pitch video. With the Robotics elective they also take home a gadget and the kit they built it with.",
   },
   {
     topic: "Money",

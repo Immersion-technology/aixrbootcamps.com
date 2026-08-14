@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { campDateBand } from "@/lib/cohorts";
 
 export const metadata = {
   title: "Contact · Talk to a human",
@@ -84,7 +85,7 @@ export default function ContactPage() {
           </div>
           <div>
             <div className="text-[10.5px] font-bold tracking-[.22em] text-aqua-deep mb-2">CAMP DATES</div>
-            <h3 className="font-bubble text-[24px] sm:text-[28px] leading-tight mb-2 text-ink">27 July – 4 September 2026</h3>
+            <h3 className="font-bubble text-[24px] sm:text-[28px] leading-tight mb-2 text-ink">{campDateBand()}</h3>
             <p className="text-[13.5px] text-neutral-700 leading-relaxed">
               Mon – Fri · 9am – 1:30pm · Demo Day the Saturday after each cohort.
             </p>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import Ferrofluid from "@/components/Ferrofluid";
+import { campDateBand } from "@/lib/cohorts";
 
 const SOCIALS: Array<{ label: string; href: string; path: string }> = [
   {
@@ -33,9 +34,11 @@ const EXPLORE = [
 ];
 
 const VISIT = [
-  { label: "27 July – 4 September 2026", muted: false },
+  // Tracks the cohort still on sale, so the footer stops advertising dates that
+  // have already passed.
+  { label: campDateBand(), muted: false },
   { label: "Mon – Fri · 9am – 1:30pm", muted: true },
-  { label: "In-person in Lagos · or join online", muted: false },
+  { label: "In-person in Lagos", muted: false },
   { label: "Adeniran Ogunsanya St, Surulere · Lagos", muted: true },
 ];
 

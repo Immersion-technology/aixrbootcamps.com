@@ -18,7 +18,15 @@ import { connectDB } from "@/lib/db";
 import { Registration } from "@/models/Registration";
 import { getSetting, SETTING_KEYS } from "@/models/Setting";
 import { PRICING } from "@/lib/pricing";
-import { COHORTS, CAMP_SCHEDULE } from "@/lib/cohorts";
+import {
+  COHORTS,
+  CAMP_SCHEDULE,
+  openCohorts,
+  nextOpenCohort,
+  isFinalIntake,
+  registrationClosed,
+  cohortState,
+} from "@/lib/cohorts";
 import {
   SITE_URL,
   SITE_NAME,
@@ -117,6 +125,25 @@ export default async function Landing() {
   const cfg = await getPublicConfig();
   const regularPrice = PRICING.regular;
   const naira = (k: number) => `₦${(k / 100).toLocaleString("en-NG")}`;
+
+  // Cohort availability is derived from today's date (see lib/cohorts.ts), so
+  // the page closes each cohort by itself instead of needing a manual edit.
+  const openList = openCohorts();
+  const finalCohort = nextOpenCohort();
+  const isFinal = isFinalIntake();
+  const allClosed = registrationClosed();
+  // "AUG 24" — the sticker's big line.
+  const startSticker = finalCohort
+    ? new Date(`${finalCohort.start}T00:00:00`)
+        .toLocaleDateString("en-NG", { month: "short", day: "numeric" })
+        .toUpperCase()
+    : "CLOSED";
+  /** The date range still on sale, for copy that used to say "27 Jul – 4 Sep". */
+  const sellingRange = allClosed
+    ? "2026 season complete"
+    : openList.length === 1
+      ? `${openList[0].range} 2026`
+      : `${openList[0].range} – ${openList[openList.length - 1].range.split("– ")[1] ?? ""} 2026`;
   const eventJsonLd = {
     ...EVENT_JSONLD,
     offers: { ...EVENT_JSONLD.offers, price: PRICE_REGULAR },
@@ -157,7 +184,7 @@ export default async function Landing() {
           <div className="relative z-[5] order-1 lg:order-2 flex flex-col">
             {/* tiny welcome paragraph, desktop only (hidden on phones) */}
             <p className="hidden lg:block text-[13px] text-neutral-700 leading-relaxed max-w-[320px] mb-5 lg:ml-auto lg:text-right anim-fade-up">
-              Welcome to the AI &amp; XR Summer Tech Bootcamp. Nigeria&apos;s only summer programme where kids 10–17 ship a deployed AI app, build a VR world, produce an AI-assisted track and deliver a live startup pitch to a jury. <strong>27 July – 4 September 2026.</strong> Join us <strong>in-person in Lagos or live online.</strong>
+              Welcome to the AI &amp; XR Summer Tech Bootcamp. Nigeria&apos;s only summer programme where kids 10–17 ship a deployed AI app, build a VR world, produce an AI-assisted track and deliver a live startup pitch to a jury. <strong>Final cohort: {finalCohort?.range ?? "24 Aug – 4 Sep"} 2026.</strong> Join us <strong>in-person in Lagos.</strong>
             </p>
 
             {/* Sign-up banner, full-width lead-in to the AI & XR wordmark below */}
@@ -192,11 +219,18 @@ export default async function Landing() {
                   </ul>
                 </div>
 
-                {/* JUL 27 date sticker */}
+                {/* Start-date sticker. Tracks the next bookable cohort, so it
+                    rolls forward on its own as each cohort begins. */}
                 <div className="card-sticker card-sticker--pink card-sticker--tilt-l-lg px-3.5 py-3 sm:px-5 sm:py-4 lg:px-4 lg:py-4 shrink-0 flex flex-col justify-center" style={{ borderRadius: 18 }}>
-                  <div className="text-[8.5px] sm:text-[10px] font-bold tracking-[.22em] text-white/85 uppercase">Boot camp starts</div>
-                  <div className="font-bubble text-[18px] sm:text-[24px] leading-none mt-1 text-white">JUL 27</div>
-                  <div className="text-[8.5px] sm:text-[10px] font-bold tracking-[.18em] text-white/85 uppercase mt-0.5">3 cohorts · 2 wks each</div>
+                  <div className="text-[8.5px] sm:text-[10px] font-bold tracking-[.22em] text-white/85 uppercase">
+                    {isFinal ? "Last cohort starts" : "Boot camp starts"}
+                  </div>
+                  <div className="font-bubble text-[18px] sm:text-[24px] leading-none mt-1 text-white">
+                    {startSticker}
+                  </div>
+                  <div className="text-[8.5px] sm:text-[10px] font-bold tracking-[.18em] text-white/85 uppercase mt-0.5">
+                    {isFinal ? "Final intake · 2 wks" : `${openList.length} cohorts · 2 wks each`}
+                  </div>
                 </div>
               </div>
 
@@ -227,14 +261,8 @@ export default async function Landing() {
             </div>
 
             <Link
-              href="/register?mode=online"
-              className="anim-fade-up delay-5 text-[12.5px] mt-4 font-semibold text-aqua-deep hover:text-ink underline underline-offset-4 decoration-2 self-center lg:self-end"
-            >
-              or join online for {naira(PRICING.online)} →
-            </Link>
-            <Link
               href="/contact"
-              className="anim-fade-up delay-5 text-[12.5px] mt-1.5 text-neutral-600 hover:text-ink underline underline-offset-4 decoration-2 self-center lg:self-end"
+              className="anim-fade-up delay-5 text-[12.5px] mt-4 text-neutral-600 hover:text-ink underline underline-offset-4 decoration-2 self-center lg:self-end"
             >
               or talk to a human →
             </Link>
@@ -246,15 +274,18 @@ export default async function Landing() {
       <section id="programmes" className="relative overflow-hidden py-16 sm:py-20 bg-white border-y border-black/[.05]">
         <div className="max-w-[1180px] mx-auto px-5 sm:px-7">
           <div className="text-center mb-10">
-            <div className="text-[10.5px] font-bold tracking-[.22em] text-violet-brand uppercase mb-2">Two ways to join</div>
-            <h2 className="font-bubble text-[clamp(32px,5vw,58px)] leading-[1.02] text-ink">CHOOSE YOUR PROGRAMME</h2>
+            <div className="text-[10.5px] font-bold tracking-[.22em] text-violet-brand uppercase mb-2">
+              {isFinal ? "Final intake" : "What's included"}
+            </div>
+            <h2 className="font-bubble text-[clamp(32px,5vw,58px)] leading-[1.02] text-ink">THE PROGRAMME</h2>
             <p className="text-[14px] text-neutral-600 mt-3 max-w-[560px] mx-auto">
-              Same IMMERSIA teaching, two ways to attend. Come to our Lagos venue for the full camp, or join the core courses live online from anywhere in Nigeria.
+              Two weeks, in-person at our Lagos venue — {CAMP_SCHEDULE}. Every course, the Demo Day pitch and
+              all four side attractions are included in one fee.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-5 lg:gap-6 items-stretch">
-            {/* IN-PERSON */}
+          <div className="max-w-[560px] mx-auto">
+            {/* IN-PERSON — the only programme now offered. */}
             <div className="relative flex flex-col rounded-3xl border-2 border-ink/10 bg-paper p-7 sm:p-8">
               <div className="flex items-center justify-between mb-2">
                 <div className="text-[11px] font-bold tracking-[.2em] text-aqua-deep uppercase">In-person · Lagos</div>
@@ -273,30 +304,12 @@ export default async function Landing() {
                 <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> Robotics &amp; Embedded elective (+{naira(PRICING.robotics)})</li>
                 <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> Optional laptop rental (+{naira(PRICING.laptop)})</li>
               </ul>
-              <Link href="/register" className="btn-grass mt-auto block w-full text-center">Reserve a slot →</Link>
-            </div>
-
-            {/* ONLINE */}
-            <div className="relative flex flex-col rounded-3xl border-2 border-aqua-brand/40 bg-aqua-brand/[.05] p-7 sm:p-8">
-              <div className="flex items-center justify-between mb-2">
-                <div className="text-[11px] font-bold tracking-[.2em] text-aqua-deep uppercase">Online · anywhere</div>
-                <span className="sticker-pill sticker-pill--cyan">New</span>
-              </div>
-              <div className="flex items-baseline gap-2 mt-1">
-                <span className="font-bubble text-[40px] leading-none text-ink">{naira(PRICING.online)}</span>
-                <span className="text-[13px] font-semibold text-neutral-500">flat</span>
-              </div>
-              <div className="text-[11px] font-semibold text-neutral-500 uppercase tracking-wide mt-1 mb-5">
-                Fully remote · join live from home
-              </div>
-              <ul className="space-y-2.5 text-[13.5px] text-neutral-700 mb-7">
-                <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> 3 live courses: Vibe Coding, Content Creation, 3D &amp; VR</li>
-                <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> Every session live — join from anywhere in Nigeria</li>
-                <li className="flex gap-2.5"><span className="text-aqua-brand font-bold shrink-0">✓</span> Optional Embedded Systems elective +{naira(PRICING.onlineEmbedded)} — kit delivered</li>
-                <li className="flex gap-2.5 text-neutral-400"><span className="font-bold shrink-0">–</span> No Demo Day pitch or prize</li>
-                <li className="flex gap-2.5 text-neutral-400"><span className="font-bold shrink-0">–</span> No side attractions (in-person only)</li>
-              </ul>
-              <Link href="/register?mode=online" className="btn-dark mt-auto block w-full text-center">Join online →</Link>
+              <Link
+                href={allClosed ? "/register/closed" : "/register"}
+                className="btn-grass mt-auto block w-full text-center"
+              >
+                {allClosed ? "Join the waitlist →" : "Reserve a slot →"}
+              </Link>
             </div>
           </div>
         </div>
@@ -306,25 +319,75 @@ export default async function Landing() {
       <section id="cohorts" className="relative overflow-hidden py-16 sm:py-20">
         <div className="max-w-[1180px] mx-auto px-5 sm:px-7">
           <div className="text-center mb-9">
-            <div className="text-[10.5px] font-bold tracking-[.22em] text-violet-brand uppercase mb-2">Pick your 2-week window</div>
-            <h2 className="font-bubble text-[clamp(30px,4.6vw,54px)] leading-[1.02] text-ink">CHOOSE YOUR COHORT</h2>
+            <div className="text-[10.5px] font-bold tracking-[.22em] text-violet-brand uppercase mb-2">
+              {isFinal ? "One window left" : "Pick your 2-week window"}
+            </div>
+            <h2 className="font-bubble text-[clamp(30px,4.6vw,54px)] leading-[1.02] text-ink">
+              {isFinal ? "THE FINAL COHORT" : "CHOOSE YOUR COHORT"}
+            </h2>
             <p className="text-[14px] text-neutral-600 mt-3 max-w-[560px] mx-auto">
-              Camp runs as three back-to-back 2-week cohorts. Your camper attends <strong>one</strong> — {CAMP_SCHEDULE}. Pick the window that fits your calendar at registration.
+              {allClosed ? (
+                <>The 2026 season has finished. Join the waitlist and you&apos;ll hear first when 2027 opens.</>
+              ) : isFinal ? (
+                <>
+                  Cohorts 1 and 2 have run. <strong>{finalCohort?.label}</strong> ({finalCohort?.range}) is the last
+                  one for 2026 — {CAMP_SCHEDULE}. Once it starts, the next camp is summer 2027.
+                </>
+              ) : (
+                <>
+                  Camp runs as three back-to-back 2-week cohorts. Your camper attends <strong>one</strong> —{" "}
+                  {CAMP_SCHEDULE}. Pick the window that fits your calendar at registration.
+                </>
+              )}
             </p>
           </div>
 
+          {/* Past cohorts stay visible but clearly closed — it shows the camp is
+              running rather than pretending it never happened. */}
           <div className="grid sm:grid-cols-3 gap-4 lg:gap-5">
-            {COHORTS.map((c, i) => (
-              <div
-                key={c.id}
-                className="relative flex flex-col rounded-3xl border-2 border-aqua-brand/25 bg-paper p-6 text-center"
-              >
-                <div className="font-bubble text-[22px] leading-none text-aqua-deep mb-2">0{c.id}</div>
-                <div className="text-[11px] font-bold tracking-[.2em] text-neutral-500 uppercase mb-1">{c.label}</div>
-                <div className="font-display font-extrabold text-[22px] text-ink leading-tight">{c.range}</div>
-                <div className="text-[12.5px] text-neutral-600 mt-1">2026</div>
-              </div>
-            ))}
+            {COHORTS.map((c) => {
+              const state = cohortState(c.id);
+              const isOpen = state === "open";
+              return (
+                <div
+                  key={c.id}
+                  className={`relative flex flex-col rounded-3xl border-2 p-6 text-center transition ${
+                    isOpen
+                      ? "border-grass-brand bg-grass-brand/[.06] shadow-[0_12px_30px_-16px_rgba(0,0,0,.25)]"
+                      : "border-black/10 bg-neutral-100/70"
+                  }`}
+                >
+                  {isOpen && (
+                    <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 sticker-pill whitespace-nowrap">
+                      {isFinal ? "Last chance" : "Open now"}
+                    </span>
+                  )}
+                  <div
+                    className={`font-bubble text-[22px] leading-none mb-2 ${
+                      isOpen ? "text-aqua-deep" : "text-neutral-400"
+                    }`}
+                  >
+                    0{c.id}
+                  </div>
+                  <div className="text-[11px] font-bold tracking-[.2em] text-neutral-500 uppercase mb-1">{c.label}</div>
+                  <div
+                    className={`font-display font-extrabold text-[22px] leading-tight ${
+                      isOpen ? "text-ink" : "text-neutral-400 line-through decoration-2"
+                    }`}
+                  >
+                    {c.range}
+                  </div>
+                  <div className="text-[12.5px] text-neutral-600 mt-1">2026</div>
+                  <div
+                    className={`text-[10.5px] font-bold tracking-[.16em] uppercase mt-2.5 ${
+                      isOpen ? "text-grass-deep" : "text-neutral-400"
+                    }`}
+                  >
+                    {state === "finished" ? "Completed" : state === "running" ? "In progress" : "Accepting campers"}
+                  </div>
+                </div>
+              );
+            })}
           </div>
           <p className="text-center text-[12.5px] text-neutral-500 mt-6">
             Same schedule every cohort · <strong className="text-ink">{CAMP_SCHEDULE}</strong>
@@ -567,16 +630,21 @@ export default async function Landing() {
               THEY&apos;RE GONE.
             </h2>
             <p className="max-w-[480px] my-6 text-neutral-700 text-[14.5px] leading-relaxed mx-auto md:mx-0">
-              The 2026 cohorts run <strong>27 July – 4 September</strong> as three back-to-back 2-week sessions. Once we hit {cfg.slotsTotal} paid registrations the camp closes. Next AI &amp; XR isn&apos;t until summer 2027.{" "}
+              {allClosed ? (
+                <>The 2026 season has finished.</>
+              ) : (
+                <>
+                  <strong>{finalCohort?.label}</strong> runs <strong>{finalCohort?.range} 2026</strong> and is the
+                  last cohort of the year. Once we hit {cfg.slotsTotal} paid registrations the camp closes. Next AI
+                  &amp; XR isn&apos;t until summer 2027.
+                </>
+              )}{" "}
               The boot camp fee is <strong>{naira(regularPrice)}</strong>.{" "}
               It covers the 5 core courses, daily side attractions, materials and Demo Day — Robotics is an optional +{naira(PRICING.robotics)} elective. Daily attractions are subject to token usage.
             </p>
             <div className="flex flex-wrap gap-3 items-center justify-center md:justify-start">
-              <Link href="/register" className="btn-grass">
-                Reserve a Slot <span aria-hidden>→</span>
-              </Link>
-              <Link href="/#programmes" className="btn-light">
-                Compare online · {naira(PRICING.online)}
+              <Link href={allClosed ? "/register/closed" : "/register"} className="btn-grass">
+                {allClosed ? "Join the Waitlist" : "Reserve a Slot"} <span aria-hidden>→</span>
               </Link>
               <Link href="/contact" className="text-[13px] font-semibold text-neutral-600 hover:text-ink underline underline-offset-4">
                 Talk to a Human

@@ -3,14 +3,18 @@ import { Registration } from "@/models/Registration";
 import { getSetting, SETTING_KEYS } from "@/models/Setting";
 import { redirect } from "next/navigation";
 import { PRICING, nairaFromKobo } from "@/lib/pricing";
+import { openCohorts, nextOpenCohort } from "@/lib/cohorts";
 import RegistrationForm from "./RegistrationForm";
 
 export const dynamic = "force-dynamic";
 
 export function generateMetadata() {
+  const last = nextOpenCohort();
   return {
     title: "Register · Reserve your camper's slot",
-    description: `Secure a place at the IMMERSIA AI & XR Summer Tech Bootcamp 2026. In-person for ${nairaFromKobo(PRICING.regular)} or online for ${nairaFromKobo(PRICING.online)}.`,
+    description: last
+      ? `Secure a place at the IMMERSIA AI & XR Summer Tech Bootcamp 2026, in-person in Lagos for ${nairaFromKobo(PRICING.regular)}. Final cohort: ${last.range} 2026.`
+      : `IMMERSIA AI & XR Summer Tech Bootcamp 2026 registration is closed. Join the waitlist for 2027.`,
     alternates: { canonical: "/register" },
   };
 }
@@ -29,19 +33,20 @@ async function getRegisterData() {
   }
 }
 
-export default async function RegisterPage({
-  searchParams,
-}: {
-  searchParams: { mode?: string };
-}) {
+export default async function RegisterPage() {
   const { capacity, paid } = await getRegisterData();
 
   if (paid >= capacity) {
     redirect("/register/closed");
   }
 
-  // Flyer / landing "Join online" links land on /register?mode=online — preselect online.
-  const initialMode = searchParams?.mode === "online" ? "online" : "in_person";
+  // Cohorts close by date (lib/cohorts.ts). With none left there is nothing to
+  // sell, so send people to the waitlist instead of an unusable form.
+  const available = openCohorts();
+  if (available.length === 0) {
+    redirect("/register/closed");
+  }
+
   // Match the hero: hold slotsLeft at full capacity until the DB-backed count is trusted.
   const slotsLeft = capacity;
 
@@ -66,13 +71,11 @@ export default async function RegisterPage({
         <RegistrationForm
           pricing={{
             regularPrice: PRICING.regular,
-            onlinePrice: PRICING.online,
-            onlineEmbeddedPrice: PRICING.onlineEmbedded,
             laptopPrice: PRICING.laptop,
             roboticsPrice: PRICING.robotics,
           }}
           slotsLeft={slotsLeft}
-          initialMode={initialMode}
+          cohorts={available.map((c) => ({ id: c.id, label: c.label, range: c.range }))}
         />
       </div>
     </section>

@@ -10,7 +10,13 @@
     "seed": "tsx --env-file=.env.local scripts/seed.ts",
     "seed:demo": "tsx --env-file=.env.local scripts/seed-demo.ts",
     "add:teachers": "tsx --env-file=.env.local scripts/add-teachers.ts",
-    "mail:smoke": "tsx --env-file=.env.local scripts/mail-smoke.ts"
+    "mail:smoke": "tsx --env-file=.env.local scripts/mail-smoke.ts",
+    "email:check": "tsx scripts/email-render-check.ts",
+    "email:queue-check": "tsx --env-file=.env.local scripts/email-queue-check.ts",
+    "email:drain": "tsx --env-file=.env.local scripts/email-drain.ts",
+    "email:preview-welcome": "tsx --env-file=.env.local scripts/send-welcome-preview.ts",
+    "email:send-welcome": "tsx --env-file=.env.local scripts/send-welcome-campaign.ts",
+    "export:phones": "tsx --env-file=.env.local scripts/export-parent-phones.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

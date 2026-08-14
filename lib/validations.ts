@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { isCohortOpen } from "@/lib/cohorts";
 
 const naijaPhone = z
   .string()
@@ -52,14 +53,25 @@ export const registrationCreateSchema = z.object({
     errorMap: () => ({ message: "You must agree to the rules of conduct" }),
   }),
 }).superRefine((data, ctx) => {
-  // Laptop rental is in-person only. The Embedded Systems elective (data.roboticsElective) IS
-  // now available online — priced higher there because the kit is shipped. Guard laptop here
-  // so a tampered payload can't buy it online; the client form already hides it when online.
-  if (data.attendanceMode === "online" && data.laptopRental) {
+  // The online track has been retired — camp is in-person only. `attendanceMode`
+  // stays on the model so existing online registrations still render in the
+  // admin and parent portals, but no NEW one can be created as online, even
+  // from a hand-crafted payload.
+  if (data.attendanceMode === "online") {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      path: ["laptopRental"],
-      message: "Laptop rental is only available for in-person campers.",
+      path: ["attendanceMode"],
+      message: "The online programme is no longer offered — camp is in-person in Lagos.",
+    });
+  }
+
+  // Cohorts close on the day they start. Without this, a stale tab (or a
+  // tampered payload) could take money for a cohort that has already begun.
+  if (!isCohortOpen(data.cohort)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["cohort"],
+      message: "That cohort has already started. Please choose an available cohort.",
     });
   }
 });
@@ -124,6 +136,85 @@ export const promoCreateSchema = z
     message: "A percentage discount can't exceed 100",
     path: ["discountValue"],
   });
+
+// --- Email campaigns (admin) ---
+// Block bodies are validated by `blocksSchema` in lib/email/blocks.ts; these
+// cover the campaign envelope around them.
+
+const segmentFiltersSchema = z.object({
+  cohort: z.coerce.number().int().min(1).max(3).optional(),
+  attendanceMode: z.enum(["in_person", "online"]).optional(),
+  course: z.string().trim().max(120).optional(),
+  emails: z.string().max(20000).optional(),
+});
+
+export const campaignCreateSchema = z.object({
+  name: z.string().trim().min(2, "Give the campaign a name").max(120),
+  subject: z.string().trim().min(2, "Add a subject line").max(200),
+  preheader: z.string().trim().max(200).optional().default(""),
+  blocks: z.array(z.unknown()).optional(),
+  templateId: z.string().optional(),
+  segment: z
+    .object({
+      source: z.string().trim().min(1),
+      filters: segmentFiltersSchema.optional().default({}),
+    })
+    .optional(),
+});
+
+export const campaignUpdateSchema = z
+  .object({
+    name: z.string().trim().min(2).max(120).optional(),
+    subject: z.string().trim().min(2).max(200).optional(),
+    preheader: z.string().trim().max(200).optional(),
+    blocks: z.array(z.unknown()).optional(),
+    replyTo: z.string().trim().email("Reply-to must be a valid email").or(z.literal("")).optional(),
+    trackOpens: z.boolean().optional(),
+    segment: z
+      .object({
+        source: z.string().trim().min(1),
+        filters: segmentFiltersSchema.optional().default({}),
+      })
+      .optional(),
+  })
+  .refine((d) => Object.keys(d).length > 0, { message: "Nothing to update" });
+
+export const campaignSendSchema = z.object({
+  /** ISO datetime — omit to send immediately. */
+  scheduledFor: z.string().datetime().optional(),
+  /** Must equal the resolved recipient count; guards against a stale UI. */
+  expectedRecipients: z.number().int().nonnegative(),
+});
+
+export const templateCreateSchema = z.object({
+  name: z.string().trim().min(2, "Give the template a name").max(120),
+  description: z.string().trim().max(300).optional().default(""),
+  subject: z.string().trim().min(2, "Add a subject line").max(200),
+  preheader: z.string().trim().max(200).optional().default(""),
+  blocks: z.array(z.unknown()),
+});
+
+export const templateUpdateSchema = z
+  .object({
+    name: z.string().trim().min(2).max(120).optional(),
+    description: z.string().trim().max(300).optional(),
+    subject: z.string().trim().min(2).max(200).optional(),
+    preheader: z.string().trim().max(200).optional(),
+    blocks: z.array(z.unknown()).optional(),
+  })
+  .refine((d) => Object.keys(d).length > 0, { message: "Nothing to update" });
+
+export const suppressionCreateSchema = z.object({
+  email: z.string().trim().toLowerCase().email("Enter a valid email"),
+  reason: z.enum(["unsubscribe", "bounce", "complaint", "admin"]).optional().default("admin"),
+  note: z.string().trim().max(300).optional(),
+});
+
+export const previewSchema = z.object({
+  subject: z.string().trim().max(200).optional().default(""),
+  preheader: z.string().trim().max(200).optional().default(""),
+  blocks: z.array(z.unknown()),
+});
 
 export const promoUpdateSchema = z
   .object({

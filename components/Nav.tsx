@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { campDateBand } from "@/lib/cohorts";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -227,7 +228,7 @@ export default function Nav() {
               Log in
             </Link>
             <p className="text-center text-[11px] text-white/55 tracking-[.18em] uppercase font-bold mt-4">
-              27 July – 4 September 2026
+              {campDateBand()}
             </p>
           </div>
         </div>
