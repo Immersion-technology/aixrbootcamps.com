@@ -3,6 +3,9 @@ import { notFound } from "next/navigation";
 import { connectDB } from "@/lib/db";
 import { Registration } from "@/models/Registration";
 import { Payment } from "@/models/Payment";
+import { EmailMessage } from "@/models/EmailMessage";
+import { Campaign } from "@/models/Campaign";
+import { EmailSuppression } from "@/models/EmailSuppression";
 import { calcAge, formatNaira } from "@/lib/utils";
 import { cohortLabel } from "@/lib/cohorts";
 import DetailActions from "./DetailActions";
@@ -15,6 +18,20 @@ export default async function RegistrationDetail({ params }: { params: { id: str
   if (!reg) notFound();
 
   const payments = await Payment.find({ registrationId: reg._id }).sort({ receivedAt: -1 }).lean();
+
+  // Campaign delivery history for this parent — answers "did they actually get
+  // the reminder?" without digging through the campaign screens.
+  const [campaignMessages, suppression] = await Promise.all([
+    EmailMessage.find({ email: reg.parent.email }).sort({ createdAt: -1 }).limit(20).lean(),
+    EmailSuppression.findOne({ email: reg.parent.email }).lean<any>(),
+  ]);
+
+  const campaignNames = new Map<string, string>();
+  if (campaignMessages.length > 0) {
+    const ids = [...new Set(campaignMessages.map((m: any) => String(m.campaignId)))];
+    const campaigns = await Campaign.find({ _id: { $in: ids } }).select("name").lean();
+    for (const c of campaigns as any[]) campaignNames.set(String(c._id), c.name);
+  }
 
   return (
     <div className="p-6 sm:p-10 lg:p-12 max-w-6xl">
@@ -119,6 +136,46 @@ export default async function RegistrationDetail({ params }: { params: { id: str
                     {p.channel ?? "–"}
                   </span>
                   <span className="text-[11.5px] text-neutral-500">{new Date(p.receivedAt).toLocaleString("en-NG")}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
+
+        <Card title="Campaign emails" wide>
+          {suppression && (
+            <div className="text-[12.5px] bg-amber-50 text-amber-800 rounded-xl p-3 mb-3 leading-relaxed">
+              <strong className="font-semibold">This parent is unsubscribed</strong> ({suppression.reason}) — they
+              are skipped by every campaign. Receipts and login links are unaffected.
+            </div>
+          )}
+          {campaignMessages.length === 0 ? (
+            <p className="text-[13px] text-neutral-500">No campaigns sent to this address yet.</p>
+          ) : (
+            <ul className="text-[13px] divide-y divide-black/5">
+              {campaignMessages.map((m: any) => (
+                <li key={String(m._id)} className="py-2.5 flex justify-between gap-3 items-start">
+                  <span className="min-w-0">
+                    <strong className="block truncate">
+                      {campaignNames.get(String(m.campaignId)) ?? "Deleted campaign"}
+                    </strong>
+                    <span
+                      className={`text-[11.5px] ${
+                        m.status === "sent"
+                          ? "text-grass-deep"
+                          : m.status === "failed"
+                            ? "text-pink-deep"
+                            : "text-neutral-500"
+                      }`}
+                    >
+                      {m.status}
+                      {m.error ? ` — ${m.error}` : ""}
+                      {m.openedAt ? " · opened" : ""}
+                    </span>
+                  </span>
+                  <span className="text-[11.5px] text-neutral-500 whitespace-nowrap shrink-0">
+                    {m.sentAt ? new Date(m.sentAt).toLocaleString("en-NG") : "—"}
+                  </span>
                 </li>
               ))}
             </ul>

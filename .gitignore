@@ -13,6 +13,16 @@ build
 # Build cache
 *.tsbuildinfo
 
+# Local email render preview (npm run email:check)
+.preview.html
+.preview-welcome.html
+.mail-outbox/
+
+# Exported customer data — real parent names, phone numbers and emails.
+# Never commit: git history is permanent and readable by anyone with repo access.
+# Regenerate locally with `npm run export:phones`.
+parent-phones-*.csv
+
 # Stray dev files
 1.png
 d0e7d470dbf49fb7b4a5ba4776c7ecd9.webp
@@ -24,3 +34,6 @@ More Info.txt
 
 # Credentialed admin manual — contains a live password, keep local only
 docs/ADMIN_MANUAL.pdf
+
+.vercel
+.env*

@@ -1,5 +1,6 @@
 import nodemailer from "nodemailer";
 import { cohortLabel, cohortById } from "./cohorts";
+import { APP_URL, esc, shell } from "./email/shell";
 
 function extractEmailAddress(value?: string): string {
   if (!value) return "";
@@ -24,16 +25,18 @@ const transporter = nodemailer.createTransport({
   auth: SMTP_USER && SMTP_PASS ? { user: SMTP_USER, pass: SMTP_PASS } : undefined,
 });
 
-const APP_URL = process.env.APP_URL ?? "https://immersia.ng";
-const LOGO_URL = `${APP_URL}/logo.png`;
-
-interface SendOpts {
+export interface SendOpts {
   to: string;
   subject: string;
   html: string;
   text?: string;
   replyTo?: string;
   attachments?: Array<{ filename: string; content: Buffer | string; contentType?: string }>;
+  /**
+   * Extra RFC headers. Campaigns use this for List-Unsubscribe /
+   * List-Unsubscribe-Post (RFC 8058); transactional mail never sets it.
+   */
+  headers?: Record<string, string>;
 }
 
 function assertMailConfig() {
@@ -61,78 +64,12 @@ export async function sendMail(opts: SendOpts) {
     text: opts.text,
     replyTo: opts.replyTo,
     attachments: opts.attachments,
+    headers: opts.headers,
   });
 }
 
 export function fmtNaira(kobo: number): string {
   return "₦" + (kobo / 100).toLocaleString("en-NG");
-}
-
-/**
- * Escape user-supplied values before interpolating them into email HTML.
- * Names, notes, etc. come from registrations / admin input and must not be
- * able to inject markup into the email body.
- */
-function esc(value: unknown): string {
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-
-/**
- * Email shell: wraps content in IMMERSIA-branded layout.
- * Email clients don't support backdrop-filter, so we use solid styles
- * that approximate the frosted-glass look.
- */
-function shell(content: string): string {
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>IMMERSIA</title>
-</head>
-<body style="margin:0;padding:0;background:#f1f1f1;font-family:'Space Grotesk',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#0f0f0f;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f1f1f1;padding:32px 16px;">
-    <tr>
-      <td align="center">
-        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:580px;background:#f1f1f1;">
-          <tr>
-            <td align="center" style="padding-bottom:24px;">
-              <img src="${LOGO_URL}" alt="IMMERSIA" width="72" style="display:block;height:auto;">
-            </td>
-          </tr>
-          <tr>
-            <td>${content}</td>
-          </tr>
-          <tr>
-            <td style="padding:32px 0 8px;text-align:center;font-size:11px;color:#777;letter-spacing:0.18em;text-transform:uppercase;">
-              <strong style="color:#2563eb;">99 Adesanya Ogunsanya, Leisure Mall</strong> · 27 July – 4 September 2026 · Mon–Fri 9am–1:30pm · In-person in Lagos or online
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:6px 0 0;text-align:center;font-size:11px;color:#999;">
-              <a href="${APP_URL}" style="color:#2563eb;text-decoration:none;font-weight:600;">immersia.ng</a>
-              &nbsp;·&nbsp;
-              <a href="${APP_URL}/contact" style="color:#999;text-decoration:none;">Contact</a>
-              &nbsp;·&nbsp;
-              <a href="${APP_URL}/faq" style="color:#999;text-decoration:none;">FAQ</a>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:24px 0 0;text-align:center;font-size:10.5px;color:#bbb;">
-              © 2026 IMMERSIA. All rights reserved.
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`;
 }
 
 export function parentConfirmationHtml(args: {

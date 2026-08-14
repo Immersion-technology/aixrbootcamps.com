@@ -64,6 +64,33 @@ export default function PrivacyPage() {
             </p>
           </Section>
 
+          <Section title="4b. Emails we send you">
+            <p>
+              We send two kinds of email, and they follow different rules.
+            </p>
+            <ul className="list-disc pl-5 space-y-1.5 mt-2">
+              <li>
+                <strong>Essential emails</strong> — payment receipts, your registration confirmation,
+                one-time login links and urgent safety notices. These are part of providing the service
+                you paid for, so they are sent for as long as you have an active registration.
+              </li>
+              <li>
+                <strong>Camp updates</strong> — logistics, schedules, reminders and news about the
+                programme. <strong>Every one of these carries a one-click unsubscribe link</strong>, and
+                you can also reply to any email to ask us to stop. We action it immediately, and it
+                applies to every future update. Unsubscribing from updates never stops your essential
+                emails.
+              </li>
+            </ul>
+            <p className="mt-2">
+              Some camp updates may include an invisible one-pixel image that tells us whether the email
+              was opened, so we know whether important logistics actually reached you. It records only
+              that the email was opened and when — never your location or what you did next. It is off
+              unless we switch it on for a specific email, and blocking images in your email app
+              prevents it entirely.
+            </p>
+          </Section>
+
           <Section title="5. How long we keep it">
             <p>
               Registration records and payment metadata are kept for <strong>two years</strong> after the cohort ends, then permanently deleted. Site analytics (cookie-grouped, not identity-linked) are kept for up to 12 months. Medical notes are deleted within 30 days of camp ending unless required for an ongoing incident report.
@@ -76,7 +103,7 @@ export default function PrivacyPage() {
               <li>Ask for a copy of the data we hold on you or your child.</li>
               <li>Ask us to correct anything inaccurate.</li>
               <li>Ask us to delete your data (we&apos;ll comply unless we&apos;re legally required to retain it).</li>
-              <li>Withdraw consent for marketing communications.</li>
+              <li>Withdraw consent for marketing communications — use the unsubscribe link in any camp update, or email us.</li>
             </ul>
             <p className="mt-2">
               Email any of these requests to <a className="font-semibold underline underline-offset-2 decoration-2 hover:text-aqua-deep" href="mailto:privacy@immersia.ng">privacy@immersia.ng</a> and we&apos;ll respond within 14 days.
