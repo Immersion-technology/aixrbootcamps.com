@@ -27,6 +27,7 @@ const SOCIALS: Array<{ label: string; href: string; path: string }> = [
 const EXPLORE = [
   { href: "/#courses",   label: "Courses" },
   { href: "/#timetable", label: "Schedule" },
+  { href: "/gallery",    label: "Gallery" },
   { href: "/teachers",   label: "Teachers" },
   { href: "/register",   label: "Register" },
   { href: "/faq",        label: "FAQ" },

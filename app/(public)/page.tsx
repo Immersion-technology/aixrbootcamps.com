@@ -13,6 +13,7 @@ import {
 } from "hugeicons-react";
 import ScrollReveal from "@/components/ScrollReveal";
 import FaqAccordion from "@/components/FaqAccordion";
+import GalleryStrip from "@/components/GalleryStrip";
 import JsonLd from "@/components/JsonLd";
 import { connectDB } from "@/lib/db";
 import { Registration } from "@/models/Registration";
@@ -569,6 +570,10 @@ export default async function Landing() {
           </div>
         </div>
       </section>
+
+      {/* ============ GALLERY STRIP ============ */}
+      {/* Renders nothing until photos exist — see lib/gallery.ts */}
+      <GalleryStrip />
 
       {/* ============ PARENT FAQ ============ */}
       <section className="relative py-20 sm:py-24">

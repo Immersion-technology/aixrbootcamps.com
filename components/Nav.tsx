@@ -11,6 +11,7 @@ const LINKS = [
   { href: "/#programmes",  label: "Programmes" },
   { href: "/#courses",     label: "Courses" },
   { href: "/#timetable",   label: "Schedule" },
+  { href: "/gallery",      label: "Gallery" },
   { href: "/teachers",     label: "Teachers" },
   { href: "/faq",          label: "FAQ" },
   { href: "/contact",      label: "Contact" },
@@ -88,6 +89,7 @@ export default function Nav() {
               <li><Link href="/#programmes" className="hover:text-ink transition">Programmes</Link></li>
               <li><Link href="/#courses"   className="hover:text-ink transition">Courses</Link></li>
               <li><Link href="/#timetable" className="hover:text-ink transition">Schedule</Link></li>
+              <li><Link href="/gallery"    className="hover:text-ink transition">Gallery</Link></li>
               <li><Link href="/teachers"   className="hover:text-ink transition">Teachers</Link></li>
               <li><Link href="/faq"        className="hover:text-ink transition">FAQ</Link></li>
               <li><Link href="/contact"    className="hover:text-ink transition">Contact</Link></li>
