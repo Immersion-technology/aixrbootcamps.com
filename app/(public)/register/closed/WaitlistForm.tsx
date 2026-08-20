@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { trackMeta } from "@/lib/meta-pixel";
 
 export default function WaitlistForm() {
   const [submitting, setSubmitting] = useState(false);
@@ -23,6 +24,9 @@ export default function WaitlistForm() {
         const j = await r.json();
         throw new Error(j.error ?? "Could not add to waitlist");
       }
+      // When the cohort is full the waitlist IS the conversion — it is the
+      // only thing an ad click can still achieve, so Meta needs to see it.
+      trackMeta("Lead", { content_name: "waitlist" });
       setDone(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong");

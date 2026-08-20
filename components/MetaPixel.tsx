@@ -3,6 +3,7 @@
 import Script from "next/script";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef } from "react";
+import { trackMeta } from "@/lib/meta-pixel";
 
 /**
  * Meta (Facebook) Pixel.
@@ -24,12 +25,6 @@ import { useEffect, useRef } from "react";
 // where the env var was never set.
 const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || "1678499276571961";
 
-declare global {
-  interface Window {
-    fbq?: (...args: unknown[]) => void;
-  }
-}
-
 export default function MetaPixel() {
   const pathname = usePathname();
   // The base snippet already fires one PageView on load. Skipping the first run
@@ -42,9 +37,9 @@ export default function MetaPixel() {
       return;
     }
     // App Router navigations never reload the document, so each client-side route
-    // change needs its own PageView. Optional-call because ad blockers strip
-    // fbevents.js often enough that a hard reference would throw for real users.
-    window.fbq?.("track", "PageView");
+    // change needs its own PageView. trackMeta no-ops when fbq is missing, which
+    // ad blockers make common enough to matter.
+    trackMeta("PageView");
   }, [pathname]);
 
   if (!PIXEL_ID) return null;

@@ -7,6 +7,7 @@ import { registrationCreateSchema, type RegistrationCreateInput } from "@/lib/va
 import { cn } from "@/lib/utils";
 import { CURRICULUM, type CurriculumItem } from "@/lib/curriculum";
 import { COHORTS, CAMP_SCHEDULE, cohortLabel } from "@/lib/cohorts";
+import { META_CURRENCY, toMetaValue, trackMeta } from "@/lib/meta-pixel";
 
 interface Pricing {
   regularPrice: number;
@@ -28,6 +29,9 @@ interface Props {
 }
 
 const STEPS = ["Camper", "Guardian", "Programme", "Pay"] as const;
+
+/** Index of the Pay step. Derived, so reordering STEPS cannot silently desync it. */
+const PAY_STEP = STEPS.length - 1;
 
 // Every camper attends every core class. Electives (e.g. Robotics) are opt-in,
 // carry their own fee, and are offered separately below.
@@ -83,6 +87,11 @@ export default function RegistrationForm({ pricing, cohorts }: Props) {
   const { register, handleSubmit, watch, setValue, formState, trigger } = form;
   const values = watch();
 
+  // Fires once per form session. A full page refresh legitimately restarts the
+  // wizard, and a fresh InitiateCheckout on a genuine retry is correct — so this
+  // is a ref, not sessionStorage.
+  const initiateCheckoutFired = useRef(false);
+
   async function next() {
     const fieldsForStep = (() => {
       if (step === 0) return ["participant"];
@@ -92,7 +101,29 @@ export default function RegistrationForm({ pricing, cohorts }: Props) {
       return [];
     })();
     const ok = await trigger(fieldsForStep as any, { shouldFocus: true });
-    if (ok) setStep((s) => Math.min(s + 1, STEPS.length - 1));
+    if (!ok) return;
+
+    const nextStep = Math.min(step + 1, STEPS.length - 1);
+
+    // Reaching the Pay step is where checkout actually begins. Firing here
+    // rather than on submit is deliberate: submit is a second before the
+    // Paystack redirect that produces Purchase anyway, so it would tell Meta
+    // almost nothing new. Everyone who reaches this screen and then walks away
+    // is the audience worth retargeting, and only this placement captures them.
+    //
+    // The value here is the browser-computed total. That is fine for a
+    // mid-funnel signal; Purchase uses the server-verified figure instead.
+    if (nextStep === PAY_STEP && !initiateCheckoutFired.current) {
+      initiateCheckoutFired.current = true;
+      trackMeta("InitiateCheckout", {
+        value: toMetaValue(payableTotal),
+        currency: META_CURRENCY,
+        content_ids: ["boot-camp-registration"],
+        content_type: "product",
+      });
+    }
+
+    setStep(nextStep);
   }
 
   function back() {

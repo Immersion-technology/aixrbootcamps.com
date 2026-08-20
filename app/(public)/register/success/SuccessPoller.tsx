@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { firePurchaseOnce } from "@/lib/meta-pixel";
 
 type PollState = "checking" | "paid" | "pending" | "failed";
 
@@ -29,6 +30,17 @@ export default function SuccessPoller({ reference }: { reference: string }) {
         if (json.paymentStatus === "paid") {
           setRegistrationId(json.registrationId);
           setStatus("paid");
+          // Report the conversion to Meta so ad delivery can optimise toward
+          // registrations. The amount comes from the same response as the
+          // "paid" status and is the server-verified figure, never the total
+          // the browser computed during checkout.
+          if (typeof json.amountKobo === "number") {
+            firePurchaseOnce({
+              reference,
+              registrationId: json.registrationId,
+              amountKobo: json.amountKobo,
+            });
+          }
           return;
         }
         if (json.paymentStatus === "failed") {

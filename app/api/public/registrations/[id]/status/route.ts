@@ -13,7 +13,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
   const reg = await Registration.findOne({
     $or: [{ paymentReference: ref }, { registrationId: ref }],
   })
-    .select("registrationId paymentStatus admissionStatus")
+    .select("registrationId paymentStatus admissionStatus pricing.total")
     .lean();
 
   if (!reg) return NextResponse.json({ paymentStatus: "unknown" }, { status: 404 });
@@ -22,5 +22,14 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
     registrationId: reg.registrationId,
     paymentStatus: reg.paymentStatus,
     admissionStatus: reg.admissionStatus,
+    // The confirmed amount rides along with the confirmed status so the
+    // client can report a Purchase conversion with a real value. Both come
+    // from the same read, so they can never describe different moments.
+    //
+    // Only ever sent once paid: a pending or failed reference must not be
+    // usable to probe what someone was quoted.
+    ...(reg.paymentStatus === "paid"
+      ? { amountKobo: reg.pricing?.total, currency: "NGN" }
+      : {}),
   });
 }

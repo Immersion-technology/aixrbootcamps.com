@@ -21,6 +21,7 @@ import {
 } from "@/lib/curriculum";
 import { cn } from "@/lib/utils";
 import JsonLd from "@/components/JsonLd";
+import TrackViewContent from "@/components/TrackViewContent";
 import { SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site";
 
 const ICON_MAP: Record<IconName, typeof CodeIcon> = {
@@ -109,6 +110,7 @@ export default function CourseDetail({ params }: { params: { slug: string } }) {
   return (
     <section className="relative dot-grid pt-12 pb-24">
       <JsonLd data={courseJsonLd} />
+      <TrackViewContent slug={course.slug} name={course.name} category={course.type} />
       <div className="max-w-[960px] mx-auto px-5 sm:px-7">
         {/* breadcrumb */}
         <Link
