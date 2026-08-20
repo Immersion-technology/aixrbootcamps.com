@@ -9,6 +9,7 @@ import {
   type GalleryItem,
 } from "@/lib/gallery";
 import type { CohortId } from "@/lib/cohorts";
+import Lightbox from "@/components/Lightbox";
 
 interface Props {
   photos: GalleryItem[];
@@ -142,13 +143,33 @@ export default function GalleryGrid({ photos, categories, cohorts, cohortLabels 
 
       {openIndex !== null && visible[openIndex] && (
         <Lightbox
-          photo={visible[openIndex]}
+          label={visible[openIndex].alt}
           index={openIndex}
           total={visible.length}
           onClose={close}
           onPrev={() => step(-1)}
           onNext={() => step(1)}
-        />
+          prevLabel="Previous photo"
+          nextLabel="Next photo"
+        >
+          <figure className="relative flex-1 h-full flex flex-col items-center justify-center min-w-0 m-0">
+            <div className="relative w-full h-full">
+              <Image
+                src={visible[openIndex].src}
+                alt={visible[openIndex].alt}
+                fill
+                sizes="100vw"
+                priority
+                className="object-contain"
+              />
+            </div>
+            {visible[openIndex].caption && (
+              <figcaption className="text-center text-white/85 text-[13px] mt-3 shrink-0">
+                {visible[openIndex].caption}
+              </figcaption>
+            )}
+          </figure>
+        </Lightbox>
       )}
     </>
   );
@@ -177,176 +198,6 @@ function Chip({
             : "bg-aqua-brand text-white border-aqua-brand"
           : "bg-white text-neutral-600 border-black/[.08] hover:border-aqua-brand hover:text-aqua-deep"
       }`}
-    >
-      {children}
-    </button>
-  );
-}
-
-function Lightbox({
-  photo,
-  index,
-  total,
-  onClose,
-  onPrev,
-  onNext,
-}: {
-  photo: GalleryItem;
-  index: number;
-  total: number;
-  onClose: () => void;
-  onPrev: () => void;
-  onNext: () => void;
-}) {
-  const dialogRef = useRef<HTMLDivElement>(null);
-  const touchStartX = useRef<number | null>(null);
-
-  // Keyboard: Esc closes, arrows navigate, Tab is trapped inside the dialog.
-  useEffect(() => {
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        onClose();
-        return;
-      }
-      if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        onPrev();
-        return;
-      }
-      if (e.key === "ArrowRight") {
-        e.preventDefault();
-        onNext();
-        return;
-      }
-      if (e.key !== "Tab") return;
-
-      // Focus trap — without it, Tab walks out of the modal into the page behind.
-      const focusables = dialogRef.current?.querySelectorAll<HTMLElement>("button");
-      if (!focusables || focusables.length === 0) return;
-      const first = focusables[0];
-      const last = focusables[focusables.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      }
-    }
-
-    document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, [onClose, onPrev, onNext]);
-
-  // Lock background scroll while open, restoring whatever was there before.
-  useEffect(() => {
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previous;
-    };
-  }, []);
-
-  // Move focus into the dialog on open.
-  useEffect(() => {
-    dialogRef.current?.querySelector<HTMLElement>("button")?.focus();
-  }, []);
-
-  return (
-    <div
-      ref={dialogRef}
-      role="dialog"
-      aria-modal="true"
-      aria-label={photo.alt}
-      className="fixed inset-0 z-[100] bg-black/92 flex flex-col"
-      onClick={onClose}
-      onTouchStart={(e) => {
-        touchStartX.current = e.touches[0]?.clientX ?? null;
-      }}
-      onTouchEnd={(e) => {
-        const start = touchStartX.current;
-        const end = e.changedTouches[0]?.clientX;
-        touchStartX.current = null;
-        if (start === null || end === undefined) return;
-        const dx = end - start;
-        if (Math.abs(dx) < 50) return;
-        dx > 0 ? onPrev() : onNext();
-      }}
-    >
-      <div className="flex items-center justify-between gap-4 p-4 text-white/80 text-[12.5px] font-semibold shrink-0">
-        <span className="tabular-nums">
-          {index + 1} / {total}
-        </span>
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onClose();
-          }}
-          className="rounded-full px-4 py-2 bg-white/10 hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-white transition"
-        >
-          Close ✕
-        </button>
-      </div>
-
-      {/* stopPropagation so clicking the photo itself doesn't close the dialog */}
-      <div
-        className="flex-1 min-h-0 flex items-center justify-center px-4 pb-4 gap-3"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {total > 1 && (
-          <NavButton label="Previous photo" onClick={onPrev}>
-            ‹
-          </NavButton>
-        )}
-
-        <figure className="relative flex-1 h-full flex flex-col items-center justify-center min-w-0 m-0">
-          <div className="relative w-full h-full">
-            <Image
-              src={photo.src}
-              alt={photo.alt}
-              fill
-              sizes="100vw"
-              priority
-              className="object-contain"
-            />
-          </div>
-          {photo.caption && (
-            <figcaption className="text-center text-white/85 text-[13px] mt-3 shrink-0">
-              {photo.caption}
-            </figcaption>
-          )}
-        </figure>
-
-        {total > 1 && (
-          <NavButton label="Next photo" onClick={onNext}>
-            ›
-          </NavButton>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function NavButton({
-  children,
-  label,
-  onClick,
-}: {
-  children: React.ReactNode;
-  label: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      aria-label={label}
-      onClick={(e) => {
-        e.stopPropagation();
-        onClick();
-      }}
-      className="shrink-0 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white text-[26px] leading-none flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-white transition"
     >
       {children}
     </button>

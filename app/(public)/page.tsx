@@ -12,6 +12,7 @@ import {
   RacingFlagIcon,
 } from "hugeicons-react";
 import ScrollReveal from "@/components/ScrollReveal";
+import VideoGallery from "@/components/VideoGallery";
 import FaqAccordion from "@/components/FaqAccordion";
 import GalleryStrip from "@/components/GalleryStrip";
 import JsonLd from "@/components/JsonLd";
@@ -270,6 +271,9 @@ export default async function Landing() {
           </div>
         </div>
       </section>
+
+      {/* ============ VIDEO GALLERY ============ */}
+      <VideoGallery />
 
       {/* ============ CHOOSE YOUR PROGRAMME ============ */}
       <section id="programmes" className="relative overflow-hidden py-16 sm:py-20 bg-white border-y border-black/[.05]">
