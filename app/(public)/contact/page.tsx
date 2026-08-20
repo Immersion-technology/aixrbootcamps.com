@@ -1,6 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import { campDateBand } from "@/lib/cohorts";
+import {
+  CONTACT_EMAIL,
+  CONTACT_PHONE_INTL_DISPLAY,
+  CONTACT_TEL_URL,
+  whatsappUrl,
+} from "@/lib/contact";
 
 export const metadata = {
   title: "Contact · Talk to a human",
@@ -21,24 +27,24 @@ const CHANNELS: Array<{
 }> = [
   {
     label: "WhatsApp",
-    value: "+234 813 701 3560",
-    href: "https://wa.me/2348137013560",
+    value: CONTACT_PHONE_INTL_DISPLAY,
+    href: whatsappUrl(),
     note: "Fastest. We reply within 30 minutes during office hours.",
     glass: "/img/glass-orb.png",
     sticker: "green",
   },
   {
     label: "Phone",
-    value: "+234 813 701 3560",
-    href: "tel:+2348137013560",
+    value: CONTACT_PHONE_INTL_DISPLAY,
+    href: CONTACT_TEL_URL,
     note: "Office hours: Mon – Sat, 9am – 6pm WAT.",
     glass: "/img/glass-paper-plane.png",
     sticker: "ink",
   },
   {
     label: "Email",
-    value: "hello@immersia.ng",
-    href: "mailto:hello@immersia.ng",
+    value: CONTACT_EMAIL,
+    href: `mailto:${CONTACT_EMAIL}`,
     note: "For longer questions or to share documents. We reply within 24h.",
     glass: "/img/glass-star.png",
     sticker: "cyan",

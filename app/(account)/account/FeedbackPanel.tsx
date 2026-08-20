@@ -2,6 +2,12 @@
 
 import Link from "next/link";
 import { FormEvent, useState } from "react";
+import {
+  CONTACT_EMAIL,
+  CONTACT_EMAIL_URL,
+  CONTACT_PHONE_INTL_DISPLAY,
+  whatsappUrl,
+} from "@/lib/contact";
 
 type Status = { kind: "success" | "error"; text: string } | null;
 
@@ -103,11 +109,23 @@ export default function FeedbackPanel() {
         <div className="mt-6 space-y-3 text-[13px]">
           <div className="rounded-2xl bg-white/10 border border-white/10 p-4">
             <div className="font-semibold">Email</div>
-            <div className="text-white/75">hello@immersia.ng</div>
+            <a
+              href={CONTACT_EMAIL_URL}
+              className="text-white/75 underline underline-offset-4 decoration-white/30 hover:text-white transition"
+            >
+              {CONTACT_EMAIL}
+            </a>
           </div>
           <div className="rounded-2xl bg-white/10 border border-white/10 p-4">
             <div className="font-semibold">WhatsApp</div>
-            <div className="text-white/75">+234 813 701 3560</div>
+            <a
+              href={whatsappUrl("Hi! I'm a parent with a question about my camper.")}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white/75 underline underline-offset-4 decoration-white/30 hover:text-white transition"
+            >
+              {CONTACT_PHONE_INTL_DISPLAY}
+            </a>
           </div>
         </div>
       </aside>

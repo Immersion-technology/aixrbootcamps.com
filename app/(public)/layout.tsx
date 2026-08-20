@@ -3,6 +3,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
 import MetaPixel from "@/components/MetaPixel";
+import WhatsAppFab from "@/components/WhatsAppFab";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -14,6 +15,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       <Nav />
       <main>{children}</main>
       <Footer />
+      <WhatsAppFab />
     </>
   );
 }

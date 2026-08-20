@@ -35,11 +35,26 @@ export const SITE_KEYWORDS = [
 export const CAMP_START = "2026-07-27";
 export const CAMP_END = "2026-09-04";
 
-// Contact + locale, used by structured data.
 export const SITE_LOCALE = "en_NG";
-export const CONTACT_PHONE = "+2348137013560";
 export const CONTACT_CITY = "Lagos";
 export const CONTACT_COUNTRY = "NG";
+
+// Contact details live in lib/contact.ts (no pricing dependency, so client
+// components can import them). Re-exported here because structured data and
+// SEO metadata reach for them alongside the rest of the site constants.
+export {
+  CONTACT_PHONE_E164,
+  CONTACT_PHONE_DISPLAY,
+  CONTACT_PHONE_INTL_DISPLAY,
+  CONTACT_WHATSAPP_NUMBER,
+  CONTACT_WHATSAPP_URL,
+  CONTACT_TEL_URL,
+  CONTACT_EMAIL,
+  whatsappUrl,
+} from "@/lib/contact";
+
+/** schema.org / legacy alias. */
+export { CONTACT_PHONE_E164 as CONTACT_PHONE } from "@/lib/contact";
 
 // Pricing in naira, for Offer structured data only. Derived from the kobo source of
 // truth in lib/pricing.ts (env-configurable) so SEO and checkout never disagree.
