@@ -30,6 +30,9 @@ const PaymentSchema = new Schema<IPayment>(
 );
 
 PaymentSchema.index({ paymentReference: 1, status: 1 });
+// The payments CSV sorts by receivedAt and now filters a date range on it too;
+// unindexed that is a full scan of every transaction attempt ever made.
+PaymentSchema.index({ receivedAt: -1 });
 
 export const Payment: Model<IPayment> =
   (mongoose.models.Payment as Model<IPayment>) || mongoose.model<IPayment>("Payment", PaymentSchema);

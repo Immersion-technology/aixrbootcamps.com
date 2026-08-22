@@ -5,12 +5,9 @@ import { Registration } from "@/models/Registration";
 import { Attendance } from "@/models/Attendance";
 import { AttractionChoice, type Attraction } from "@/models/AttractionChoice";
 import TeacherRosterRow from "./TeacherRosterRow";
+import { todayISO } from "@/lib/date-range";
 
 export const dynamic = "force-dynamic";
-
-function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
-}
 
 export default async function TeacherDashboard({
   searchParams,

@@ -149,6 +149,13 @@ const RegistrationSchema = new Schema<IRegistration>(
   { timestamps: true, strict: true }
 );
 
+// The admin registry filters by status and by registration date together, and
+// sorts by date always. createdAt comes from `timestamps` so it is not declared
+// as a field above and picks up no index on its own — unindexed, every listing
+// and every date-range filter full-scans a collection that only ever grows.
+RegistrationSchema.index({ paymentStatus: 1, createdAt: -1 });
+RegistrationSchema.index({ createdAt: -1 });
+
 export const Registration: Model<IRegistration> =
   (mongoose.models.Registration as Model<IRegistration>) ||
   mongoose.model<IRegistration>("Registration", RegistrationSchema);

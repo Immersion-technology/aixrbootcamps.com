@@ -3,12 +3,9 @@ import { connectDB } from "@/lib/db";
 import { Registration } from "@/models/Registration";
 import { Attendance } from "@/models/Attendance";
 import RosterRow from "./RosterRow";
+import { todayISO } from "@/lib/date-range";
 
 export const dynamic = "force-dynamic";
-
-function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
-}
 
 export default async function AdminAttendancePage({
   searchParams,

@@ -18,6 +18,10 @@ const WaitlistSchema = new Schema<IWaitlist>(
   { timestamps: { createdAt: "createdAt", updatedAt: false }, strict: true }
 );
 
+// Listed newest-first and now filterable by date. Same reasoning as Registration:
+// createdAt is a `timestamps` field, so it needs an explicit index.
+WaitlistSchema.index({ createdAt: -1 });
+
 export const Waitlist: Model<IWaitlist> =
   (mongoose.models.Waitlist as Model<IWaitlist>) ||
   mongoose.model<IWaitlist>("Waitlist", WaitlistSchema);
