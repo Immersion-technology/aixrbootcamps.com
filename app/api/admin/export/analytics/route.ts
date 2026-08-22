@@ -3,6 +3,7 @@ import { connectDB } from "@/lib/db";
 import { PageView } from "@/models/PageView";
 import { getAdminFromCookie } from "@/lib/auth";
 import { csvResponse } from "@/lib/csv";
+import { exportDateClause, hasDateParams } from "@/lib/date-range";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +21,17 @@ export async function GET(req: NextRequest) {
   since.setDate(since.getDate() - days);
 
   await connectDB();
-  const rows = await PageView.find({ ts: { $gte: since } })
+  // An explicit range wins; ?days= stays as the fallback so old links and the
+  // documented "last 30 days" default keep working.
+  //
+  // `range=all` also yields no clause, but it means the opposite of "unset" —
+  // it means every row. Coalescing the two would silently cap an "All time"
+  // export at 30 days while the button that produced it said otherwise.
+  const sp = req.nextUrl.searchParams;
+  const clause = exportDateClause(sp);
+  const tsBetween = clause ?? (hasDateParams(sp) ? undefined : { $gte: since });
+
+  const rows = await PageView.find(tsBetween ? { ts: tsBetween } : {})
     .sort({ ts: -1 })
     .limit(MAX_ROWS)
     .lean();

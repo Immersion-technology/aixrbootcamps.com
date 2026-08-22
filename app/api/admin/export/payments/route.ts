@@ -5,6 +5,7 @@ import { Registration } from "@/models/Registration";
 import { getAdminFromCookie } from "@/lib/auth";
 import { formatNaira } from "@/lib/utils";
 import { csvResponse } from "@/lib/csv";
+import { exportDateClause } from "@/lib/date-range";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,10 @@ export async function GET(req: NextRequest) {
   if (status) filter.status = status;
 
   await connectDB();
+  // Payments are dated by when the money landed, not when the row was written.
+  const receivedBetween = exportDateClause(req.nextUrl.searchParams);
+  if (receivedBetween) filter.receivedAt = receivedBetween;
+
   const rows = await Payment.find(filter).sort({ receivedAt: -1 }).lean();
 
   const registrations = await Registration.find({

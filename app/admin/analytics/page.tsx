@@ -1,5 +1,19 @@
 import { connectDB } from "@/lib/db";
 import { PageView } from "@/models/PageView";
+import {
+  GRAIN_FORMAT,
+  LAGOS_OFFSET,
+  bucketKeyFor,
+  bucketKeys,
+  startOfDay,
+  grainFor,
+  type Grain,
+  parseDateRange,
+  PRESETS,
+  rangeFilter,
+  todayISO,
+  type DateRange,
+} from "@/lib/date-range";
 
 export const dynamic = "force-dynamic";
 
@@ -8,6 +22,7 @@ export const metadata = {
 };
 
 interface DayBucket {
+  /** Bucket key: a date, ISO week or month depending on the range span. */
   date: string;
   count: number;
   visitors: number;
@@ -38,28 +53,26 @@ interface RecentVisitor {
   lastSeen: Date;
 }
 
-async function getAnalytics() {
+async function getAnalytics(range: DateRange) {
   try {
     await connectDB();
 
-    const now = new Date();
-    const startOf7d = new Date(now);
-    startOf7d.setDate(startOf7d.getDate() - 7);
-    startOf7d.setHours(0, 0, 0, 0);
+    // Every window below is Lagos-correct. The previous code used
+    // .setHours(0,0,0,0), which snaps to the SERVER's midnight — UTC on Vercel —
+    // so between 00:00 and 01:00 WAT "today" silently meant yesterday.
+    const inRange = rangeFilter(range);
+    const today = todayISO();
+    const startOfToday = startOfDay(today);
 
-    const startOf14d = new Date(now);
-    startOf14d.setDate(startOf14d.getDate() - 13);
-    startOf14d.setHours(0, 0, 0, 0);
-
-    const startOfToday = new Date(now);
-    startOfToday.setHours(0, 0, 0, 0);
+    // Bucket width follows the span, so "all time" cannot render 900 columns.
+    const grain = grainFor(range.spanDays);
 
     const [
       totalAll,
-      total7d,
+      totalRange,
       totalToday,
       uniqueAll,
-      unique7d,
+      uniqueRange,
       uniqueToday,
       topPages,
       dailyBuckets,
@@ -70,14 +83,15 @@ async function getAnalytics() {
       recentVisitorsAgg,
     ] = await Promise.all([
       PageView.countDocuments(),
-      PageView.countDocuments({ ts: { $gte: startOf7d } }),
+      PageView.countDocuments({ ts: inRange }),
       PageView.countDocuments({ ts: { $gte: startOfToday } }),
 
       PageView.distinct("visitorId", { visitorId: { $nin: [null, ""] } }).then((v) => v.length),
-      PageView.distinct("visitorId", { visitorId: { $nin: [null, ""] }, ts: { $gte: startOf7d } }).then((v) => v.length),
+      PageView.distinct("visitorId", { visitorId: { $nin: [null, ""] }, ts: inRange }).then((v) => v.length),
       PageView.distinct("visitorId", { visitorId: { $nin: [null, ""] }, ts: { $gte: startOfToday } }).then((v) => v.length),
 
       PageView.aggregate<TopPage>([
+        { $match: { ts: inRange } },
         { $group: { _id: "$path", count: { $sum: 1 } } },
         { $sort: { count: -1 } },
         { $limit: 10 },
@@ -85,10 +99,18 @@ async function getAnalytics() {
       ]),
 
       PageView.aggregate([
-        { $match: { ts: { $gte: startOf14d } } },
+        { $match: { ts: inRange } },
         {
           $group: {
-            _id: { $dateToString: { format: "%Y-%m-%d", date: "$ts" } },
+            // timezone is load-bearing: without it Mongo buckets by UTC day and the
+            // chart disagrees with the totals by an hour at every boundary.
+            _id: {
+              $dateToString: {
+                format: GRAIN_FORMAT[grain],
+                date: "$ts",
+                timezone: LAGOS_OFFSET,
+              },
+            },
             count: { $sum: 1 },
             visitors: {
               $addToSet: { $cond: [{ $in: ["$visitorId", [null, ""]] }, "$$REMOVE", "$visitorId"] },
@@ -100,21 +122,21 @@ async function getAnalytics() {
       ]),
 
       PageView.aggregate<BreakdownRow>([
-        { $match: { ts: { $gte: startOf7d }, device: { $ne: "" } } },
+        { $match: { ts: inRange, device: { $ne: "" } } },
         { $group: { _id: "$device", count: { $sum: 1 } } },
         { $sort: { count: -1 } },
         { $project: { _id: 0, label: "$_id", count: 1 } },
       ]),
 
       PageView.aggregate<BreakdownRow>([
-        { $match: { ts: { $gte: startOf7d }, browser: { $ne: "" } } },
+        { $match: { ts: inRange, browser: { $ne: "" } } },
         { $group: { _id: "$browser", count: { $sum: 1 } } },
         { $sort: { count: -1 } },
         { $project: { _id: 0, label: "$_id", count: 1 } },
       ]),
 
       PageView.aggregate<BreakdownRow>([
-        { $match: { ts: { $gte: startOf7d }, country: { $ne: "" } } },
+        { $match: { ts: inRange, country: { $ne: "" } } },
         { $group: { _id: "$country", count: { $sum: 1 } } },
         { $sort: { count: -1 } },
         { $limit: 8 },
@@ -122,7 +144,7 @@ async function getAnalytics() {
       ]),
 
       PageView.aggregate<BreakdownRow>([
-        { $match: { ts: { $gte: startOf7d }, utmSource: { $ne: "" } } },
+        { $match: { ts: inRange, utmSource: { $ne: "" } } },
         { $group: { _id: "$utmSource", count: { $sum: 1 } } },
         { $sort: { count: -1 } },
         { $limit: 8 },
@@ -133,7 +155,7 @@ async function getAnalytics() {
       // Legacy rows recorded before visitor tracking shipped have no visitorId — exclude them
       // so they don't collapse into one phantom "visitor" with hundreds of page views.
       PageView.aggregate([
-        { $match: { visitorId: { $nin: [null, ""] } } },
+        { $match: { visitorId: { $nin: [null, ""] }, ts: inRange } },
         { $sort: { ts: 1 } },
         {
           $group: {
@@ -173,21 +195,22 @@ async function getAnalytics() {
       ]),
     ]);
 
-    const filledDays: DayBucket[] = [];
-    for (let i = 13; i >= 0; i--) {
-      const d = new Date(now);
-      d.setDate(d.getDate() - i);
-      const dateStr = d.toISOString().slice(0, 10);
-      const existing = (dailyBuckets as DayBucket[]).find((b) => b.date === dateStr);
-      filledDays.push({ date: dateStr, count: existing?.count ?? 0, visitors: existing?.visitors ?? 0 });
-    }
+    const found = new Map(
+      (dailyBuckets as DayBucket[]).map((b) => [b.date, b] as const),
+    );
+    const filledDays: DayBucket[] = bucketKeys(range, grain).map((key) => ({
+      date: key,
+      count: found.get(key)?.count ?? 0,
+      visitors: found.get(key)?.visitors ?? 0,
+    }));
 
     return {
+      grain,
       totalAll,
-      total7d,
+      totalRange,
       totalToday,
       uniqueAll,
-      unique7d,
+      uniqueRange,
       uniqueToday,
       topPages,
       filledDays,
@@ -199,11 +222,12 @@ async function getAnalytics() {
     };
   } catch {
     return {
+      grain: "day" as const,
       totalAll: 0,
-      total7d: 0,
+      totalRange: 0,
       totalToday: 0,
       uniqueAll: 0,
-      unique7d: 0,
+      uniqueRange: 0,
       uniqueToday: 0,
       topPages: [] as TopPage[],
       filledDays: [] as DayBucket[],
@@ -220,10 +244,74 @@ function fmt(n: number) {
   return n.toLocaleString("en-NG");
 }
 
-function shortDate(iso: string) {
-  const [, month, day] = iso.split("-");
-  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  return `${months[Number(month) - 1]} ${Number(day)}`;
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+/**
+ * Axis label for a bucket key. The key shape follows the grain, so this has to
+ * branch: "2026-08-20" (day), "2026-W34" (week), "2026-08" (month).
+ */
+function bucketLabel(key: string, grain: Grain): string {
+  if (grain === "week") return `W${key.split("-W")[1]}`;
+  if (grain === "month") {
+    const [year, month] = key.split("-");
+    return `${MONTHS[Number(month) - 1]} ${year.slice(2)}`;
+  }
+  const [, month, day] = key.split("-");
+  return `${MONTHS[Number(month) - 1]} ${Number(day)}`;
+}
+
+/**
+ * Date range picker.
+ *
+ * Preset chips are plain links and the custom range is a GET form, so the whole
+ * control works with no JavaScript — which matters, because this page is a
+ * server component and there is no client bundle to fall back on.
+ */
+function RangeControl({ range }: { range: DateRange }) {
+  return (
+    <div className="frosted-glass rounded-2xl p-4 mb-6 flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap gap-2">
+        {PRESETS.map((preset) => {
+          const active = range.preset === preset.key;
+          return (
+            <a
+              key={preset.key}
+              href={`/admin/analytics?range=${preset.key}`}
+              aria-current={active ? "page" : undefined}
+              className={`rounded-full px-3.5 py-1.5 text-[11.5px] font-bold tracking-[.1em] uppercase transition ${
+                active
+                  ? "bg-violet-brand text-white"
+                  : "bg-white border border-black/10 text-neutral-600 hover:border-violet-brand/40 hover:text-violet-deep"
+              }`}
+            >
+              {preset.label}
+            </a>
+          );
+        })}
+      </div>
+
+      <form method="GET" className="flex items-center gap-2 sm:ml-auto">
+        <input
+          type="date"
+          name="from"
+          defaultValue={range.from}
+          max={todayISO()}
+          aria-label="From date"
+          className="input !py-2 !w-auto !text-[12px]"
+        />
+        <span className="text-neutral-400 text-[12px]" aria-hidden>&ndash;</span>
+        <input
+          type="date"
+          name="to"
+          defaultValue={range.to}
+          max={todayISO()}
+          aria-label="To date"
+          className="input !py-2 !w-auto !text-[12px]"
+        />
+        <button type="submit" className="btn-light !py-2 !px-4 !text-[12px]">Apply</button>
+      </form>
+    </div>
+  );
 }
 
 function relativeTime(d: Date) {
@@ -252,14 +340,27 @@ function maskIp(ip: string) {
   return ip;
 }
 
-export default async function AnalyticsPage() {
+export default async function AnalyticsPage({
+  searchParams,
+}: {
+  searchParams: { range?: string; from?: string; to?: string };
+}) {
+  // Parsed outside the data fetch so a database hiccup blanks the numbers but
+  // still leaves a working filter control to retry with.
+  const range = parseDateRange(searchParams);
   const {
-    totalAll, total7d, totalToday,
-    uniqueAll, unique7d, uniqueToday,
+    grain,
+    totalAll, totalRange, totalToday,
+    uniqueAll, uniqueRange, uniqueToday,
     topPages, filledDays,
     deviceBreakdown, browserBreakdown, countryBreakdown, utmBreakdown,
     recentVisitors,
-  } = await getAnalytics();
+  } = await getAnalytics(range);
+
+  const currentBucket = bucketKeyFor(todayISO(), grain);
+  const rangeQuery = range.preset
+    ? `range=${range.preset}`
+    : `from=${range.from}&to=${range.to}`;
 
   const maxDay = Math.max(...filledDays.map((d) => d.count), 1);
   const totalForShare = topPages.reduce((s, p) => s + p.count, 0) || 1;
@@ -279,10 +380,12 @@ export default async function AnalyticsPage() {
             Visitors are identified by an anonymous device cookie, not by personal identity. IP addresses shown are masked.
           </p>
         </div>
-        <a href="/api/admin/export/analytics" className="btn-dark !text-[12px] !px-5 !py-2 shrink-0">
+        <a href={`/api/admin/export/analytics?${rangeQuery}`} className="btn-dark !text-[12px] !px-5 !py-2 shrink-0">
           Export CSV <span>→</span>
         </a>
       </div>
+
+      <RangeControl range={range} />
 
       {/* stat tiles: page views */}
       <div className="grid grid-cols-3 gap-4 mb-4">
@@ -292,8 +395,8 @@ export default async function AnalyticsPage() {
           <div className="text-[11.5px] text-neutral-500 mt-1">page views</div>
         </div>
         <div className="frosted-glass-violet rounded-2xl p-5">
-          <div className="text-[10px] font-bold tracking-[.2em] text-white/70 uppercase mb-2">Last 7 days</div>
-          <div className="font-accent font-extrabold text-[30px] leading-none text-white">{fmt(total7d)}</div>
+          <div className="text-[10px] font-bold tracking-[.2em] text-white/70 uppercase mb-2">{range.label}</div>
+          <div className="font-accent font-extrabold text-[30px] leading-none text-white">{fmt(totalRange)}</div>
           <div className="text-[11.5px] text-white/70 mt-1">page views</div>
         </div>
         <div className="frosted-glass-dark rounded-2xl p-5">
@@ -311,8 +414,8 @@ export default async function AnalyticsPage() {
           <div className="text-[11.5px] text-neutral-500 mt-1">unique visitors</div>
         </div>
         <div className="bg-white border border-black/[.06] rounded-2xl p-5">
-          <div className="text-[10px] font-bold tracking-[.2em] text-neutral-500 uppercase mb-2">Last 7 days</div>
-          <div className="font-accent font-extrabold text-[24px] leading-none text-ink">{fmt(unique7d)}</div>
+          <div className="text-[10px] font-bold tracking-[.2em] text-neutral-500 uppercase mb-2">{range.label}</div>
+          <div className="font-accent font-extrabold text-[24px] leading-none text-ink">{fmt(uniqueRange)}</div>
           <div className="text-[11.5px] text-neutral-500 mt-1">unique visitors</div>
         </div>
         <div className="bg-white border border-black/[.06] rounded-2xl p-5">
@@ -322,16 +425,16 @@ export default async function AnalyticsPage() {
         </div>
       </div>
 
-      {/* 14-day trend */}
+      {/* traffic trend over the selected range */}
       <div className="bg-white border border-black/[.06] rounded-2xl p-6 mb-6">
         <div className="text-[10.5px] font-bold tracking-[.22em] text-neutral-500 uppercase mb-5">
-          14-day trend &middot; views vs unique visitors
+          {range.label} &middot; views vs unique visitors &middot; by {grain}
         </div>
         <div className="flex items-end gap-1.5 h-28">
           {filledDays.map((d) => {
             const pct = Math.round((d.count / maxDay) * 100);
             const visitorPct = Math.round((d.visitors / maxDay) * 100);
-            const isToday = d.date === new Date().toISOString().slice(0, 10);
+            const isToday = d.date === currentBucket;
             return (
               <div key={d.date} className="flex-1 flex flex-col items-center justify-end gap-1 group relative">
                 <div className="absolute bottom-full mb-1.5 left-1/2 -translate-x-1/2 pointer-events-none opacity-0 group-hover:opacity-100 transition bg-ink text-white text-[10px] font-bold rounded-lg px-2 py-1 whitespace-nowrap z-10">
@@ -348,7 +451,7 @@ export default async function AnalyticsPage() {
                   />
                 </div>
                 <span className="text-[8.5px] text-neutral-400 whitespace-nowrap hidden sm:block">
-                  {shortDate(d.date)}
+                  {bucketLabel(d.date, grain)}
                 </span>
               </div>
             );
@@ -358,10 +461,10 @@ export default async function AnalyticsPage() {
 
       {/* breakdown grid: device, browser, country, utm source */}
       <div className="grid grid-cols-2 gap-4 mb-6">
-        <BreakdownCard title="Device (7d)" rows={deviceBreakdown} />
-        <BreakdownCard title="Browser (7d)" rows={browserBreakdown} />
-        <BreakdownCard title="Country (7d)" rows={countryBreakdown} emptyLabel="No geo data yet" />
-        <BreakdownCard title="Traffic source (7d)" rows={utmBreakdown} emptyLabel="No campaign traffic yet" />
+        <BreakdownCard title={`Device · ${range.label}`} rows={deviceBreakdown} />
+        <BreakdownCard title={`Browser · ${range.label}`} rows={browserBreakdown} />
+        <BreakdownCard title={`Country · ${range.label}`} rows={countryBreakdown} emptyLabel="No geo data yet" />
+        <BreakdownCard title={`Traffic source · ${range.label}`} rows={utmBreakdown} emptyLabel="No campaign traffic yet" />
       </div>
 
       {/* top pages table */}
@@ -373,7 +476,9 @@ export default async function AnalyticsPage() {
         </div>
         {topPages.length === 0 ? (
           <div className="px-6 py-10 text-center text-[13px] text-neutral-400">
-            No page views recorded yet. Visit the public site to start tracking.
+            {totalAll === 0
+              ? "No page views recorded yet. Visit the public site to start tracking."
+              : `No page views in ${range.label.toLowerCase()}. Try a wider range.`}
           </div>
         ) : (
           <table className="w-full text-[13px]">
@@ -412,7 +517,9 @@ export default async function AnalyticsPage() {
         </div>
         {recentVisitors.length === 0 ? (
           <div className="px-6 py-10 text-center text-[13px] text-neutral-400">
-            No visitors recorded yet.
+            {uniqueAll === 0
+              ? "No visitors recorded yet."
+              : `No visitors in ${range.label.toLowerCase()}.`}
           </div>
         ) : (
           <div className="overflow-x-auto">

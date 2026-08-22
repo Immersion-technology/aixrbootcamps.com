@@ -1,4 +1,17 @@
-export default function ExportPage() {
+import { isValidISODate, todayISO } from "@/lib/date-range";
+
+export default function ExportPage({
+  searchParams,
+}: {
+  searchParams: { from?: string; to?: string };
+}) {
+  // Appended to every download link, so the CSV matches whatever range is set
+  // above it. Omitted entirely when unset — an export with no dates means
+  // everything, and silently truncating a spreadsheet is worse than a big one.
+  const from = isValidISODate(searchParams.from) ? searchParams.from : "";
+  const to = isValidISODate(searchParams.to) ? searchParams.to : "";
+  const dates = [from && `from=${from}`, to && `to=${to}`].filter(Boolean).join("&");
+  const q = (base: string) => (dates ? `${base}${base.includes("?") ? "&" : "?"}${dates}` : base);
   return (
     <div className="p-6 sm:p-10 lg:p-12 max-w-3xl">
       <div className="mb-9">
@@ -11,42 +24,62 @@ export default function ExportPage() {
         </p>
       </div>
 
+      <form className="frosted-glass rounded-2xl p-4 mb-6 flex flex-wrap items-end gap-3">
+        <div>
+          <label htmlFor="from" className="block text-[10px] font-bold tracking-[.2em] text-neutral-500 uppercase mb-1.5">From</label>
+          <input id="from" type="date" name="from" defaultValue={from} max={todayISO()} className="input !py-2 !w-auto !text-[12px]" />
+        </div>
+        <div>
+          <label htmlFor="to" className="block text-[10px] font-bold tracking-[.2em] text-neutral-500 uppercase mb-1.5">To</label>
+          <input id="to" type="date" name="to" defaultValue={to} max={todayISO()} className="input !py-2 !w-auto !text-[12px]" />
+        </div>
+        <button className="btn-light !py-2 !px-4 !text-[12px]">Apply to downloads</button>
+        {dates && (
+          <a href="/admin/export" className="text-[11.5px] text-neutral-500 underline underline-offset-4 hover:text-ink">Clear</a>
+        )}
+        <p className="w-full text-[11.5px] text-neutral-500">
+          {dates
+            ? "Downloads below are limited to this range, except the lifetime stats snapshot."
+            : "No range set — downloads include everything."}
+        </p>
+      </form>
+
       <div className="frosted-glass rounded-3xl p-5 sm:p-7 space-y-6">
         <div>
           <div className="text-[10.5px] font-bold tracking-[.22em] text-violet-brand uppercase mb-3">Registrations</div>
-          <a href="/api/admin/export?format=csv" className="btn-dark inline-flex">
+          <a href={q("/api/admin/export?format=csv")} className="btn-dark inline-flex">
             Download all as CSV <span>→</span>
           </a>
           <p className="text-[11.5px] text-neutral-500 mt-2.5">
             Camper + parent details, courses, pricing, payment/admission status. Opens cleanly in Excel, Google Sheets, Numbers.
           </p>
           <div className="flex flex-wrap gap-2.5 mt-4">
-            <Chip href="/api/admin/export?format=csv&payment=paid">Paid only</Chip>
-            <Chip href="/api/admin/export?format=csv&payment=pending">Pending payment</Chip>
-            <Chip href="/api/admin/export?format=csv&admission=admitted">Admitted only</Chip>
-            <Chip href="/api/admin/export?format=csv&admission=rejected">Rejected only</Chip>
-            <Chip href="/api/admin/export?format=csv&laptop=yes">Laptop renters</Chip>
+            <Chip href={q("/api/admin/export?format=csv&payment=paid")}>Paid only</Chip>
+            <Chip href={q("/api/admin/export?format=csv&payment=pending")}>Pending payment</Chip>
+            <Chip href={q("/api/admin/export?format=csv&admission=admitted")}>Admitted only</Chip>
+            <Chip href={q("/api/admin/export?format=csv&admission=rejected")}>Rejected only</Chip>
+            <Chip href={q("/api/admin/export?format=csv&laptop=yes")}>Laptop renters</Chip>
           </div>
         </div>
 
         <div className="border-t border-black/5 pt-6">
           <div className="text-[10.5px] font-bold tracking-[.22em] text-violet-brand uppercase mb-3">Payments</div>
-          <a href="/api/admin/export/payments" className="btn-dark inline-flex">
+          <a href={q("/api/admin/export/payments")} className="btn-dark inline-flex">
             Download payments as CSV <span>→</span>
           </a>
           <p className="text-[11.5px] text-neutral-500 mt-2.5">
             Every Paystack transaction attempt — reference, channel, status, amount, timestamp.
           </p>
           <div className="flex flex-wrap gap-2.5 mt-4">
-            <Chip href="/api/admin/export/payments?status=success">Successful</Chip>
-            <Chip href="/api/admin/export/payments?status=failed">Failed</Chip>
-            <Chip href="/api/admin/export/payments?status=abandoned">Abandoned</Chip>
+            <Chip href={q("/api/admin/export/payments?status=success")}>Successful</Chip>
+            <Chip href={q("/api/admin/export/payments?status=failed")}>Failed</Chip>
+            <Chip href={q("/api/admin/export/payments?status=abandoned")}>Abandoned</Chip>
           </div>
         </div>
 
         <div className="border-t border-black/5 pt-6">
           <div className="text-[10.5px] font-bold tracking-[.22em] text-violet-brand uppercase mb-3">Waitlist</div>
-          <a href="/api/admin/export/waitlist" className="btn-dark inline-flex">
+          <a href={q("/api/admin/export/waitlist")} className="btn-dark inline-flex">
             Download waitlist as CSV <span>→</span>
           </a>
           <p className="text-[11.5px] text-neutral-500 mt-2.5">Everyone who signed up while the camp was full.</p>
@@ -54,7 +87,7 @@ export default function ExportPage() {
 
         <div className="border-t border-black/5 pt-6">
           <div className="text-[10.5px] font-bold tracking-[.22em] text-violet-brand uppercase mb-3">Site traffic</div>
-          <a href="/api/admin/export/analytics" className="btn-dark inline-flex">
+          <a href={q("/api/admin/export/analytics")} className="btn-dark inline-flex">
             Download pageviews as CSV <span>→</span>
           </a>
           <p className="text-[11.5px] text-neutral-500 mt-2.5">
@@ -69,6 +102,7 @@ export default function ExportPage() {
           </a>
           <p className="text-[11.5px] text-neutral-500 mt-2.5">
             One-row summary: totals, revenue, capacity, waitlist size — a dated snapshot for board/sponsor updates.
+            <strong className="text-neutral-700"> Always lifetime totals</strong> — the date range above does not apply.
           </p>
         </div>
 

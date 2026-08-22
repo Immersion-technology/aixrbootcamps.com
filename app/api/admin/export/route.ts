@@ -5,6 +5,7 @@ import { getAdminFromCookie } from "@/lib/auth";
 import { calcAge, formatNaira } from "@/lib/utils";
 import { cohortLabel } from "@/lib/cohorts";
 import { csvResponse } from "@/lib/csv";
+import { exportDateClause } from "@/lib/date-range";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +20,8 @@ export async function GET(req: NextRequest) {
   if (sp.get("laptop") === "yes") filter.laptopRental = true;
   if (sp.get("laptop") === "no") filter.laptopRental = false;
   if (sp.get("course")) filter.courses = sp.get("course");
+  const registeredBetween = exportDateClause(sp);
+  if (registeredBetween) filter.createdAt = registeredBetween;
 
   await connectDB();
   const rows = await Registration.find(filter).sort({ createdAt: -1 }).lean();

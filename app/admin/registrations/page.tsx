@@ -2,6 +2,7 @@ import Link from "next/link";
 import { connectDB } from "@/lib/db";
 import { Registration } from "@/models/Registration";
 import { calcAge, formatNaira } from "@/lib/utils";
+import { isValidISODate, startOfDay, endOfDay, todayISO } from "@/lib/date-range";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +12,8 @@ interface SearchParams {
   admission?: string;
   course?: string;
   laptop?: string;
+  from?: string;
+  to?: string;
   page?: string;
 }
 
@@ -26,6 +29,16 @@ export default async function RegistrationsList({ searchParams }: { searchParams
   if (searchParams.laptop === "yes") filter.laptopRental = true;
   if (searchParams.laptop === "no") filter.laptopRental = false;
   if (searchParams.course) filter.courses = searchParams.course;
+
+  // Registered-between, on Lagos day boundaries. Either side may be omitted.
+  const from = isValidISODate(searchParams.from) ? searchParams.from : undefined;
+  const to = isValidISODate(searchParams.to) ? searchParams.to : undefined;
+  if (from || to) {
+    filter.createdAt = {
+      ...(from ? { $gte: startOfDay(from) } : {}),
+      ...(to ? { $lte: endOfDay(to) } : {}),
+    };
+  }
   if (searchParams.q) {
     const q = searchParams.q.trim();
     filter.$or = [
@@ -64,7 +77,7 @@ export default async function RegistrationsList({ searchParams }: { searchParams
 
       {/* Filters */}
       <form className="frosted-glass rounded-2xl p-4 mb-6">
-        <div className="grid md:grid-cols-5 gap-3">
+        <div className="grid md:grid-cols-6 gap-3">
           <input name="q" placeholder="Search name, ID, email, phone…" defaultValue={searchParams.q ?? ""} className="input md:col-span-2 !text-[13px]" />
           <select name="payment" defaultValue={searchParams.payment ?? ""} className="input !text-[13px]">
             <option value="">All payments</option>
@@ -80,7 +93,28 @@ export default async function RegistrationsList({ searchParams }: { searchParams
             <option value="admitted">Admitted</option>
             <option value="rejected">Rejected</option>
           </select>
-          <button className="btn-dark justify-center !text-[12px] !py-2.5">Filter</button>
+          <input
+            type="date"
+            name="from"
+            defaultValue={searchParams.from ?? ""}
+            max={todayISO()}
+            aria-label="Registered from"
+            className="input !text-[13px]"
+          />
+          <input
+            type="date"
+            name="to"
+            defaultValue={searchParams.to ?? ""}
+            max={todayISO()}
+            aria-label="Registered up to"
+            className="input !text-[13px]"
+          />
+          {/*
+            No hidden `page` field, deliberately: submitting drops the param
+            entirely, which resets to page 1. Filtering from page 3 into a smaller
+            result set would otherwise land on an empty page.
+          */}
+          <button className="btn-dark justify-center !text-[12px] !py-2.5 md:col-span-6">Filter</button>
         </div>
       </form>
 

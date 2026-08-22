@@ -1,11 +1,29 @@
 import { connectDB } from "@/lib/db";
 import { Waitlist } from "@/models/Waitlist";
+import { isValidISODate, startOfDay, endOfDay, todayISO } from "@/lib/date-range";
 
 export const dynamic = "force-dynamic";
 
-export default async function WaitlistPage() {
+export default async function WaitlistPage({
+  searchParams,
+}: {
+  searchParams: { from?: string; to?: string };
+}) {
   await connectDB();
-  const rows = await Waitlist.find({}).sort({ createdAt: -1 }).lean();
+
+  // Joined-between, on Lagos day boundaries. Either side may be omitted.
+  const from = isValidISODate(searchParams.from) ? searchParams.from : undefined;
+  const to = isValidISODate(searchParams.to) ? searchParams.to : undefined;
+  const filter: Record<string, unknown> = {};
+  if (from || to) {
+    filter.createdAt = {
+      ...(from ? { $gte: startOfDay(from) } : {}),
+      ...(to ? { $lte: endOfDay(to) } : {}),
+    };
+  }
+
+  const rows = await Waitlist.find(filter).sort({ createdAt: -1 }).lean();
+  const filtered = Boolean(from || to);
 
   return (
     <div className="p-6 sm:p-10 lg:p-12">
@@ -18,18 +36,42 @@ export default async function WaitlistPage() {
         </div>
         <div className="flex items-center gap-2.5">
           <span className="frosted-glass-violet rounded-full px-3.5 py-1.5 text-[10.5px] font-bold tracking-[.18em] uppercase">
-            {rows.length} on the list
+            {rows.length} {filtered ? "in range" : "on the list"}
           </span>
-          <a href="/api/admin/export/waitlist" className="btn-dark !text-[12px] !px-5 !py-2">
+          <a href={`/api/admin/export/waitlist?from=${from ?? ""}&to=${to ?? ""}`} className="btn-dark !text-[12px] !px-5 !py-2">
             Export CSV <span>→</span>
           </a>
         </div>
       </div>
 
+      <form className="frosted-glass rounded-2xl p-4 mb-6">
+        <div className="grid sm:grid-cols-3 gap-3">
+          <input
+            type="date"
+            name="from"
+            defaultValue={searchParams.from ?? ""}
+            max={todayISO()}
+            aria-label="Joined from"
+            className="input !text-[13px]"
+          />
+          <input
+            type="date"
+            name="to"
+            defaultValue={searchParams.to ?? ""}
+            max={todayISO()}
+            aria-label="Joined up to"
+            className="input !text-[13px]"
+          />
+          <button className="btn-dark justify-center !text-[12px] !py-2.5">Filter</button>
+        </div>
+      </form>
+
       <div className="bg-white rounded-2xl border border-black/[.06] overflow-hidden">
         {rows.length === 0 && (
           <p className="p-8 text-[13px] text-neutral-500 text-center">
-            No waitlist entries yet. People only land here once the cohort is full.
+            {filtered
+              ? "No waitlist entries in this date range."
+              : "No waitlist entries yet. People only land here once the cohort is full."}
           </p>
         )}
         {rows.length > 0 && (
